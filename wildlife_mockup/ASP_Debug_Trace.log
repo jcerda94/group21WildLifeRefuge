@@ -1,0 +1,28 @@
+Started *********************************************************
+Started *********************************************************
+Started ********************************************************* 10/12/2018 12:53:37 PM
+Started *********************************************************
+Started *********************************************************
+0:                 DBConnect.cs(  52)             Initialize:   Started
+1:                 DBConnect.cs( 211)            sqlNonQuery:   sql: DROP TABLE IF EXISTS _User 
+2:                 DBConnect.cs(  64)         OpenConnection:   Open DB
+3:                 DBConnect.cs( 234)          dumpException:   Exception: -2146232060
+4:                 DBConnect.cs( 235)          dumpException:   Exception: An attempt to attach an auto-named database for file C:\Users\dprin\TMA\__Jacobs\wapp\wappDB\myDB.mdf failed. A database with the same name exists, or specified file cannot be opened, or it is located on UNC share.
+5:                 DBConnect.cs( 236)          dumpException:   Exception:    at System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, DbConnectionPool pool, String accessToken, Boolean applyTransientFaultHandling, SqlAuthenticationProviderManager sqlAuthProviderManager)
+   at System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at wappDB.DBConnect.OpenConnection() in C:\Users\Bryce\Desktop\TMAWeb\wappDB\DBConnect.cs:line 65
+   at wappDB.DBConnect.sqlNonQuery(String sql) in C:\Users\Bryce\Desktop\TMAWeb\wappDB\DBConnect.cs:line 213
+6:                 DBConnect.cs(  21)                  .ctor:   DoAssert Failed:   rebuild failed
+7:                 DBConnect.cs(  21)                  .ctor:   DoAssert Failed:   rebuild failed                                                                               whereFrom:  CreateInstance(0) >> CreateInstanceDefaultCtor(0) >> CreateInstanceSlow(0) >> CreateInstance(0) >> .ctor(77)
+8:                   MyDebug.cs( 425)               DoAssert:   whereFrom:  CreateInstance(0) >> CreateInstanceDefaultCtor(0) >> CreateInstanceSlow(0) >> CreateInstance(0) >> .ctor(77)
