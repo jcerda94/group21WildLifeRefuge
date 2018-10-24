@@ -1,0 +1,19 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="wappDB.Page1"
+    Title="Page1" Height="1000" Width="1500" >
+    <StackPanel HorizontalAlignment="Center" Height="968" Margin="0,32,0,0" VerticalAlignment="Top" Width="1500">
+        <StackPanel Height="100" Background="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" Orientation="Horizontal">
+            <TextBlock x:Name="spacerTB" Text=" " FontSize="48" FontWeight="Bold" Foreground="#FFFAF5F5" VerticalAlignment="Center" HorizontalAlignment="Center" Width="231" Margin="0,18" />
+            <TextBlock x:Name="welcomeTB" Text="Welcome to Willapa National Wildlife Refuge" FontSize="48" FontWeight="Bold" Foreground="#FFFAF5F5" VerticalAlignment="Center" HorizontalAlignment="Center" Width="1498" />
+        </StackPanel>
+        <Grid Name="WelcomeGrid">
+            <Image x:Name="BackgroundPic" HorizontalAlignment="Left" Height="932" VerticalAlignment="Top" Width="1500" Source="willapa-wildlife-refuge-hiking.jpg" Stretch="Fill"/>
+            <WrapPanel Height="100"/>
+            <TextBlock TextWrapping="Wrap" Text="Welcome to Willapa National Wildlife Refuge"/>
+            <TextBlock x:Name="catchPhraseTB" Text="What do animals do in their free time?" FontSize="48" FontWeight="Bold" Foreground="#FFFAF5F5" Margin="291,10,215,844"/>
+            <Button Content="Start The Lesson" Margin="683,300,668,546"/>
+        </Grid>
+    </StackPanel>
+</Page>

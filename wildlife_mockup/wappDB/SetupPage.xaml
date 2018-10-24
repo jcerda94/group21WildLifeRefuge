@@ -1,0 +1,16 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="wappDB.Page1"
+    Title="Page1" Height="1000" Width="1500" >
+    <StackPanel HorizontalAlignment="Left" Height="968" Margin="0,32,0,0" VerticalAlignment="Top" Width="1500">
+        <StackPanel Height="100" Background="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" Orientation="Horizontal">
+            <Button Content="Select Plants" Width="203" Height="66" Margin="260,34,0,0" Background="#FF170404" Foreground="#FFF6F4F4" FontSize="24"/>
+            <Button Content="Select Prey" Width="203" Height="66" Margin="0,34,0,0" Background="#FF170404" Foreground="#FFF6F4F4" FontSize="24" VerticalAlignment="Bottom"/>
+            <Button Content="Select Predators" Width="203" Height="66" Margin="0,34,0,0" Background="#FF170404" Foreground="#FFF6F4F4" FontSize="24"/>
+        </StackPanel>
+        <Image x:Name="BackgroundPic" HorizontalAlignment="Left" Height="932" VerticalAlignment="Top" Width="1500" Source="willapa-wildlife-refuge-hiking.jpg" Stretch="Fill"/>
+        <WrapPanel Height="100"/>
+
+    </StackPanel>
+</Page>
