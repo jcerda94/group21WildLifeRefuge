@@ -1,3 +1,10 @@
+/*
+    Constructor for Red Tailed Hawk Object
+    @param gender   gender of the Hawk object
+    @param color    color of the Hawk object (not sure if this is necessary)
+    @param size     size of Hawk object (small, medium, or large)
+    @param speed    speed of flight in Miles per hour for Hawk object (slow, normal, fast)
+ */
 function RedTailedHawk(gender, color, size, speed) {
     this.color = color;
     this.gender = gender;
@@ -52,7 +59,7 @@ function RedTailedHawk(gender, color, size, speed) {
     this.hover = function() {
         //TODO: create logic to have Hawk hover in circular pattern.
     }
-
+    
     this.dive = function() {
         //TODO: create logic to have Hawk dive after prey.
     }
@@ -65,3 +72,57 @@ function RedTailedHawk(gender, color, size, speed) {
         //TODO: create logic to have Hawk feed on captured prey.
     }
 }
+
+RedTailedHawk.prototype = {
+    get gender() {
+        return this.gender;
+    },
+
+    set gender(gender) {
+        this.color = gender;
+    },
+
+    get color() {
+        return this.color;
+    },
+
+    set color(color) {
+        this.color = color;
+    },
+
+    get size() {
+        return this.size;
+    },
+
+    set size(size) {
+        this.size = size;
+    },
+
+    get speed() {
+        return this.speed;
+    },
+
+    set speed(speed) {
+        this.speed = speed;
+    },
+
+    get scientificName() {
+        return this.scientificName;
+    },
+
+    get commonName() {
+        return this.commonName;
+    },
+
+    get animalType() {
+        return this.animalType;
+    },
+
+    get diet() {
+        return this.diet;
+    },
+
+    get avgLifeSpan() {
+        return this.avgLifeSpan;
+    }
+};
