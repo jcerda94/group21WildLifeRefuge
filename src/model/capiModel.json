@@ -1,0 +1,11 @@
+{
+  "studentMode": true,
+  "authorMode": false,
+  "teacherMode": false,
+  "simEnabled": true,
+  "redCedar": 0,
+  "redHawk": 0,
+  "snowHare": 0,
+  "bigSage": 0,
+  "simObjects" : []
+}
