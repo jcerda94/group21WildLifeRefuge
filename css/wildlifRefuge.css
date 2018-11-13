@@ -1,0 +1,75 @@
+body {
+	  height: 100%;
+    margin: 0;
+	
+	background-color: #90C7E3;
+;
+       color: #666666; 
+}
+
+header{
+    background-color: #000033;
+        color: #FFFFFF;
+	margin-top: 0;
+	
+}
+
+nav{
+    background-color: #90C7E3;
+	text-align: center;
+	margin-bottom: 0;
+	
+}
+
+h1{
+	margin-top: 0;
+    margin-bottom: 0;
+	text-align: center;
+}
+h2{
+
+    color: white;
+	text-align: center;
+}
+
+.bg {
+    /* The image used */
+    background-image: url("willapa-wildlife-refuge-hiking.jpg");
+
+    /* Full height */
+    height: 100%; 
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+	
+	margin-top: 0;
+}
+#enterButton{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    color: black;
+    font-size: 16px;
+    padding: 16px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+
+footer{
+	
+   position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: black;
+   color: white;
+   text-align: center;
+	margin-top: 0;
+}
