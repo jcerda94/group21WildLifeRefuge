@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import StudentView from "./StudentView";
 
 
-class ReportView extends Component {
+class ReviewView extends Component {
 
 
     //TODO: Add more complex report state/status
@@ -19,4 +19,4 @@ class ReportView extends Component {
 
 }
 
-export default ReportView
+export default ReviewView
