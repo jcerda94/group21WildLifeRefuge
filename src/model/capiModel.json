@@ -1,7 +1,9 @@
 {
+  "toggleContext": false,
+  "simContext" : "VIEWER",
   "studentMode": true,
   "authorMode": false,
-  "teacherMode": false,
+  "reviewMode": false,
   "simEnabled": true,
   "redCedar": 0,
   "redHawk": 0,

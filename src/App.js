@@ -19,13 +19,37 @@ class App extends Component {
             window.simcapi.CapiAdapter.expose(key, this.simModel);
         }
 
-        window.simcapi.CapiAdapter.unexpose('simObjects', this.simModel);
 
+        // Todo: Refactor later to add appropriate listeners
+        this.simModel.on(('change:toggleContext'), () => {
+                this.simModel.set("simContext", window.simcapi.Transporter.getConfig().context);
+
+                switch (this.simModel.get('simContext')) {
+                    case 'VIEWER':
+                        this.toggleOnThenAllOff('studentMode', "authorMode", "reviewMode");
+                        break;
+                    case 'AUTHOR':
+                        this.toggleOnThenAllOff('authorMode', "studentMode", "reviewMode");
+                        break;
+                    default:
+                        console.log('Unsupported SimContext received')
+                }
+        });
+
+
+        window.simcapi.CapiAdapter.unexpose('simObjects', this.simModel);
         window.simcapi.Transporter.notifyOnReady();
 
         this.increment = this.increment.bind(this)
+    }
 
 
+    //TODO: Refactor to actually check all available states instead of just three
+    toggleOnThenAllOff(onState, off1, off2) {
+        this.simModel.set(onState, true);
+
+        this.simModel.set(off1, false);
+        this.simModel.set(off2, false);
     }
 
 
