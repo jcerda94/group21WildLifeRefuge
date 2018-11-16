@@ -13,6 +13,8 @@ class StudentView extends Component {
           "increment": this.props.increment
         };
 
+        // Disables increment functionality if in review mode
+        // TODO: Add functionality to disable all UI except possible forward/back buttons
         if (this.props.hasOwnProperty('review')) {
             this.setState({
                 'increment': (e) => console.log(e + ' is disabled')

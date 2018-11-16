@@ -5,10 +5,11 @@
     @param pollinated   boolean value for whether cones have been pollinated or not.
  */
 function WesternRedCedar(size, coneAge, pollinated) {
-    this.age;
-    this.diameterFeet;
-    this.heightFeet;
-    this.size;
+    // TODO: Add correct parameters
+    this.age = -1;
+    this.diameterFeet = -1;
+    this.heightFeet = -1;
+    this.size = -1;
     this.leafColor = '#99ff33'; //Lighter Green with Yellow Tint (w3schools colorpicker)
     this.leafLengthInches = (Math.random() * 0.039) + 0.157;
     this.leafBreadthInches = (Math.random() * 0.039) + 0.47;
