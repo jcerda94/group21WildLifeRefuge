@@ -1,13 +1,29 @@
-### `Use:`
+# Setup:
 
-# Run npm start to start the development server
+### Windows:
+- Clone the repo to your device
+- From the root of the project directory run `npm install`
+- Inside of `package.json` change the line `"start": "export HTTPS=true&&PORT=3000 react-scripts start" ` ->  `"start": "set HTTPS=true&&react-scripts start"`
+- Then run `npm start` to compile the project and launch the development server
+
+### Mac OSX:
+- Clone the repo to your device
+- From the root of the project directory run `npm install`
+- Then run `npm start` to compile the project and launch the development server
+
+
+# Use:
+
+### Run npm start to start the development server
 Open [https://localhost:3000](https://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br>
+The page will reload changes made when you save your code.<br>
 You will also see any lint errors in the console.
 
-### 'SPR Use/Testing:'
+# SPR Use/Testing:
 
 Open the SPR Author and put [https://localhost:3000](https://localhost:3000) as the source url for a Blank Component. Then all authoring tools should preliminarily work. (Make sure use put https and not http, it will not work otherwise)
 
-# Example: [https://youtu.be/RTAQK7XgAH4](https://youtu.be/RTAQK7XgAH4)
+## Short Demo:
+![Short SPR Demo](http://g.recordit.co/RkcyqPE0EZ.gif)
+## Long Demo: [https://youtu.be/RTAQK7XgAH4](https://youtu.be/RTAQK7XgAH4)
