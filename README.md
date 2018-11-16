@@ -24,6 +24,5 @@ You will also see any lint errors in the console.
 
 Open the SPR Author and put [https://localhost:3000](https://localhost:3000) as the source url for a Blank Component. Then all authoring tools should preliminarily work. (Make sure use put https and not http, it will not work otherwise)
 
-## Short Demo:
+## Demo:
 ![Short SPR Demo](http://g.recordit.co/RkcyqPE0EZ.gif)
-## Long Demo: [https://youtu.be/RTAQK7XgAH4](https://youtu.be/RTAQK7XgAH4)
