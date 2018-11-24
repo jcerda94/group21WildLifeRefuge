@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../css/simulation.css'
+import ElementButton from "./ElementButton";
 
 
 class StudentView extends Component {
@@ -10,7 +11,7 @@ class StudentView extends Component {
 
         //TODO: Need to test reviewing behavior later
         this.state = {
-          "increment": this.props.increment
+            "increment": this.props.increment
         };
 
         // Disables increment functionality if in review mode
@@ -27,30 +28,10 @@ class StudentView extends Component {
         return (
             <div className="student">
                 <ul>
-                    <li className="dropdown1">
-                        <a href="javascript:void(1)" className="dropbtn2">Add Predators </a>
-                        <div className="dropdown-content1">
-                            <a onClick={(e) => this.state.increment('redCedar')} href="#">Western Red Cedar</a>
-                        </div>
-                    </li>
-                    <li className="dropdown2">
-                        <a href="javascript:void(1)" className="dropbtn2">Add Predators </a>
-                        <div className="dropdown-content2">
-                            <a onClick={(e) => this.state.increment('redHawk')} href="#">Red Tailed Hawk</a>
-                        </div>
-                    </li>
-                    <li className="dropdown3">
-                        <a href="javascript:void(2)" className="dropbtn3">Add Prey</a>
-                        <div className="dropdown-content3">
-                            <a onClick={(e) => this.state.increment('snowHare')} href="#">Snowshoe Hare</a>
-                        </div>
-                    </li>
-                    <li className="dropdown4">
-                        <a href="javascript:void(2)" className="dropbtn4">Add Bushes</a>
-                        <div className="dropdown-content4">
-                            <a onClick={(e) => this.state.increment('bigSage')} href="#">Big Sagebrush</a>
-                        </div>
-                    </li>
+                    <ElementButton key="rC" addText="Add Tree" title="Western Red Cedar" increment={this.state.increment} name="redCedar"/>
+                    <ElementButton key="rH" addText="Add Predator" title="Red Tailed Hawk" increment={this.state.increment} name="redHawk"/>
+                    <ElementButton key="sH" addText="Add Prey" title="Snowshoe Hare" increment={this.state.increment} name="snowHare"/>
+                    <ElementButton key="bS" addText="Add Bushes" title="Big Sagebrush" increment={this.state.increment} name="bigSage"/>
                 </ul>
 
             </div>
