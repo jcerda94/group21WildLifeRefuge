@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import '../css/simulation.css'
 import ElementButton from "./ElementButton";
+import SimViewer from "./SimViewer";
 
 
 class StudentView extends Component {
@@ -33,6 +34,8 @@ class StudentView extends Component {
                     <ElementButton key="sH" addText="Add Prey" title="Snowshoe Hare" increment={this.state.increment} name="snowHare"/>
                     <ElementButton key="bS" addText="Add Bushes" title="Big Sagebrush" increment={this.state.increment} name="bigSage"/>
                 </ul>
+
+                <SimViewer/>
 
             </div>
         )
