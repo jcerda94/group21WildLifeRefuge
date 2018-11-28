@@ -5,7 +5,8 @@
   "dependencies": {
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-scripts": "2.1.1"
+    "react-scripts": "2.1.1",
+    "three": "^0.98.0"
   },
   "scripts": {
     "start": "export HTTPS=true&&PORT=3000 react-scripts start",
