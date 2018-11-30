@@ -9,5 +9,6 @@
   "redHawk": 0,
   "snowHare": 0,
   "bigSage": 0,
-  "simObjects" : []
+  "simObjects" : [],
+  "loggedIn": true
 }
