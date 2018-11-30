@@ -8,8 +8,8 @@
 
 ### Mac OSX:
 - Clone the repo to your device
-- From the root of the project directory run `npm install`
-- Then run `npm start` to compile the project and launch the development server
+- From the root of the project directory run `./MacInstall.sh` to install and run the project
+- For all subsequent launches, run `npm start` to compile the project and launch the development server
 
 
 # Use:
