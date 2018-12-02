@@ -105,8 +105,9 @@ class App extends Component {
 
         //TODO: Add state checking using -> simcapi.Transporter.getConfig().context
         var display = null;
-
-        if (this.state.studentMode){
+        if (!this.state.loggedIn) {
+          // display = Welcome Code
+        } else if (this.state.studentMode){
             display = <StudentView increment={this.increment}/>
         } else if (this.state.authorMode) {
             display = <AuthorView style={{backgroundColor: 'beige'}} state={this.state}/>

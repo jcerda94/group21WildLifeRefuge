@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../css/simulation.css'
-import ElementButton from "./ElementButton";
 import SimViewer from "./SimViewer";
+import UIBar from "./UIBar";
 
 
 class StudentView extends Component {
@@ -12,7 +12,8 @@ class StudentView extends Component {
 
         //TODO: Need to test reviewing behavior later
         this.state = {
-            "increment": this.props.increment
+            "increment": this.props.increment,
+            'height': 0
         };
 
         // Disables increment functionality if in review mode
@@ -24,18 +25,17 @@ class StudentView extends Component {
         }
     }
 
+    findUIHeight = (uiHeight) => {
+        this.setState({'height': (window.innerHeight-uiHeight)})
+    };
+
     render(){
 
         return (
             <div className="student">
-                <ul>
-                    <ElementButton key="rC" addText="Add Tree" title="Western Red Cedar" increment={this.state.increment} name="redCedar"/>
-                    <ElementButton key="rH" addText="Add Predator" title="Red Tailed Hawk" increment={this.state.increment} name="redHawk"/>
-                    <ElementButton key="sH" addText="Add Prey" title="Snowshoe Hare" increment={this.state.increment} name="snowHare"/>
-                    <ElementButton key="bS" addText="Add Bushes" title="Big Sagebrush" increment={this.state.increment} name="bigSage"/>
-                </ul>
+                <UIBar reportHeight={this.findUIHeight} increment={this.state.increment}/>
 
-                <SimViewer/>
+                <SimViewer height={this.state.height}/>
 
             </div>
         )
