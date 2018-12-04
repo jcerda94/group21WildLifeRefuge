@@ -9,7 +9,7 @@
   "redHawk": 0,
   "snowHare": 0,
   "bigSage": 0,
-  "level": 7,
+  "level": 0,
   "simObjects" : [],
-  "loggedIn": true
+  "loggedIn": false
 }

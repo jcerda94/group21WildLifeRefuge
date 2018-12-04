@@ -107,7 +107,7 @@ class App extends Component {
 
         //TODO: Add state checking using -> simcapi.Transporter.getConfig().context
         var display = null;
-        if (this.state.loggedIn) {
+        if (!this.state.loggedIn) {
           display = <WelcomePage name = {this.simModel} />
 
         } else if (this.state.studentMode){
