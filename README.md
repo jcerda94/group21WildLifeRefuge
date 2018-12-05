@@ -3,11 +3,11 @@
 ### Windows:
 - Clone the repo to your device
 - From the root of the project directory run `npm install`
-- Inside of `package.json` change the line `"start": "export HTTPS=true&&PORT=3000 react-scripts start" ` ->  `"start": "set HTTPS=true&&react-scripts start"`
 - Then run `npm start` to compile the project and launch the development server
 
 ### Mac OSX:
 - Clone the repo to your device
+- Inside of `package.json` change the line `"start": "set HTTPS=true&&PORT=3000 react-scripts start" ` ->  `"start": "export HTTPS=true&&react-scripts start"`
 - From the root of the project directory run `./MacInstall.sh` to install and run the project
 - For all subsequent launches, run `npm start` to compile the project and launch the development server
 
