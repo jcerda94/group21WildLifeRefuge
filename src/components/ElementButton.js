@@ -10,7 +10,16 @@ class ElementButton extends Component {
 
         // TODO: Need to add support for svg for custom button shapes
         if (this.props.hasOwnProperty('icon')) {
-            this.button = <button id ={this.props.id} onClick={(e) => alert("Clicked" + this.props.id)}>
+            var click;
+            if (this.props.id === 'reset') {
+                click = () => {
+                    SimViewer.scene.children[0].children = [];
+                }
+            }else {
+                click = () => {alert("Clicked " + this.props.id);}
+            }
+
+            this.button = <button id ={this.props.id} onClick={(e) => click()}>
                 <img className={"ui-img"} alt="NOT LOADED" src={this.props.src} />
             </button>;
         } else {
