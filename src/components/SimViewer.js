@@ -15,6 +15,7 @@ class SimViewer extends Component {
         SimViewer.camera = threeObjects[0];
         SimViewer.scene = threeObjects[1];
         SimViewer.renderer = threeObjects[2];
+        SimViewer.plane = threeObjects[3];
         SimViewer.animate();
 
     }
@@ -25,34 +26,40 @@ class SimViewer extends Component {
         camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
         camera.position.set( 0, 75, 100 );
         scene = new THREE.Scene();
-        scene.background = new THREE.Color( 0x003300 );
+        scene.background = new THREE.Color( 0xffffff );
         var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
+        var material = new THREE.MeshBasicMaterial({ color: new THREE.Color(0x996600) });
+        var mesh = new THREE.Mesh( geometry, material );
+        mesh.rotation.x = - Math.PI / 2;
+        scene.add(mesh);
+
         var texture = new THREE.CanvasTexture( SimViewer.generateTexture() );
-        for ( var i = 0; i < 10; i ++ ) {
-            var material = new THREE.MeshBasicMaterial( {
+        for ( var i = 1; i < 10; i ++ ) {
+            material = new THREE.MeshBasicMaterial( {
                 color: new THREE.Color().setHSL( 0.3, 0.75, ( i / 15 ) * 0.4 + 0.1 ),
                 map: texture,
-                depthTest: false,
-                depthWrite: false,
-                transparent: true
+                transparent: true,
             } );
-            var mesh = new THREE.Mesh( geometry, material );
+            mesh = new THREE.Mesh( geometry, material );
             mesh.position.y = i * 0.25;
             mesh.rotation.x = - Math.PI / 2;
             scene.add( mesh );
         }
         scene.children.reverse();
+
         renderer = new THREE.WebGLRenderer();
         renderer.setPixelRatio( window.devicePixelRatio );
         renderer.setSize( window.innerWidth, window.innerHeight );
+
 
         const cameraControl = new OrbitControls(camera);
 
         document.body.appendChild( renderer.domElement );
 
-        return [camera, scene, renderer]
+        return [camera, scene, renderer, mesh]
 
     }
+
 
     static generateTexture() {
         var canvas = document.createElement( 'canvas' );
