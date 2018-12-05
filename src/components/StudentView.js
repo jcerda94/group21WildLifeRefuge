@@ -34,12 +34,10 @@ class StudentView extends Component {
         return (
             <div className="student">
                 <UIBar reportHeight={this.findUIHeight} increment={this.state.increment}/>
-                <img src = "/src/assets/back.png" alt = "back button"></img>
-                <img src = "/src/assets/forward.png" alt = "forward button"></img>
-                <img src = "/src/assets/help.png" alt = "help button"></img> {/* this image was licensed using an MIT license by Ionicons(ionicons.com).*/}
-                <img src = "/src/assets/reset.png" alt = "reset button"></img> {/*this image was made by Danilo Demarco(http://www.danilodemarco.com)*/}
-                
-                
+                <a href="javascript:void(1)"><img id = 'back' src={Back} /></a>
+                <a href="javascript:void(1)"><img id = 'forward' src={Forward} /></a>
+                <a href="javascript:void(1)"><img id = 'reset' src={Reset} /></a>{/*this image was made by Danilo Demarco(http://www.danilodemarco.com)*/}
+                <a href="javascript:void(1)"><img id = 'help' src={Help} /></a>{/* this image was licensed using an MIT license by Ionicons(ionicons.com).*/}
                 <SimViewer height={this.state.height}/>
 
             </div>

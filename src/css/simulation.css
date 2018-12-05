@@ -175,3 +175,32 @@ img
     margin-left: auto;
     margin-right: 100;   
 }
+
+.navigation {
+    background-color: rgba(192,192,192,0.5);
+    text-align: center;
+}
+
+#back {
+    height: 50px;
+    width: 50px;
+    padding: 1%;
+}
+
+#forward {
+    height: 50px;
+    width: 50px;
+    padding: 1%;
+}
+
+#reset {
+    height: 50px;
+    width: 50px;
+    padding: 1%;
+}
+
+#help {
+    height: 75px;
+    width: 75px;
+    padding: 1%;
+}
