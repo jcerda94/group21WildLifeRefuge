@@ -18,12 +18,17 @@ class SimViewer extends Component {
 
         var renderer = new THREE.WebGLRenderer();
         // TODO: Get renderer to render to the full component size
+        renderer.setClearColor(0xFFFFFF, 1.0);
         renderer.setSize(600, 600);
         this.renderer = renderer;
 
+        var cameraControl = new OrbitControls(this.camera);
+        cameraControl.maxPolarAngle = Math.PI * 0.5;
+
+
         // create the ground plane
-        var planeGeometry = new THREE.PlaneGeometry(20, 5, 10);
-        var planeMaterial = new THREE.MeshLambertMaterial({color: 0xcccccc});
+        var planeGeometry = new THREE.PlaneGeometry(10, 10);
+        var planeMaterial = new THREE.MeshLambertMaterial({color: 0x000000});
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.receiveShadow = true;
 
@@ -59,10 +64,6 @@ class SimViewer extends Component {
     componentDidUpdate() {
 
         console.log(this.props.height);
-
-
-        var cameraControl = new OrbitControls(this.camera);
-        cameraControl.maxPolarAngle = Math.PI * 0.5;
 
         this.divElement.appendChild( this.renderer.domElement );
         this.renderer.setSize(window.innerWidth, this.props.height + 50);
