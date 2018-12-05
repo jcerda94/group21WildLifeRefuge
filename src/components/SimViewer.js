@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {OrbitControls} from "../js/three/OrbitControls";
 
 class SimViewer extends Component {
-    constructor(Super) {
+    constructor() {
         super();
 
         this.state = {
@@ -11,63 +11,89 @@ class SimViewer extends Component {
             width: 0
         };
 
-
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-        this.camera = camera;
-
-        var renderer = new THREE.WebGLRenderer();
-        // TODO: Get renderer to render to the full component size
-        renderer.setClearColor(0xFFFFFF, 1.0);
-        renderer.setSize(600, 600);
-        this.renderer = renderer;
-
-        var cameraControl = new OrbitControls(this.camera);
-        cameraControl.maxPolarAngle = Math.PI * 0.5;
-
-
-        // create the ground plane
-        var planeGeometry = new THREE.PlaneGeometry(10, 10);
-        var planeMaterial = new THREE.MeshLambertMaterial({color: 0x000000});
-        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        plane.receiveShadow = true;
-
-        scene.add(plane);
-        // add the plane to the scene
-//        scene.add(plane);
-        // position and point the camera to the center of the scene
-        camera.position.x = 3;
-        camera.position.y = 15;
-        camera.position.z = 10;
-        camera.lookAt(scene.position);
-
-        // add spotlight for the shadows
-        var spotLight = new THREE.DirectionalLight(0xffffff);
-        spotLight.position.set(50, 50, 50);
-        spotLight.castShadow = true;
-        spotLight.intensity = 2;
-        scene.add(spotLight);
-        var ambiLight = new THREE.AmbientLight(0x333333);
-        scene.add(ambiLight);
-
-        document.body.appendChild( this.renderer.domElement );
-
-        var animate = function () {
-            requestAnimationFrame( animate );
-
-
-            renderer.render(scene, camera );
-        };
-
-        animate();
+        var threeObjects = SimViewer.init();
+        SimViewer.camera = threeObjects[0];
+        SimViewer.scene = threeObjects[1];
+        SimViewer.renderer = threeObjects[2];
+        SimViewer.animate();
 
     }
+
+    static init() {
+        var camera, scene, renderer;
+
+        camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
+        camera.position.set( 0, 75, 100 );
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0x003300 );
+        var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
+        var texture = new THREE.CanvasTexture( SimViewer.generateTexture() );
+        for ( var i = 0; i < 10; i ++ ) {
+            var material = new THREE.MeshBasicMaterial( {
+                color: new THREE.Color().setHSL( 0.3, 0.75, ( i / 15 ) * 0.4 + 0.1 ),
+                map: texture,
+                depthTest: false,
+                depthWrite: false,
+                transparent: true
+            } );
+            var mesh = new THREE.Mesh( geometry, material );
+            mesh.position.y = i * 0.25;
+            mesh.rotation.x = - Math.PI / 2;
+            scene.add( mesh );
+        }
+        scene.children.reverse();
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+        const cameraControl = new OrbitControls(camera);
+
+        document.body.appendChild( renderer.domElement );
+
+        return [camera, scene, renderer]
+
+    }
+
+    static generateTexture() {
+        var canvas = document.createElement( 'canvas' );
+        canvas.width = 512;
+        canvas.height = 512;
+        var context = canvas.getContext( '2d' );
+        for ( var i = 0; i < 20000; i ++ ) {
+            context.fillStyle = 'hsl(0,0%,' + ( Math.random() * 50 + 50 ) + '%)';
+            context.beginPath();
+            context.arc( Math.random() * canvas.width, Math.random() * canvas.height, Math.random() + 0.15, 0, Math.PI * 2, true );
+            context.fill();
+        }
+        context.globalAlpha = 0.075;
+        context.globalCompositeOperation = 'lighter';
+        return canvas;
+    }
+
+    static animate() {
+        requestAnimationFrame( SimViewer.animate );
+        SimViewer.threeRender();
+    }
+
+    static threeRender() {
+        var time = Date.now() / 6000;
+        SimViewer.camera.position.x = 80 * Math.cos( time );
+        SimViewer.camera.position.z = 80 * Math.sin( time );
+        SimViewer.camera.lookAt( this.scene.position );
+        for ( var i = 0, l = SimViewer.scene.children.length; i < l; i ++ ) {
+            var mesh = SimViewer.scene.children[ i ];
+            mesh.position.x = Math.sin( time * 4 ) * i * i * 0.005;
+            mesh.position.z = Math.cos( time * 6 ) * i * i * 0.005;
+        }
+        SimViewer.renderer.render( SimViewer.scene, SimViewer.camera );
+    }
+
 
     componentDidUpdate() {
 
         console.log(this.props.height);
 
-        this.renderer.setSize(window.innerWidth, this.props.height + 50);
+        SimViewer.renderer.setSize(window.innerWidth, this.props.height);
 
 
     }
@@ -75,7 +101,7 @@ class SimViewer extends Component {
 
     render(){
         return (
-            <div style={this.props.style} ref={ divElement => {this.divElement = divElement}}>
+            <div style={this.props.style}>
 
             </div>
         )
