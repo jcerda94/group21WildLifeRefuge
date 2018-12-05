@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ElementButton from "./ElementButton";
 
-
 class UIBar extends Component {
 
 

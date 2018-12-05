@@ -50,6 +50,8 @@ class SimViewer extends Component {
         var ambiLight = new THREE.AmbientLight(0x333333);
         scene.add(ambiLight);
 
+        document.body.appendChild( this.renderer.domElement );
+
         var animate = function () {
             requestAnimationFrame( animate );
 
@@ -65,7 +67,6 @@ class SimViewer extends Component {
 
         console.log(this.props.height);
 
-        this.divElement.appendChild( this.renderer.domElement );
         this.renderer.setSize(window.innerWidth, this.props.height + 50);
 
 

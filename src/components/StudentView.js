@@ -6,6 +6,7 @@ import back from "../assets/back.png"
 import forward from "../assets/forward.png"
 import reset from "../assets/reset.png"
 import help from "../assets/help.png"
+import ElementButton from "./ElementButton";
 
 
 
@@ -39,12 +40,12 @@ class StudentView extends Component {
         return (
             <div className="student">
                 <UIBar reportHeight={this.findUIHeight} increment={this.state.increment}/>
-                <a href="javascript:void(1)"><img id = 'back' src={back} /></a>
-                <a href="javascript:void(1)"><img id = 'forward' src={forward} /></a>
-                <a href="javascript:void(1)"><img id = 'reset' src={reset} /></a>{/*this image was made by Danilo Demarco(http://www.danilodemarco.com)*/}
-                <a href="javascript:void(1)"><img id = 'help' src={help} /></a>{/* this image was licensed using an MIT license by Ionicons(ionicons.com).*/}
                 <SimViewer height={this.state.height}/>
 
+                <ElementButton key="back" icon id="back" src={back}/>
+                <ElementButton key="forward" icon id="forward" src={forward}/>
+                <ElementButton key="reset" icon id="reset" src={reset}/>
+                <ElementButton key="help" icon id="help" src={help}/>
             </div>
         )
 
