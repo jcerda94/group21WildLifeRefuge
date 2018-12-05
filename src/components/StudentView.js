@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import '../css/simulation.css'
 import SimViewer from "./SimViewer";
 import UIBar from "./UIBar";
+import back from "../assets/back.png"
+import forward from "../assets/forward.png"
+import reset from "../assets/reset.png"
+import help from "../assets/help.png"
+
 
 
 class StudentView extends Component {
@@ -34,10 +39,10 @@ class StudentView extends Component {
         return (
             <div className="student">
                 <UIBar reportHeight={this.findUIHeight} increment={this.state.increment}/>
-                <a href="javascript:void(1)"><img id = 'back' src={Back} /></a>
-                <a href="javascript:void(1)"><img id = 'forward' src={Forward} /></a>
-                <a href="javascript:void(1)"><img id = 'reset' src={Reset} /></a>{/*this image was made by Danilo Demarco(http://www.danilodemarco.com)*/}
-                <a href="javascript:void(1)"><img id = 'help' src={Help} /></a>{/* this image was licensed using an MIT license by Ionicons(ionicons.com).*/}
+                <a href="javascript:void(1)"><img id = 'back' src={back} /></a>
+                <a href="javascript:void(1)"><img id = 'forward' src={forward} /></a>
+                <a href="javascript:void(1)"><img id = 'reset' src={reset} /></a>{/*this image was made by Danilo Demarco(http://www.danilodemarco.com)*/}
+                <a href="javascript:void(1)"><img id = 'help' src={help} /></a>{/* this image was licensed using an MIT license by Ionicons(ionicons.com).*/}
                 <SimViewer height={this.state.height}/>
 
             </div>

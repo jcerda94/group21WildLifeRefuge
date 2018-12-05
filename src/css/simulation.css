@@ -182,25 +182,41 @@ img
 }
 
 #back {
+    position: absolute;
+    bottom: 8px;
+    left: 16px;
     height: 50px;
     width: 50px;
     padding: 1%;
+    z-index: +1;
 }
 
 #forward {
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
     height: 50px;
     width: 50px;
     padding: 1%;
+    z-index: +1;
 }
 
 #reset {
+    position: absolute;
+    bottom: 8px;
+    left: 120px;
     height: 50px;
     width: 50px;
     padding: 1%;
-}
+    z-index: +1;
 
+}
 #help {
-    height: 75px;
-    width: 75px;
-    padding: 1%;
+    filter: invert(100%);
+    position: absolute;
+    top: 5px;
+    right: 16px;
+    height: 40px;
+    width: 40px;
+    z-index: +1;
 }
