@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import './css/App.css'
-import model from './model/capiModel'
-import StudentView from './components/StudentView'
+import './css/App.css';
+import model from './model/capiModel';
+import WelcomePage from './components/WelcomePage';
+
+import StudentView from './components/StudentView';
 import AuthorView from "./components/AuthorView";
 
 
@@ -106,7 +108,8 @@ class App extends Component {
         //TODO: Add state checking using -> simcapi.Transporter.getConfig().context
         var display = null;
         if (!this.state.loggedIn) {
-          // display = Welcome Code
+          display = <WelcomePage name = {this.simModel} />
+
         } else if (this.state.studentMode){
             display = <StudentView increment={this.increment}/>
         } else if (this.state.authorMode) {
@@ -116,6 +119,8 @@ class App extends Component {
         return display;
 
   }
+
+
 }
 
 export default App;
