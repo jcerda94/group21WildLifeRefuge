@@ -41,7 +41,8 @@ class ElementButton extends Component {
                     case 'hare':
                         color = new THREE.Color(0xd9d9d9);
                         break;
-
+                    default:
+                        break;
                 }
 
                 var geometry = new THREE.BoxGeometry( 3, 3, 3 );
