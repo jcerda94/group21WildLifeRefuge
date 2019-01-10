@@ -7,9 +7,9 @@ class WelcomePage extends React.Component {
 
     constructor(props) {
         super(props);
-        this.user = new User("Jonh", "Doe", 6, 0, 0);
 
         this.simModel = props.name;
+        this.user = new User(this.simModel.name, "Doe", 6, 0, 0);
 
         this.handleLoginClick = this.handleLoginClick.bind(this);
 
@@ -26,7 +26,7 @@ class WelcomePage extends React.Component {
 
                 <div>
                     <header>
-                        {this.user.firstName} 
+                        {this.simModel.name}
 
                     </header>
 

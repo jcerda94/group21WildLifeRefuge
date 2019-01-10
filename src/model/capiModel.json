@@ -9,6 +9,7 @@
   "redHawk": 0,
   "snowHare": 0,
   "bigSage": 0,
+  "name": "John",
   "level": 0,
   "simObjects" : [],
   "loggedIn": false
