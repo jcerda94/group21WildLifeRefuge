@@ -55,7 +55,7 @@ class Sim {
     canvas.height = 512
     let context = canvas.getContext('2d')
     for (let i = 0; i < 20000; i++) {
-      context.fillStyle = `hsl(0,0%, ${Math.random() * 50 + 50}%)`
+      context.fillStyle = `hsl(0, 0%, ${Math.random() * 50 + 50}%)`
       context.beginPath()
       context.arc(
         Math.random() * canvas.width,
@@ -79,11 +79,11 @@ class Sim {
     this.scene.add(mesh)
     const geometry = this.generateGeometry()
     for (var i = 1; i < 10; i++) {
-      let material = this.makeMaterial(texture, [
-        0.3,
-        0.75,
-        (i / 15) * 0.4 + 0.1
-      ])
+      let material = this.makeMaterial(texture, {
+        h: 0.3,
+        s: 0.75,
+        l: (i / 15) * 0.4 + 0.1
+      })
       mesh = new THREE.Mesh(geometry, material)
       mesh.position.y = i * 0.25
       mesh.rotation.x = -Math.PI / 2
@@ -92,9 +92,9 @@ class Sim {
     this.scene.children.reverse()
   }
 
-  makeMaterial (texture, hsl) {
+  makeMaterial (texture, { h, s, l }) {
     return new THREE.MeshBasicMaterial({
-      color: new THREE.Color().setHSL(...hsl),
+      color: new THREE.Color().setHSL(h, s, l),
       map: texture,
       transparent: true
     })
