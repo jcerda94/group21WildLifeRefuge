@@ -111,7 +111,7 @@ class App extends Component {
       )
     }
 
-    return display
+    return <StudentView increment={this.increment} />
   }
 }
 

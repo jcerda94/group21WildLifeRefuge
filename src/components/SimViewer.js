@@ -1,34 +1,23 @@
-import React, { Component } from 'react'
-import Sim from './Sim'
+import React, { Component } from "react";
+import SceneManager from "../scenes/SceneManager";
+import styled from "styled-components";
+import entryPoint from "../scenes/entryPoint";
+
+const CanvasContainer = styled.div`
+  flex: 1;
+  overflow: hidden;
+`;
 
 class SimViewer extends Component {
-  constructor () {
-    super()
+  canvasContainer = React.createRef();
 
-    this.state = {
-      height: 0,
-      width: 0
-    }
-    this.sim = new Sim()
-
-    this.sim.animate()
-    document.body.appendChild(this.sim.renderer.domElement)
+  componentDidMount() {
+    entryPoint(this.canvasContainer.current);
   }
 
-  animate = () => {
-    this.sim.animate()
-  }
-
-  componentDidUpdate () {
-    const { height } = this.props
-    console.log(height)
-
-    this.sim.renderer.setSize(window.innerWidth, height)
-  }
-
-  render () {
-    return <div style={this.props.style} />
+  render() {
+    return <CanvasContainer ref={this.canvasContainer} />;
   }
 }
 
-export default SimViewer
+export default SimViewer;
