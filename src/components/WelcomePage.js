@@ -1,6 +1,24 @@
 import React from 'react';
 import '../css/welcome.css';
+import UserImage from '../assets/user1.png'
+import styled from 'styled-components'
 
+const Container = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    background-color: #000000AA;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+`
+
+const Welcome = styled.h1``
+
+const Subtitle = styled.h2``
 
 class WelcomePage extends React.Component {
 
@@ -21,16 +39,15 @@ class WelcomePage extends React.Component {
     render() {
 
             return (
-
-                <div>
-
-                    <h1>Welcome to Willapa National Wildlife Refuge</h1>
-                    <h2>What do animals do in their free time?</h2>
+                <Container>
+                    <Welcome> Welcome to Willapa Wildlife Refuge</Welcome>
+                    <Subtitle>What do animals do in their free time?</Subtitle>
                     <p>This is the refuge summary paragraph</p>
-                    <div className="button">
-                        <button className="enterButton" type="button" onClick = {this.handleLoginClick}> Start Lesson</button>
-                    </div>
-                </div>
+                    <button className="enterButton" type="button" onClick = {this.handleLoginClick}> Start Lesson</button>
+                    <i style={{fontSize: 48, color: 'white'}} class="fas fa-user"></i>
+                    <div className='spinner' />
+                    {/* <img style={{maxWidth: 100}} alt='user icon' src={UserImage}></img> */}
+                </Container>
             );
         }
 
