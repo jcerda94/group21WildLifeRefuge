@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "../js/three/OrbitControls";
 import Ground from "./Ground";
+import Grass from "./Grass";
 
 class SceneManager {
   camera = null;
@@ -42,6 +43,7 @@ class SceneManager {
   }
 
   createSceneSubjects() {
+    new Grass(this.scene);
     this.subjects = [new Ground(this.scene)];
   }
 
@@ -89,9 +91,6 @@ class SceneManager {
     });
     this.renderer.setPixelRatio(1);
     this.renderer.setSize(width, height);
-
-    this.renderer.gammaInput = true;
-    this.renderer.gammaOutput = true;
   }
 }
 
