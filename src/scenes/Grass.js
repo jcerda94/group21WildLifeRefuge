@@ -1,20 +1,21 @@
-const THREE = (window.THREE = require("three"));
-require("three/examples/js/loaders/GLTFLoader");
+const THREE = (window.THREE = require('three'))
+require('three/examples/js/loaders/GLTFLoader')
 
-function Grass(scene, config = {}) {
-  const loader = new THREE.GLTFLoader();
+async function Grass (scene, config = {}) {
+  const loader = new THREE.GLTFLoader()
 
-  loader.load(
-    "models/grass.gltf",
-    fbx => console.log("IMPORTED", fbx),
-    undefined,
-    err => console.log(err)
-  );
+  let grass = await new Promise((resolve, reject) => {
+    loader.load('models/grass.gltf', resolve, undefined, reject)
+  })
 
-  function update() {}
+  console.log(grass)
+  if (grass) scene.add(grass.scene)
+
+  function update () {}
+
   return {
     update
-  };
+  }
 }
 
-export default Grass;
+export default Grass
