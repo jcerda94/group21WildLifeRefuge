@@ -7,6 +7,10 @@ import DirectionalLight from './DirectionalLight';
 import ThreeEntry from './ThreeEntry';
 
 class SceneManager {
+  groundSize = {
+    x: 100,
+    y: 100
+  }
   camera = null
   scene = null
   renderer = null
@@ -47,8 +51,8 @@ class SceneManager {
 
   createSceneSubjects () {
     this.subjects = [
-      new Ground(this.scene),
-      new GrassField(this.scene, { count: 250 }),
+      new Ground(this.scene, { size: this.groundSize, color: '#996600' }),
+      new GrassField(this.scene, { count: 500 }),
       new AmbientLight(this.scene),
       new DirectionalLight(this.scene)
     ];

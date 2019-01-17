@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import SimViewer from './SimViewer';
 import { getSceneManager } from '../scenes/SceneManager';
 import * as THREE from 'three';
+import Cube from '../scenes/Cube';
 
 class ElementButton extends Component {
   constructor (props) {
@@ -32,32 +33,36 @@ class ElementButton extends Component {
         var color;
         switch (this.props.model) {
           case 'tree':
-            color = new THREE.Color('#00C060');
+            color = '#00C060';
             break;
           case 'hawk':
-            color = new THREE.Color(0xcc0000);
+            color = 0xcc0000;
             break;
           case 'bush':
-            color = new THREE.Color(0x669900);
+            color = 0x669900;
             break;
           case 'hare':
-            color = new THREE.Color(0xd9d9d9);
+            color = 0xd9d9d9;
             break;
           default:
             break;
         }
-
-        var geometry = new THREE.BoxGeometry(3, 3, 3);
-        var material = new THREE.MeshBasicMaterial({ color: color });
-        var cube = new THREE.Mesh(geometry, material);
         function random (min, max) {
           return Math.random() * (max - min) + min;
         }
         const x = random(-48, 48);
-        const y = random(-48, 48);
-        cube.position.set(x, 1.5, y);
-        cube.scale.set(1, 1, 1);
-        getSceneManager().addObject(cube);
+        const y = 1.5;
+        const z = random(-48, 48);
+        const position = { x, y, z };
+
+        const cubeConfig = {
+          size: 3,
+          position,
+          color
+        };
+
+        const SceneManager = getSceneManager();
+        SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
       };
 
       this.button = ( // TODO: Refactor to use an HTML button or other type of component, use of null anchor tags is highly discouraged
