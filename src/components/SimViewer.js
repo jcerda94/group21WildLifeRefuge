@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import * as THREE from 'three';
+import  {CameraControlUI} from "./CamraControlUI";
+
 import {OrbitControls} from "../js/three/OrbitControls";
+import CamraControlUI from "./CamraControlUI";
+import UIBar from "./UIBar";
 
 class SimViewer extends Component {
     constructor() {
@@ -105,11 +109,12 @@ class SimViewer extends Component {
 
     }
 
-
+    CamiraControl = <CamraControlUI/>
     render(){
         return (
-            <div style={this.props.style}>
 
+            <div style={this.props.style}>
+                {this.CamiraControl}
             </div>
         )
     }
