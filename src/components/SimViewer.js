@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import SceneManager from "../scenes/SceneManager";
-import styled from "styled-components";
-import entryPoint from "../scenes/entryPoint";
+import React, { Component } from 'react';
+import SceneManager from '../scenes/SceneManager';
+import styled from 'styled-components';
+import ThreeEntry from '../scenes/ThreeEntry';
 
 const CanvasContainer = styled.div`
   flex: 1;
@@ -9,13 +9,13 @@ const CanvasContainer = styled.div`
 `;
 
 class SimViewer extends Component {
-  canvasContainer = React.createRef();
+  canvasContainer = React.createRef()
 
-  componentDidMount() {
-    entryPoint(this.canvasContainer.current);
+  componentDidMount () {
+    new ThreeEntry(this.canvasContainer.current);
   }
 
-  render() {
+  render () {
     return <CanvasContainer ref={this.canvasContainer} />;
   }
 }

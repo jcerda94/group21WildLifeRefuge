@@ -4,6 +4,7 @@ import Ground from './Ground';
 import GrassField from './GrassField';
 import AmbientLight from './AmbientLight';
 import DirectionalLight from './DirectionalLight';
+import ThreeEntry from './ThreeEntry';
 
 class SceneManager {
   camera = null
@@ -55,6 +56,7 @@ class SceneManager {
 
   addObject (sceneObject, position) {
     this.subjects.push(sceneObject);
+    this.scene.add(sceneObject);
   }
 
   onWindowResize () {
@@ -104,4 +106,13 @@ class SceneManager {
   }
 }
 
-export default SceneManager;
+export const getSceneManager = () => {
+  return SceneManager.instance || null;
+};
+
+export default function (container) {
+  if (!SceneManager.instance) {
+    SceneManager.instance = new SceneManager(container);
+  }
+  return SceneManager.instance;
+}
