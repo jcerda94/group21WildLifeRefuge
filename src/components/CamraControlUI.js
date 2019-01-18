@@ -2,16 +2,15 @@ import 'react-dat-gui/build/react-dat-gui.css';
 import React, { Component } from 'react';
 
 
-import DatGui, { DatBoolean, DatButton, DatNumber, DatString } from 'react-dat-gui';
+import DatGui, {DatBoolean, DatButton, DatNumber, DatSelect, DatString} from 'react-dat-gui';
 
 
 class CamraControlUI extends Component {
     state = {
         data: {
             package: 'Choose a Camera',
-            power: 9000,
-            isAwesome: true,
-            feelsLike: '#2FA1D6',
+            bloolean: 'true',
+            select: 'one',
         }
     }
 
@@ -24,8 +23,9 @@ class CamraControlUI extends Component {
             <DatGui data={data} onUpdate={this.handleUpdate}>
                 <DatString path='package' label='Camera Control'/>
 
-                <DatBoolean path='bloolena' label='Camera ONE'/>
+                <DatBoolean path='bloolean' label='Camera ONE'/>
 
+                <DatSelect label="Select" path='select' options={['two', 'three', 'four']}/>
 
             </DatGui>
         )

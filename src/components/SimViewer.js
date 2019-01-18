@@ -109,12 +109,12 @@ class SimViewer extends Component {
 
     }
 
-    CamiraControl = <CamraControlUI/>
+    CameraControl = <CamraControlUI/>
     render(){
         return (
 
             <div style={this.props.style}>
-                {this.CamiraControl}
+                {this.CameraControl}
             </div>
         )
     }
