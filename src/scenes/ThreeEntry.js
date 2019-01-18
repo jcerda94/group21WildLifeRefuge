@@ -1,27 +1,27 @@
-import SceneManager from './SceneManager';
+import SceneManager from "./SceneManager";
 
-function createCanvas (document, containerElement) {
-  const canvas = document.createElement('canvas');
+function createCanvas(document, containerElement) {
+  const canvas = document.createElement("canvas");
   containerElement.appendChild(canvas);
   return canvas;
 }
 
 class ThreeEntry {
-  constructor (container) {
+  constructor(container) {
     this.canvas = createCanvas(document, container);
     this.sceneManager = SceneManager(this.canvas);
     this.bindEventListeners();
     this.render();
   }
 
-  bindEventListeners () {
+  bindEventListeners() {
     window.onresize = this.resizeCanvas;
     this.resizeCanvas();
   }
 
-  resizeCanvas () {
-    this.canvas.style.width = '100%';
-    this.canvas.style.height = '100%';
+  resizeCanvas() {
+    this.canvas.style.width = "100%";
+    this.canvas.style.height = "100%";
     this.canvas.width = this.canvas.offsetWidth;
     this.canvas.height = this.canvas.offsetHeight;
     this.sceneManager.onWindowResize();
@@ -30,7 +30,7 @@ class ThreeEntry {
   render = () => {
     requestAnimationFrame(this.render);
     this.sceneManager.update();
-  }
+  };
 }
 
 export default ThreeEntry;
