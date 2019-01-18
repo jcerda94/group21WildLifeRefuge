@@ -15,6 +15,8 @@ class SceneManager {
   scene = null;
   renderer = null;
   cameraControls = null;
+  raycaster = new THREE.Raycaster();
+  mouse = new THREE.Vector2();
   clock = new THREE.Clock();
   screenDimensions = {};
   subjects = [];
@@ -43,6 +45,13 @@ class SceneManager {
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
     }
+
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    const intersects = this.raycaster.intersectObjects(this.scene.children);
+    if ((intersects || []).length > 1) {
+      console.log(intersects);
+    }
+
     this.cameraControls.update();
     this.renderer.render(this.scene, this.camera);
   }
@@ -78,6 +87,12 @@ class SceneManager {
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(width, height);
+  }
+
+  onDocumentMouseMove(event) {
+    event.preventDefault();
+    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    this.mouse.y = (-event.clientY / window.innerHeight) * 2 + 1;
   }
 
   initializeCamera() {
