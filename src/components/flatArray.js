@@ -29,7 +29,7 @@ class FlatArrayExample extends Component {
         switch (selected) {
 
             case 'Top':
-               SceneManager.setCameraPostion(0,200,100);
+               SceneManager.setCameraPostion(0,400,800);
                console.log('You selected ', option.label)
                 break;
             case 'Bottom View':

@@ -8,8 +8,8 @@ import ThreeEntry from "./ThreeEntry";
 
 class SceneManager {
   groundSize = {
-    x: 100,
-    y: 100
+    x: 1000,
+    y: 1000
   };
   camera = null;
   scene = null;
