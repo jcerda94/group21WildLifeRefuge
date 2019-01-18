@@ -6,7 +6,7 @@ class ImgButton extends Component {
     constructor(props) {
         super(props);
 
-        // TODO: Need to add support for svg for custom button shapes
+        // TODO: Need to add support for svg for custom button shapes, currently transparancey can be clicked on 
         if (this.props.hasOwnProperty('icon')) {
             if (this.props.id === 'reset') {
                 this.click = () => {
