@@ -2,7 +2,7 @@ import SceneManager from "./SceneManager";
 
 function createCanvas(document, containerElement) {
   const canvas = document.createElement("canvas");
-  containerElement.appendChild(canvas);
+  containerElement.prepend(canvas);
   return canvas;
 }
 
@@ -14,23 +14,23 @@ class ThreeEntry {
     this.render();
   }
 
-  bindEventListeners() {
+  bindEventListeners = () => {
     window.onresize = this.resizeCanvas;
     document.addEventListener(
       "mousemove",
       this.sceneManager.onDocumentMouseMove,
-      false
+      true
     );
     this.resizeCanvas();
-  }
+  };
 
-  resizeCanvas() {
+  resizeCanvas = () => {
     this.canvas.style.width = "100%";
     this.canvas.style.height = "100%";
     this.canvas.width = this.canvas.offsetWidth;
     this.canvas.height = this.canvas.offsetHeight;
     this.sceneManager.onWindowResize();
-  }
+  };
 
   render = () => {
     requestAnimationFrame(this.render);
