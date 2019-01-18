@@ -3,12 +3,9 @@ import * as THREE from "three";
 function Ground(scene, config) {
   const { size = { x: 100, y: 100 }, color = "#996600" } = config;
   const depth = 15;
-  const geometry = new THREE.CubeGeometry(size.x, depth, size.y);
-  geometry.faces[4].color.set("#90ff8e");
-  geometry.faces[5].color.set("#90ff8e");
+  const geometry = new THREE.BoxBufferGeometry(size.x, depth, size.y);
   const material = new THREE.MeshPhongMaterial({
-    color: "#996600",
-    vertexColors: THREE.FaceColors
+    color: "#996600"
   });
 
   geometry.computeFaceNormals();

@@ -5,6 +5,7 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import ThreeEntry from "./ThreeEntry";
+let INTERSECTED = null;
 
 class SceneManager {
   groundSize = {
@@ -46,15 +47,24 @@ class SceneManager {
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
     }
 
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersects = this.raycaster.intersectObjects(this.scene.children);
-    if ((intersects || []).length > 1) {
-      console.log(intersects);
-    }
-
     this.cameraControls.update();
     this.renderer.render(this.scene, this.camera);
+    this.checkIntersects();
   }
+
+  checkIntersects = () => {
+    const intersects =
+      this.raycaster.intersectObjects(this.scene.children, true) || [];
+
+    if (intersects.length > 0) {
+      if (INTERSECTED !== intersects[0].object) {
+        INTERSECTED = intersects[0].object;
+        console.log(INTERSECTED);
+      }
+    } else {
+      INTERSECTED = null;
+    }
+  };
 
   rotateCamera(elapsedTime) {
     this.camera.position.x = 120 * Math.cos(elapsedTime / 8);
@@ -89,11 +99,19 @@ class SceneManager {
     this.renderer.setSize(width, height);
   }
 
-  onDocumentMouseMove(event) {
-    event.preventDefault();
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    this.mouse.y = (-event.clientY / window.innerHeight) * 2 + 1;
-  }
+  onDocumentMouseMove = event => {
+    const vector = new THREE.Vector3();
+    const canvasTopOffset = this.canvas.getBoundingClientRect().top;
+    vector.x = (event.clientX / this.canvas.width) * 2 - 1;
+    vector.y =
+      (-(event.clientY - canvasTopOffset) / this.canvas.height) * 2 + 1;
+
+    vector.unproject(this.camera);
+    vector.sub(this.camera.position);
+    vector.normalize();
+
+    this.raycaster.set(this.camera.position, vector);
+  };
 
   initializeCamera() {
     const { width, height } = this.screenDimensions;
