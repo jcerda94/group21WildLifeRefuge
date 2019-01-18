@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './css/App.css';
 import model from './model/capiModel';
-import WelcomePage from './components/WelcomePage';
+import WelcomePage from './components/WelcomePage/WelcomePage';
 
 import StudentView from './components/StudentView';
 import AuthorView from "./components/AuthorView";
