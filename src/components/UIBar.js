@@ -16,6 +16,8 @@ class UIBar extends Component {
                 <ElementButton model="hawk" key="rH" addText="Add Predator" title="Red Tailed Hawk" increment={this.props.increment} name="redHawk"/>
                 <ElementButton model="hare" key="sH" addText="Add Prey" title="Snowshoe Hare" increment={this.props.increment} name="snowHare"/>
                 <ElementButton model="bush" key="bS" addText="Add Bushes" title="Big Sagebrush" increment={this.props.increment} name="bigSage"/>
+                <ElementButton model="Camera" key="cM" addText="Change Views" title= {"Big Sagebrush"} increment={this.props.increment} name="bigSage"/>
+
             </ul>
         )
     }

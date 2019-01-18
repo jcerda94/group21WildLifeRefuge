@@ -62,6 +62,7 @@ class ElementButton extends Component {
                     <a href="javascript:void(1)" className="dropbtn2">{this.props.addText}</a>
                     <div className="dropdown-content1">
                         <a onClick={(e) => onClick()} href="#">{this.props.title}</a>
+                        <a onClick={(e) => onClick()} href="#">{"Camera One"}</a>
                     </div>
                 </li>;
 

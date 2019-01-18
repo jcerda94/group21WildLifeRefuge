@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import '../css/simulation.css'
 import SimViewer from "./SimViewer";
 import UIBar from "./UIBar";
-import back from "../assets/back.png"
-import forward from "../assets/forward.png"
-import reset from "../assets/reset.png"
-import help from "../assets/help.png"
+import back from "../assets/back.png";
+import forward from "../assets/forward.png";
+import reset from "../assets/reset.png";
+import help from "../assets/help.png";
+import CamraControlUI from "./CamraControlUI";
 import ElementButton from "./ElementButton";
 
 
@@ -46,6 +47,7 @@ class StudentView extends Component {
                 <ElementButton key="forward" icon id="forward" src={forward}/>
                 <ElementButton key="reset" icon id="reset" src={reset}/>
                 <ElementButton key="help" icon id="help" src={help}/>
+                <CamraControlUI/>
             </div>
         )
 
