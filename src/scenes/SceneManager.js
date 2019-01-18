@@ -34,6 +34,10 @@ class SceneManager {
     this.screenDimensions = { width, height };
   }
 
+  resetCamera() {
+    this.cameraControls.reset();
+  }
+
   update() {
     const elapsedTime = this.clock.getElapsedTime();
     for (let i = 0; i < this.subjects.length; i++) {
@@ -60,7 +64,6 @@ class SceneManager {
 
   addObject(sceneObject, position) {
     this.subjects.push(sceneObject);
-    this.scene.add(sceneObject);
   }
 
   onWindowResize() {
