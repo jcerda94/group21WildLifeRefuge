@@ -6,3 +6,5 @@
 .idea/vcs.xml
 *.cmd
 node_modules/**
+src/.DS_Store
+.vscode/
