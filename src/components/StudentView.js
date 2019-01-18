@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "../css/simulation.css";
 import SimViewer from "./SimViewer";
 import UIBar from "./UIBar";
+import FlatArrayExample from "./flatArray";
 import back from "../assets/back.png";
 import forward from "../assets/forward.png";
 import reset from "../assets/reset.png";
@@ -58,6 +59,7 @@ class StudentView extends Component {
           reportHeight={this.findUIHeight}
           increment={this.state.increment}
         />
+        <FlatArrayExample/>
         <SimViewer height={this.state.height} />
       </Container>
     );

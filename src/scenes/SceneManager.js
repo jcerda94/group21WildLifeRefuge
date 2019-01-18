@@ -101,6 +101,13 @@ class SceneManager {
     this.scene.background = new THREE.Color("#ffffff");
   }
 
+  setCameraPostion(x,y,z){
+
+    this.camera.position.x = x;
+    this.camera.position.y = y;
+    this.camera.position.z = z;
+  }
+
   initializeRenderer() {
     const { width, height } = this.screenDimensions;
     this.renderer = new THREE.WebGLRenderer({
