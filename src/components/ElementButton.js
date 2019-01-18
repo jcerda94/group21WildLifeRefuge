@@ -50,9 +50,15 @@ class ElementButton extends Component {
         function random (min, max) {
           return Math.random() * (max - min) + min;
         }
-        const x = random(-48, 48);
+
+        const SceneManager = getSceneManager();
+
+        const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
+        const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
+
+        const x = random(-widthBound, widthBound);
         const y = 1.5;
-        const z = random(-48, 48);
+        const z = random(-heightBound, heightBound);
         const position = { x, y, z };
 
         const cubeConfig = {
@@ -61,7 +67,6 @@ class ElementButton extends Component {
           color
         };
 
-        const SceneManager = getSceneManager();
         SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
       };
 
