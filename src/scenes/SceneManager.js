@@ -39,7 +39,7 @@ class SceneManager {
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
     }
-    this.rotateCamera(elapsedTime);
+    this.cameraControls.update();
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -92,6 +92,8 @@ class SceneManager {
     );
 
     this.camera.position.set(0, 75, 100);
+
+    this.cameraControls = new OrbitControls(this.camera);
   }
 
   initializeScene () {
