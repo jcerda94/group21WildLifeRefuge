@@ -1,11 +1,9 @@
 import React from 'react';
 import '../../css/welcome.css';
-import UserImage from '../../assets/user1.png'
 import LessonName from './LessonName';
 import Steps from './Steps';
 import styled from 'styled-components'
 import Title from './Title';
-import Loading from '../Styled/Loading';
 import Summary from './Summary';
 import VerticalLine from './VerticalLine';
 import Button from '../Styled/Button';
@@ -65,10 +63,15 @@ class WelcomePage extends React.Component {
                             "More steps to come"
                         ]}
                     />
-                    <Button label='Hello' />
+                    <Button 
+                        label='Start Lesson'
+                        onClick={this.handleLoginClick}
+                        color='#4CAF50'
+                        hoverColor='#FFFFFF'
+                        labelColor='#FFFFFF'
+                        labelHoverColor='#4CAF50'
+                    />
                     <Summary summary = "This is the summary paragraph from ReactJS" />
-                    <button className="enterButton" type="button" onClick = {this.handleLoginClick}> Start Lesson</button>
-                    {/* <img style={{maxWidth: 100}} alt='user icon' src={UserImage}></img> */}
                 </Container>
             </React.Fragment>
         );

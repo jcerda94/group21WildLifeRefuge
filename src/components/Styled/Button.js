@@ -5,7 +5,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
+  padding: 12px 24px 14px 24px;
   border-radius: 0.25em;
   cursor: pointer;
   user-select: none;
@@ -21,7 +21,7 @@ const Container = styled.div`
 const Label = styled.span`
   color: ${props => props.labelColor};
   transition: color .5s;
-  font-size: 24px;
+  font-size: 19px;
 
   ${Container}:hover & {
     color: ${props => props.labelHoverColor};
