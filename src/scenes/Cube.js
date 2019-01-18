@@ -13,7 +13,6 @@ async function Cube (scene, config) {
   const cube = new THREE.Mesh(geometry, material);
   cube.position.set(position.x, position.y, position.z);
 
-  cube.type = "SimElement";
   scene.add(cube);
   function update () {}
 
