@@ -2,7 +2,13 @@ import React from 'react';
 import '../../css/welcome.css';
 import UserImage from '../../assets/user1.png'
 import LessonName from './LessonName';
+import Steps from './Steps';
 import styled from 'styled-components'
+import Title from './Title';
+import Loading from '../Styled/Loading';
+import Summary from './Summary';
+import VerticalLine from './VerticalLine';
+import Button from '../Styled/Button';
 
 const Container = styled.div`
     display: flex;
@@ -17,8 +23,19 @@ const Container = styled.div`
     right: 0;
 `
 
-class WelcomePage extends React.Component {
+const Background = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("assets/willapa-wildlife-refuge-hiking.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+`
 
+class WelcomePage extends React.Component {
     constructor(props) {
         super(props);
         this.simModel = props.name;
@@ -33,15 +50,27 @@ class WelcomePage extends React.Component {
 
     render() {
         return (
-            <Container>
-                <div> Welcome to Willapa Wildlife Refuge</div>
-                <LessonName name="What do animals do in their free time?" />
-                <p>This is the refuge summary paragraph</p>
-                <button className="enterButton" type="button" onClick = {this.handleLoginClick}> Start Lesson</button>
-                <i style={{fontSize: 48, color: 'white'}} class="fas fa-user"></i>
-                <div className='spinner' />
-                {/* <img style={{maxWidth: 100}} alt='user icon' src={UserImage}></img> */}
-            </Container>
+            <React.Fragment>
+                <Background />
+                <Container>
+                    <Title title = "Welcome to Willapa Wildlife Refuge"/>
+                    <VerticalLine height={80} color='white' />
+                    <LessonName name="What do animals do in their free time?" />
+                    <VerticalLine height={360} color='white' />
+                    <Steps
+                        steps={[
+                            "Add animals",
+                            "Observe their interactions",
+                            "Watch as hawks dominate the ecosystem",
+                            "More steps to come"
+                        ]}
+                    />
+                    <Button label='Hello' />
+                    <Summary summary = "This is the summary paragraph from ReactJS" />
+                    <button className="enterButton" type="button" onClick = {this.handleLoginClick}> Start Lesson</button>
+                    {/* <img style={{maxWidth: 100}} alt='user icon' src={UserImage}></img> */}
+                </Container>
+            </React.Fragment>
         );
     }
 }
