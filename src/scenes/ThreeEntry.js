@@ -16,6 +16,11 @@ class ThreeEntry {
 
   bindEventListeners() {
     window.onresize = this.resizeCanvas;
+    document.addEventListener(
+      "mousemove",
+      this.sceneManager.onDocumentMouseMove,
+      false
+    );
     this.resizeCanvas();
   }
 

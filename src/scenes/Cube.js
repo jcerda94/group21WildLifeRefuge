@@ -13,7 +13,6 @@ async function Cube(scene, config) {
   const cube = new THREE.Mesh(geometry, material);
   cube.position.set(position.x, position.y, position.z);
 
-  await new Promise(resolve => setTimeout(resolve, 1000));
   scene.add(cube);
   function update() {}
 
