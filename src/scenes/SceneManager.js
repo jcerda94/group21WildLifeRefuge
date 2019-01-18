@@ -1,25 +1,25 @@
-import * as THREE from 'three';
-import { OrbitControls } from '../js/three/OrbitControls';
-import Ground from './Ground';
-import GrassField from './GrassField';
-import AmbientLight from './AmbientLight';
-import DirectionalLight from './DirectionalLight';
-import ThreeEntry from './ThreeEntry';
+import * as THREE from "three";
+import { OrbitControls } from "../js/three/OrbitControls";
+import Ground from "./Ground";
+import GrassField from "./GrassField";
+import AmbientLight from "./AmbientLight";
+import DirectionalLight from "./DirectionalLight";
+import ThreeEntry from "./ThreeEntry";
 
 class SceneManager {
   groundSize = {
     x: 100,
     y: 100
-  }
-  camera = null
-  scene = null
-  renderer = null
-  cameraControls = null
-  clock = new THREE.Clock()
-  screenDimensions = {}
-  subjects = []
+  };
+  camera = null;
+  scene = null;
+  renderer = null;
+  cameraControls = null;
+  clock = new THREE.Clock();
+  screenDimensions = {};
+  subjects = [];
 
-  constructor (canvas) {
+  constructor(canvas) {
     this.setCanvas(canvas);
     this.initializeScene();
     this.initializeRenderer();
@@ -28,13 +28,13 @@ class SceneManager {
     this.createSceneSubjects();
   }
 
-  setCanvas (canvas) {
+  setCanvas(canvas) {
     const { width, height } = canvas;
     this.canvas = canvas;
     this.screenDimensions = { width, height };
   }
 
-  update () {
+  update() {
     const elapsedTime = this.clock.getElapsedTime();
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
@@ -43,27 +43,27 @@ class SceneManager {
     this.renderer.render(this.scene, this.camera);
   }
 
-  rotateCamera (elapsedTime) {
+  rotateCamera(elapsedTime) {
     this.camera.position.x = 120 * Math.cos(elapsedTime / 8);
     this.camera.position.z = 120 * Math.sin(elapsedTime / 8);
     this.camera.lookAt(this.scene.position);
   }
 
-  createSceneSubjects () {
+  createSceneSubjects() {
     this.subjects = [
-      new Ground(this.scene, { size: this.groundSize, color: '#996600' }),
+      new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
       new GrassField(this.scene, { count: 500 }),
       new AmbientLight(this.scene),
       new DirectionalLight(this.scene)
     ];
   }
 
-  addObject (sceneObject, position) {
+  addObject(sceneObject, position) {
     this.subjects.push(sceneObject);
     this.scene.add(sceneObject);
   }
 
-  onWindowResize () {
+  onWindowResize() {
     const { width, height } = this.canvas;
 
     this.screenDimensions.width = width;
@@ -77,7 +77,7 @@ class SceneManager {
     this.renderer.setSize(width, height);
   }
 
-  initializeCamera () {
+  initializeCamera() {
     const { width, height } = this.screenDimensions;
     const fieldOfView = 60;
     const aspectRatio = width / height;
@@ -96,12 +96,12 @@ class SceneManager {
     this.cameraControls = new OrbitControls(this.camera);
   }
 
-  initializeScene () {
+  initializeScene() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color('#ffffff');
+    this.scene.background = new THREE.Color("#ffffff");
   }
 
-  initializeRenderer () {
+  initializeRenderer() {
     const { width, height } = this.screenDimensions;
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
@@ -116,7 +116,7 @@ export const getSceneManager = () => {
   return SceneManager.instance || null;
 };
 
-export default function (container) {
+export default function(container) {
   if (!SceneManager.instance) {
     SceneManager.instance = new SceneManager(container);
   }
