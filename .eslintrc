@@ -6,6 +6,10 @@
     "import"
   ],
   "rules": {
+    "quotes": [
+      "error",
+      "double"
+    ],
     "semi": [
       2,
       "always"
