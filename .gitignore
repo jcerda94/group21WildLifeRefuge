@@ -7,3 +7,5 @@
 *.cmd
 node_modules/**
 package-lock.json
+src/.DS_Store
+.vscode/
