@@ -9,27 +9,29 @@ const Container = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-`
+`;
 
 const Step = styled.span`
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 14px;
-`
+`;
 
 class Steps extends Component {
   render () {
-    const { steps } = this.props
+    const { steps } = this.props;
 
     return (
       <Container>
-        {steps.map((step, i) => <Step>{`${i + 1}.) ${step}`}</Step>)}
+        {steps.map((step, i) => (
+          <Step key={`${i}`}>{`${i + 1}.) ${step}`}</Step>
+        ))}
       </Container>
-    )
+    );
   }
 }
 
 Steps.defaultProps = {
   steps: []
-}
+};
 
-export default Steps
+export default Steps;
