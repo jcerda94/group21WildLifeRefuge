@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ElementButton from '../ElementButton';
+import ElementButton from './ElementButton';
 import styled from 'styled-components';
 
 const Container = styled.div`
