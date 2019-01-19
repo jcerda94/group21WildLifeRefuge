@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SimViewer from "./SimViewer";
+import {getSceneManager} from "../scenes/SceneManager";
 class ImgButton extends Component {
 
 
@@ -10,12 +10,19 @@ class ImgButton extends Component {
         if (this.props.hasOwnProperty('icon')) {
             if (this.props.id === 'reset') {
                 this.click = () => {
-                    SimViewer.scene.children[0].children = [];
-                }
+                    var SceneManager = getSceneManager();
+                    for (var i = SceneManager.scene.children.length - 1; i >= 0;  i--) {
+                        if (SceneManager.scene.children[i].type === "SimElement"){
+                            SceneManager.scene.children.splice(i, 1);
+                        }
+
+                    }
+
+                };
             } else {
                 this.click = () => {
                     alert("Clicked " + this.props.id);
-                }
+                };
             }
         }
 
@@ -27,4 +34,4 @@ class ImgButton extends Component {
                 </button>;
     }
 }
-export default ImgButton
+export default ImgButton;

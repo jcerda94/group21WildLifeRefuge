@@ -9,7 +9,7 @@ const CanvasContainer = styled.div`
 `;
 
 class SimViewer extends Component {
-  canvasContainer = React.createRef()
+  canvasContainer = React.createRef();
 
   componentDidMount () {
     new ThreeEntry(this.canvasContainer.current);

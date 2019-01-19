@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import "../css/simulation.css";
 import SimViewer from "./SimViewer";
-import UIBar from "./UIBar";
+import UIBar from "./UIBar/UIBar";
 import back from "../assets/back.png";
 import forward from "../assets/forward.png";
 import reset from "../assets/reset.png";
 import help from "../assets/help.png";
 import ElementButton from "./ElementButton";
 import styled from "styled-components";
+import ImgButton from "./ImgButton";
 
 const Container = styled.div`
   display: flex;
@@ -46,10 +47,10 @@ class StudentView extends Component {
   render() {
     const Controls = (
       <React.Fragment>
-        <ElementButton key="back" icon id="back" src={back} />
-        <ElementButton key="forward" icon id="forward" src={forward} />
-        <ElementButton key="reset" icon id="reset" src={reset} />
-        <ElementButton key="help" icon id="help" src={help} />
+        <ImgButton key="back" icon id="back" src={back} />
+        <ImgButton key="forward" icon id="forward" src={forward} />
+        <ImgButton key="reset" icon id="reset" src={reset} />
+        <ImgButton key="help" icon id="help" src={help} />
       </React.Fragment>
     );
     return (
@@ -58,6 +59,7 @@ class StudentView extends Component {
           reportHeight={this.findUIHeight}
           increment={this.state.increment}
         />
+        {Controls}
         <SimViewer height={this.state.height} />
       </Container>
     );

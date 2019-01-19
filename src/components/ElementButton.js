@@ -68,6 +68,7 @@ class ElementButton extends Component {
         };
 
         SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
+        console.log(SceneManager.scene.children);
       };
 
       this.button = ( // TODO: Refactor to use an HTML button or other type of component, use of null anchor tags is highly discouraged
