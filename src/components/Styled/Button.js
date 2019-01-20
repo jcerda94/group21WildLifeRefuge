@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
+import React, { Component } from "react";
+import styled from "styled-components";
 
 const Container = styled.div`
   display: flex;
@@ -11,53 +11,47 @@ const Container = styled.div`
   user-select: none;
 
   background-color: ${props => props.color};
-  transition: background-color .5s;
+  transition: background-color 0.5s;
 
   &:hover {
     background-color: ${props => props.hoverColor};
   }
-`
+`;
 
 const Label = styled.span`
   color: ${props => props.labelColor};
-  transition: color .5s;
+  transition: color 0.5s;
   font-size: 19px;
 
   ${Container}:hover & {
     color: ${props => props.labelHoverColor};
   }
-`
+`;
 
 class Button extends Component {
   onClick = () => {
-    const { onClick } = this.props
+    const { onClick } = this.props;
 
-    onClick && onClick()
+    onClick && onClick();
   }
 
-  render() {
-    const { label, color, hoverColor, labelColor, labelHoverColor } = this.props
+  render () {
+    const { label, color, hoverColor, labelColor, labelHoverColor } = this.props;
     return (
-      <Container
-        color={color}
-        hoverColor={hoverColor}
-      >
-        <Label 
-          labelColor={labelColor} 
-          labelHoverColor={labelHoverColor}
-        >
+      <Container color={color} hoverColor={hoverColor} onClick={this.onClick}>
+        <Label labelColor={labelColor} labelHoverColor={labelHoverColor}>
           {label}
         </Label>
       </Container>
-    )
+    );
   }
 }
 
 Button.defaultProps = {
-  color: 'black',
-  labelColor: 'white',
-  hoverColor: 'white',
-  labelHoverColor: 'black'
-}
+  color: "black",
+  labelColor: "white",
+  hoverColor: "white",
+  labelHoverColor: "black"
+};
 
 export default Button;

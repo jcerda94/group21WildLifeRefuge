@@ -5,6 +5,7 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import ThreeEntry from "./ThreeEntry";
+let INTERSECTED = null;
 
 class SceneManager {
   groundSize = {
@@ -15,6 +16,8 @@ class SceneManager {
   scene = null;
   renderer = null;
   cameraControls = null;
+  raycaster = new THREE.Raycaster();
+  mouse = new THREE.Vector2();
   clock = new THREE.Clock();
   screenDimensions = {};
   subjects = [];
@@ -34,14 +37,34 @@ class SceneManager {
     this.screenDimensions = { width, height };
   }
 
+  resetCamera() {
+    this.cameraControls.reset();
+  }
+
   update() {
     const elapsedTime = this.clock.getElapsedTime();
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
     }
+
     this.cameraControls.update();
     this.renderer.render(this.scene, this.camera);
+    this.checkIntersects();
   }
+
+  checkIntersects = () => {
+    const intersects =
+      this.raycaster.intersectObjects(this.scene.children, true) || [];
+
+    if (intersects.length > 0) {
+      if (INTERSECTED !== intersects[0].object) {
+        INTERSECTED = intersects[0].object;
+        console.log(INTERSECTED);
+      }
+    } else {
+      INTERSECTED = null;
+    }
+  };
 
   rotateCamera(elapsedTime) {
     this.camera.position.x = 120 * Math.cos(elapsedTime / 8);
@@ -60,7 +83,6 @@ class SceneManager {
 
   addObject(sceneObject, position) {
     this.subjects.push(sceneObject);
-    this.scene.add(sceneObject);
   }
 
   onWindowResize() {
@@ -76,6 +98,20 @@ class SceneManager {
 
     this.renderer.setSize(width, height);
   }
+
+  onDocumentMouseMove = event => {
+    const vector = new THREE.Vector3();
+    const canvasTopOffset = this.canvas.getBoundingClientRect().top;
+    vector.x = (event.clientX / this.canvas.width) * 2 - 1;
+    vector.y =
+      (-(event.clientY - canvasTopOffset) / this.canvas.height) * 2 + 1;
+
+    vector.unproject(this.camera);
+    vector.sub(this.camera.position);
+    vector.normalize();
+
+    this.raycaster.set(this.camera.position, vector);
+  };
 
   initializeCamera() {
     const { width, height } = this.screenDimensions;
