@@ -9,23 +9,23 @@ const CanvasContainer = styled.div`
 `;
 
 const Button = styled.div`
-  padding: 24px;
+  padding: 14px;
   color: white;
-  font-size: 24px;
+  font-size: 18px;
   text-align: center;
   border-radius: 20px;
   background-color: tomato;
   position: absolute;
-  top: 55px;
+  top: 85px;
   left: 25px;
   cursor: pointer;
   user-select: none;
 `;
 
 class SimViewer extends Component {
-  canvasContainer = React.createRef();
+  canvasContainer = React.createRef()
 
-  componentDidMount() {
+  componentDidMount () {
     this.sceneManager = new ThreeEntry(
       this.canvasContainer.current
     ).sceneManager;
@@ -33,9 +33,9 @@ class SimViewer extends Component {
 
   onClick = () => {
     this.sceneManager.resetCamera();
-  };
+  }
 
-  render() {
+  render () {
     return (
       <CanvasContainer ref={this.canvasContainer}>
         <Button onClick={this.onClick}>Reset Camera</Button>
