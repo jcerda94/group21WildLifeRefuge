@@ -11,18 +11,18 @@ class SceneManager {
   groundSize = {
     x: 100,
     y: 100
-  };
-  camera = null;
-  scene = null;
-  renderer = null;
-  cameraControls = null;
-  raycaster = new THREE.Raycaster();
-  mouse = new THREE.Vector2();
-  clock = new THREE.Clock();
-  screenDimensions = {};
-  subjects = [];
+  }
+  camera = null
+  scene = null
+  renderer = null
+  cameraControls = null
+  raycaster = new THREE.Raycaster()
+  mouse = new THREE.Vector2()
+  clock = new THREE.Clock()
+  screenDimensions = {}
+  subjects = []
 
-  constructor(canvas) {
+  constructor (canvas) {
     this.setCanvas(canvas);
     this.initializeScene();
     this.initializeRenderer();
@@ -31,17 +31,17 @@ class SceneManager {
     this.createSceneSubjects();
   }
 
-  setCanvas(canvas) {
+  setCanvas (canvas) {
     const { width, height } = canvas;
     this.canvas = canvas;
     this.screenDimensions = { width, height };
   }
 
-  resetCamera() {
+  resetCamera () {
     this.cameraControls.reset();
   }
 
-  update() {
+  update () {
     const elapsedTime = this.clock.getElapsedTime();
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
@@ -58,21 +58,31 @@ class SceneManager {
 
     if (intersects.length > 0) {
       if (INTERSECTED !== intersects[0].object) {
+        let prevIntersect = null;
+        if (INTERSECTED) {
+          prevIntersect = INTERSECTED;
+        }
         INTERSECTED = intersects[0].object;
-        console.log(INTERSECTED);
+        INTERSECTED.originalColor = INTERSECTED.material.color;
+        if (INTERSECTED.name === "LowPolyGrass") {
+          INTERSECTED.material.color.set("#FFF");
+        }
+        if (prevIntersect && prevIntersect.name === "LowPolyGrass") {
+          prevIntersect.material.color.set("#3baa5d");
+        }
       }
     } else {
       INTERSECTED = null;
     }
-  };
+  }
 
-  rotateCamera(elapsedTime) {
+  rotateCamera (elapsedTime) {
     this.camera.position.x = 120 * Math.cos(elapsedTime / 8);
     this.camera.position.z = 120 * Math.sin(elapsedTime / 8);
     this.camera.lookAt(this.scene.position);
   }
 
-  createSceneSubjects() {
+  createSceneSubjects () {
     this.subjects = [
       new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
       new GrassField(this.scene, { count: 500 }),
@@ -81,11 +91,11 @@ class SceneManager {
     ];
   }
 
-  addObject(sceneObject, position) {
+  addObject (sceneObject, position) {
     this.subjects.push(sceneObject);
   }
 
-  onWindowResize() {
+  onWindowResize () {
     const { width, height } = this.canvas;
 
     this.screenDimensions.width = width;
@@ -103,17 +113,16 @@ class SceneManager {
     const vector = new THREE.Vector3();
     const canvasTopOffset = this.canvas.getBoundingClientRect().top;
     vector.x = (event.clientX / this.canvas.width) * 2 - 1;
-    vector.y =
-      (-(event.clientY - canvasTopOffset) / this.canvas.height) * 2 + 1;
+    vector.y = (-(event.clientY - canvasTopOffset) / this.canvas.height) * 2 + 1;
 
     vector.unproject(this.camera);
     vector.sub(this.camera.position);
     vector.normalize();
 
     this.raycaster.set(this.camera.position, vector);
-  };
+  }
 
-  initializeCamera() {
+  initializeCamera () {
     const { width, height } = this.screenDimensions;
     const fieldOfView = 60;
     const aspectRatio = width / height;
@@ -132,12 +141,12 @@ class SceneManager {
     this.cameraControls = new OrbitControls(this.camera);
   }
 
-  initializeScene() {
+  initializeScene () {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color("#ffffff");
   }
 
-  initializeRenderer() {
+  initializeRenderer () {
     const { width, height } = this.screenDimensions;
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
@@ -152,7 +161,7 @@ export const getSceneManager = () => {
   return SceneManager.instance || null;
 };
 
-export default function(container) {
+export default function (container) {
   if (!SceneManager.instance) {
     SceneManager.instance = new SceneManager(container);
   }
