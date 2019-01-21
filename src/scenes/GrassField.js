@@ -16,7 +16,6 @@ async function GrassField (scene, config = { count: 500 }) {
       reject
     );
   });
-  console.log(originalGrass);
   const bounds = getSceneManager().groundSize;
   bounds.x *= 0.95;
   bounds.y *= 0.95;
@@ -30,7 +29,6 @@ async function GrassField (scene, config = { count: 500 }) {
         original: "#3baa5d"
       }
     };
-    if (i === 0) console.log(grass);
     const size = random(1, 2);
 
     const x = random(-bounds.x / 2, bounds.x / 2);

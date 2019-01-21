@@ -5,7 +5,7 @@ function Ground (scene, config) {
   const depth = 15;
   const geometry = new THREE.BoxBufferGeometry(size.x, depth, size.y);
   const material = new THREE.MeshPhongMaterial({
-    color: "#996600"
+    color
   });
 
   geometry.computeFaceNormals();

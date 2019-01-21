@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./css/App.css";
-import model from "./model/capiModel";
 import WelcomePage from "./components/WelcomePage/WelcomePage";
 
 import StudentView from "./components/StudentView";
@@ -114,7 +113,7 @@ class App extends Component {
 
   handleLogin = () => {
     if (!this.state.loggedIn) {
-      this.setState({ loggedIn: true }, () => console.log(this.state));
+      this.setState({ loggedIn: true });
     }
   }
 

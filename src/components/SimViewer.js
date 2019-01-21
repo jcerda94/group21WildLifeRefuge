@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import SceneManager from "../scenes/SceneManager";
 import styled from "styled-components";
 import ThreeEntry from "../scenes/ThreeEntry";
 

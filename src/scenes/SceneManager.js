@@ -4,7 +4,6 @@ import Ground from "./Ground";
 import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
-import ThreeEntry from "./ThreeEntry";
 import { getValue } from "../utils/helpers";
 
 class SceneManager {
