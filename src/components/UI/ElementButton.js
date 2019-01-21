@@ -7,16 +7,16 @@ class ElementButton extends Component {
     super(props);
 
     this.button = ( // TODO: Refactor to use an HTML button or other type of component, use of null anchor tags is highly discouraged
-        <li className='dropdown1'>
-          <a href='javascript:void(1)' className='dropbtn2'>
+        <div className="dropdown">
+          <button className="dropbtn">
             {this.props.addText}
-          </a>
-          <div className='dropdown-content1'>
-            <a onClick={e => this.onClick()} href='#'>
+          </button>
+          <div className='dropdown-content'>
+            <button onClick={e => this.onClick()} >
               {this.props.title}
-            </a>
+            </button>
           </div>
-        </li>
+        </div>
     );
   }
 
