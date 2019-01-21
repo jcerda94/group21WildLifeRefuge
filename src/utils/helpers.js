@@ -1,8 +1,8 @@
-export const random = (min, max) => {
+const random = (min, max) => {
   return Math.random() * (max - min) + min;
 };
 
-export const getValue = (accessor = "", initial = {}) => {
+const getValue = (accessor = "", initial = {}) => {
   if (initial === null) {
     throw new Error(`Cannot access ${accessor} on null initial value`);
   }
@@ -20,4 +20,9 @@ export const getValue = (accessor = "", initial = {}) => {
 
     return val || {};
   }, initial);
+};
+
+module.exports = {
+  random,
+  getValue
 };
