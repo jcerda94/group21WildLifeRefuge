@@ -22,7 +22,7 @@ async function GrassField (scene, config = { count: 500 }) {
 
   for (let i = 0; i < count; i++) {
     const grass = originalGrass.clone();
-    grass.children[0].userData = {
+    grass.children[0].children[0].userData = {
       selectable: true,
       color: {
         highlight: "#FFF",
@@ -41,12 +41,13 @@ async function GrassField (scene, config = { count: 500 }) {
     grass.position.set(x, 0, z);
     grass.rotation.y = rotation;
     const grassMesh = grass.children[0].children[0].material;
-    grassMesh.color.set(grass.children[0].userData.color.original);
+    grassMesh.color.set(grass.children[0].children[0].userData.color.original);
     grass.children[0].children[0].material = grassMesh.clone();
     grasses.add(grass);
   }
 
   grasses.type = "Grass";
+
   scene.add(grasses);
 
   function update () {}

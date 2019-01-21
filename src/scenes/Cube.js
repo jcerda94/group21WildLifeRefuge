@@ -11,6 +11,14 @@ async function Cube (scene, config) {
   const material = new THREE.MeshBasicMaterial({ color });
   const cube = new THREE.Mesh(geometry, material);
   cube.position.set(position.x, position.y, position.z);
+  cube.userData = {
+    selectable: true,
+    color: {
+      original: color,
+      highlight: "#f7ff6d",
+      selected: "#000"
+    }
+  };
 
   cube.type = "SimElement";
   scene.add(cube);

@@ -47,20 +47,16 @@ class SceneManager {
       selectedModel => model === selectedModel
     );
     const color = getValue("object.material.color", model);
-    console.log(model);
     if (modelIndex >= 0) {
       const modelToRemove = this.selected[modelIndex];
-      const originalColor = getValue(
-        "parent.userData.color.original",
-        modelToRemove
-      );
+      const originalColor = getValue("userData.color.original", modelToRemove);
 
       const color = getValue("material.color", modelToRemove);
       color.set && color.set(originalColor);
       this.selected.splice(modelIndex, 1);
     } else {
       const color = getValue("material.color", model);
-      const selectedColor = getValue("parent.userData.color.selected", model);
+      const selectedColor = getValue("userData.color.selected", model);
       color.set && color.set(selectedColor);
       this.selected.push(model);
     }
@@ -86,13 +82,10 @@ class SceneManager {
         this.resetIntersectedColor(this.intersected);
         this.intersected = getValue("object", intersects[0]);
 
-        const selectable = getValue(
-          "parent.userData.selectable",
-          this.intersected
-        );
+        const selectable = getValue("userData.selectable", this.intersected);
         if (selectable) {
           const highlight = getValue(
-            "parent.userData.color.highlight",
+            "userData.color.highlight",
             this.intersected
           );
           const color = getValue("material.color", this.intersected);
@@ -106,14 +99,14 @@ class SceneManager {
   }
 
   resetIntersectedColor (intersected) {
-    const selectableKey = "parent.userData.selectable";
+    const selectableKey = "userData.selectable";
     if (intersected && getValue(selectableKey, intersected)) {
       const color = getValue("material.color", intersected);
       const isSelected =
         this.selected.findIndex(model => model === intersected) >= 0;
 
       if (color.set) {
-        const colorKey = `parent.userData.color.${
+        const colorKey = `userData.color.${
           isSelected ? "selected" : "original"
         }`;
         color.set(getValue(colorKey, intersected));
@@ -161,7 +154,7 @@ class SceneManager {
       this.raycaster.intersectObjects(this.scene.children, true) || [];
 
     const model = intersects[0] || {};
-    const isSelectable = !!getValue("object.parent.userData.selectable", model);
+    const isSelectable = !!getValue("object.userData.selectable", model);
 
     if (isSelectable) {
       this.toggleSelected(model.object);
