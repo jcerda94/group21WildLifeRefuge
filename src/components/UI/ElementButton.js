@@ -17,8 +17,7 @@ class ElementButton extends Component {
     );
   }
 
-  onClick = e => {
-    e.preventDefault();
+  onClick = () => {
     this.props.increment(this.props.name);
 
     var color;
