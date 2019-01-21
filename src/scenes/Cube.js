@@ -1,4 +1,3 @@
-import { random } from "../utils/helpers";
 const THREE = require("three");
 
 async function Cube (scene, config) {

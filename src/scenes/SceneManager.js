@@ -46,7 +46,7 @@ class SceneManager {
     const modelIndex = this.selected.findIndex(
       selectedModel => model === selectedModel
     );
-    const color = getValue("object.material.color", model);
+
     if (modelIndex >= 0) {
       const modelToRemove = this.selected[modelIndex];
       const originalColor = getValue("userData.color.original", modelToRemove);
