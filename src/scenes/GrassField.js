@@ -23,6 +23,13 @@ async function GrassField (scene, config = { count: 500 }) {
 
   for (let i = 0; i < count; i++) {
     const grass = originalGrass.clone();
+    grass.children[0].userData = {
+      selectable: true,
+      color: {
+        highlight: "#FFF",
+        original: "#3baa5d"
+      }
+    };
     if (i === 0) console.log(grass);
     const size = random(1, 2);
 
@@ -35,11 +42,8 @@ async function GrassField (scene, config = { count: 500 }) {
     grass.position.set(x, 0, z);
     grass.rotation.y = rotation;
     const grassMesh = grass.children[0].children[0].material;
-    grassMesh.type = "Grass";
-    grassMesh.name = "Low Poly Grass";
-    grassMesh.color.set("#3BAA5D");
+    grassMesh.color.set(grass.children[0].userData.color.original);
     grass.children[0].children[0].material = grassMesh.clone();
-
     grasses.add(grass);
   }
 

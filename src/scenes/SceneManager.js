@@ -5,7 +5,7 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import ThreeEntry from "./ThreeEntry";
-let INTERSECTED = null;
+import { getValue } from "../utils/helpers";
 
 class SceneManager {
   groundSize = {
@@ -21,6 +21,8 @@ class SceneManager {
   clock = new THREE.Clock()
   screenDimensions = {}
   subjects = []
+  selected = []
+  intersected = null
 
   constructor (canvas) {
     this.setCanvas(canvas);
@@ -41,6 +43,20 @@ class SceneManager {
     this.cameraControls.reset();
   }
 
+  addSelected (model) {
+    if (this.selected.includes(model)) return;
+
+    this.selected.push(model);
+  }
+
+  removeSelected (model) {
+    const modelIndex = this.selected.findIndex(
+      selectedModel => model === selectedModel
+    );
+    if (modelIndex < 0) return;
+    this.selected.splice(modelIndex, 1);
+  }
+
   update () {
     const elapsedTime = this.clock.getElapsedTime();
     for (let i = 0; i < this.subjects.length; i++) {
@@ -57,22 +73,36 @@ class SceneManager {
       this.raycaster.intersectObjects(this.scene.children, true) || [];
 
     if (intersects.length > 0) {
-      if (INTERSECTED !== intersects[0].object) {
-        let prevIntersect = null;
-        if (INTERSECTED) {
-          prevIntersect = INTERSECTED;
-        }
-        INTERSECTED = intersects[0].object;
-        INTERSECTED.originalColor = INTERSECTED.material.color;
-        if (INTERSECTED.name === "LowPolyGrass") {
-          INTERSECTED.material.color.set("#FFF");
-        }
-        if (prevIntersect && prevIntersect.name === "LowPolyGrass") {
-          prevIntersect.material.color.set("#3baa5d");
+      if (this.intersected !== intersects[0].object) {
+        this.resetIntersectedColor(this.intersected);
+        this.intersected = getValue("object", intersects[0]);
+
+        const selectable = getValue(
+          "parent.userData.selectable",
+          this.intersected
+        );
+        if (selectable) {
+          const highlight = getValue(
+            "parent.userData.color.highlight",
+            this.intersected
+          );
+          const color = getValue("material.color", this.intersected);
+          color.set && color.set(highlight);
         }
       }
     } else {
-      INTERSECTED = null;
+      this.resetIntersectedColor(this.intersected);
+      this.intersected = null;
+    }
+  }
+
+  resetIntersectedColor (intersected) {
+    const selectableKey = "parent.userData.selectable";
+    if (intersected && getValue(selectableKey, intersected)) {
+      const color = getValue("material.color", intersected);
+      if (color.set) {
+        color.set(getValue("parent.userData.color.original", intersected));
+      }
     }
   }
 
