@@ -14,9 +14,9 @@ class ReviewView extends Component {
 
         return (
            <StudentView review={reviewState} props={this.props}/>
-        )
+        );
     }
 
 }
 
-export default ReviewView
+export default ReviewView;

@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import ElementButton from '../ElementButton'
-import styled from 'styled-components'
+import React, { Component } from 'react';
+import ElementButton from './ElementButton';
+import styled from 'styled-components';
 
 const Container = styled.div`
   display: flex;
@@ -9,7 +9,7 @@ const Container = styled.div`
   align-items: center;
   height: 60px;
   background-color: #303030;
-`
+`;
 
 class UIBar extends Component {
   render () {
@@ -48,8 +48,8 @@ class UIBar extends Component {
           name='bigSage'
         />
       </Container>
-    )
+    );
   }
 }
 
-export default UIBar
+export default UIBar;

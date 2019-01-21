@@ -6,6 +6,16 @@
     "import"
   ],
   "rules": {
+    "quotes": [
+      "error",
+      "double"
+    ],
+    "max-len": [
+      "error",
+      {
+        "code": 120
+      }
+    ],
     "semi": [
       2,
       "always"
