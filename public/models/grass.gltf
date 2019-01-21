@@ -76,7 +76,7 @@
     ],
     "materials": [
         {
-            "name": "Low_Poly_Grass_001_Mat",
+            "name": "LowPolyGrass",
             "alphaMode": "OPAQUE",
             "extras": {
                 "fromFBX": {
@@ -98,7 +98,7 @@
     ],
     "meshes": [
         {
-            "name": "Low_Poly_Grass_001",
+            "name": "LowPolyGrass",
             "primitives": [
                 {
                     "material": 0,
@@ -136,7 +136,7 @@
             ]
         },
         {
-            "name": "Low_Poly_Grass_001",
+            "name": "LowPolyGrass",
             "translation": [
                 0.0,
                 0.0,

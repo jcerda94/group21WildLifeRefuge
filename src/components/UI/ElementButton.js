@@ -1,22 +1,19 @@
-import React, { Component } from 'react';
-import { getSceneManager } from '../../scenes/SceneManager';
-import Cube from '../../scenes/Cube';
+import React, { Component } from "react";
+import { getSceneManager } from "../../scenes/SceneManager";
+import Cube from "../../scenes/Cube";
 
 class ElementButton extends Component {
   constructor (props) {
     super(props);
 
-    this.button = ( // TODO: Refactor to use an HTML button or other type of component, use of null anchor tags is highly discouraged
-        <div className="dropdown">
-          <button className="dropbtn">
-            {this.props.addText}
-          </button>
-          <div className='dropdown-content'>
-            <button onClick={e => this.onClick()} >
-              {this.props.title}
-            </button>
-          </div>
+    // TODO: Refactor to use an HTML button or other type of component, use of null anchor tags is highly discouraged
+    this.button = (
+      <div className='dropdown'>
+        <button className='dropbtn'>{this.props.addText}</button>
+        <div className='dropdown-content'>
+          <button onClick={e => this.onClick()}>{this.props.title}</button>
         </div>
+      </div>
     );
   }
 
@@ -25,16 +22,16 @@ class ElementButton extends Component {
 
     var color;
     switch (this.props.model) {
-      case 'tree':
-        color = '#00C060';
+      case "tree":
+        color = "#00C060";
         break;
-      case 'hawk':
+      case "hawk":
         color = 0xcc0000;
         break;
-      case 'bush':
+      case "bush":
         color = 0x669900;
         break;
-      case 'hare':
+      case "hare":
         color = 0xd9d9d9;
         break;
       default:
@@ -61,13 +58,10 @@ class ElementButton extends Component {
     };
 
     SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
-    console.log(SceneManager.scene.children);
-  };
-
+  }
 
   render () {
     return this.button;
   }
 }
 export default ElementButton;
-
