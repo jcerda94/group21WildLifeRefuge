@@ -1,3 +1,4 @@
+import { random } from "../utils/helpers";
 const THREE = require("three");
 
 async function Cube (scene, config) {
@@ -20,7 +21,6 @@ async function Cube (scene, config) {
     }
   };
 
-  cube.type = "SimElement";
   scene.add(cube);
   function update () {}
 
