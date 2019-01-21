@@ -42,18 +42,28 @@ class SceneManager {
     this.cameraControls.reset();
   }
 
-  addSelected (model) {
-    if (this.selected.includes(model)) return;
-
-    this.selected.push(model);
-  }
-
-  removeSelected (model) {
+  toggleSelected (model) {
     const modelIndex = this.selected.findIndex(
       selectedModel => model === selectedModel
     );
-    if (modelIndex < 0) return;
-    this.selected.splice(modelIndex, 1);
+    const color = getValue("object.material.color", model);
+    console.log(model);
+    if (modelIndex >= 0) {
+      const modelToRemove = this.selected[modelIndex];
+      const originalColor = getValue(
+        "parent.userData.color.original",
+        modelToRemove
+      );
+
+      const color = getValue("material.color", modelToRemove);
+      color.set && color.set(originalColor);
+      this.selected.splice(modelIndex, 1);
+    } else {
+      const color = getValue("material.color", model);
+      const selectedColor = getValue("parent.userData.color.selected", model);
+      color.set && color.set(selectedColor);
+      this.selected.push(model);
+    }
   }
 
   update () {
@@ -99,8 +109,14 @@ class SceneManager {
     const selectableKey = "parent.userData.selectable";
     if (intersected && getValue(selectableKey, intersected)) {
       const color = getValue("material.color", intersected);
+      const isSelected =
+        this.selected.findIndex(model => model === intersected) >= 0;
+
       if (color.set) {
-        color.set(getValue("parent.userData.color.original", intersected));
+        const colorKey = `parent.userData.color.${
+          isSelected ? "selected" : "original"
+        }`;
+        color.set(getValue(colorKey, intersected));
       }
     }
   }
@@ -138,7 +154,21 @@ class SceneManager {
     this.renderer.setSize(width, height);
   }
 
-  onDocumentMouseMove = event => {
+  handleClick = event => {
+    const vector = this.convertClickToVector(event);
+    this.raycaster.set(this.camera.position, vector);
+    const intersects =
+      this.raycaster.intersectObjects(this.scene.children, true) || [];
+
+    const model = intersects[0] || {};
+    const isSelectable = !!getValue("object.parent.userData.selectable", model);
+
+    if (isSelectable) {
+      this.toggleSelected(model.object);
+    }
+  }
+
+  convertClickToVector = event => {
     const vector = new THREE.Vector3();
     const canvasTopOffset = this.canvas.getBoundingClientRect().top;
     vector.x = (event.clientX / this.canvas.width) * 2 - 1;
@@ -147,7 +177,15 @@ class SceneManager {
     vector.unproject(this.camera);
     vector.sub(this.camera.position);
     vector.normalize();
+    return vector;
+  }
 
+  onDocumentMouseClick = event => {
+    this.handleClick(event);
+  }
+
+  onDocumentMouseMove = event => {
+    const vector = this.convertClickToVector(event);
     this.raycaster.set(this.camera.position, vector);
   }
 

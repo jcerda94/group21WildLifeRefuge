@@ -26,7 +26,8 @@ async function GrassField (scene, config = { count: 500 }) {
       selectable: true,
       color: {
         highlight: "#FFF",
-        original: "#3baa5d"
+        original: "#3baa5d",
+        selected: "#FF00FF"
       }
     };
     const size = random(1, 2);
