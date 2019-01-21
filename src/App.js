@@ -1,15 +1,28 @@
 import React, { Component } from "react";
 import "./css/App.css";
-import model from "./model/capiModel";
-import WelcomePage from "./components/WelcomePage";
+import WelcomePage from "./components/WelcomePage/WelcomePage";
 
 import StudentView from "./components/StudentView";
 import AuthorView from "./components/AuthorView";
 
 class App extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
-    this.state = JSON.parse(JSON.stringify(model));
+    this.state = {
+      toggleContext: false,
+      simContext: "VIEWER",
+      studentMode: true,
+      authorMode: false,
+      reviewMode: false,
+      simEnabled: true,
+      redCedar: 0,
+      redHawk: 0,
+      snowHare: 0,
+      bigSage: 0,
+      level: 0,
+      simObjects: [],
+      loggedIn: false
+    };
 
     this.simModel = new window.simcapi.CapiAdapter.CapiModel(this.state);
 
@@ -45,14 +58,14 @@ class App extends Component {
   }
 
   // TODO: Refactor to actually check all available states instead of just three
-  toggleOnThenAllOff(onState, off1, off2) {
+  toggleOnThenAllOff (onState, off1, off2) {
     this.simModel.set(onState, true);
 
     this.simModel.set(off1, false);
     this.simModel.set(off2, false);
   }
 
-  addListener(keyName) {
+  addListener (keyName) {
     this.simModel.on("change:" + keyName, () => {
       this.setState({
         [keyName]: this.simModel.get(keyName)
@@ -60,7 +73,7 @@ class App extends Component {
     });
   }
 
-  addSimulationElement(element) {
+  addSimulationElement (element) {
     switch (element) {
       case "redCedar":
         // TODO: Randomize Object parameters
@@ -91,18 +104,26 @@ class App extends Component {
     }
   }
 
-  increment(objectName) {
+  increment (objectName) {
     var count = this.simModel.get(objectName);
     this.simModel.set(objectName, count + 1);
 
     this.addSimulationElement(objectName);
   }
 
-  render() {
+  handleLogin = () => {
+    if (!this.state.loggedIn) {
+      this.setState({ loggedIn: true });
+    }
+  }
+
+  render () {
     // TODO: Add state checking using -> simcapi.Transporter.getConfig().context
     var display = null;
     if (!this.state.loggedIn) {
-      display = <WelcomePage name={this.simModel} />;
+      display = (
+        <WelcomePage name={this.simModel} handleLogin={this.handleLogin} />
+      );
     } else if (this.state.studentMode) {
       display = <StudentView increment={this.increment} />;
     } else if (this.state.authorMode) {
