@@ -46,8 +46,10 @@ class WelcomePage extends React.Component {
     render () {
     const { handleLogin } = this.props;
     return (
+
       <React.Fragment>
         <Background />
+
         <Container>
             <Header name = {this.simModel}/>
           <Title title='Welcome to Willapa Wildlife Refuge' />
