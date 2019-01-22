@@ -19,6 +19,9 @@ class App extends Component {
       redHawk: 0,
       snowHare: 0,
       bigSage: 0,
+      firstName: "John",
+      lastName: "Deo",
+      score: 0,
       level: 0,
       simObjects: [],
       loggedIn: false
