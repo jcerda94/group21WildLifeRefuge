@@ -7,8 +7,9 @@ class WelcomePage extends React.Component {
 
     constructor(props) {
         super(props);
-
         this.simModel = props.name;
+
+        //this.simModel = props.name;
         this.user = new User(this.simModel.name, "Doe", 6, 0, 0);
 
         this.handleLoginClick = this.handleLoginClick.bind(this);
