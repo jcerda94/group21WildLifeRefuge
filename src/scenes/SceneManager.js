@@ -148,6 +148,12 @@ class SceneManager {
     this.subjects.push(sceneObject);
   }
 
+  removeObject (objectType) {
+    const sceneIndex = this.scene.children.findIndex((child) => {return child.type === objectType})
+
+    this.scene.children.splice(sceneIndex, 1)
+  }
+
   onTransporterReady () {
     const capi = getCapiInstance();
     const hawkCount = capi.getValue({ key: "redtailHawkCount" });
