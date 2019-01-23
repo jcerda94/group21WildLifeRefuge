@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "../js/three/OrbitControls";
+import { FlyControls } from "../js/three/FlyControls";
 import Ground from "./Ground";
 import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
@@ -19,6 +20,8 @@ class SceneManager {
   screenDimensions = {};
   subjects = [];
 
+
+
   constructor(canvas) {
     this.setCanvas(canvas);
     this.initializeScene();
@@ -35,11 +38,14 @@ class SceneManager {
   }
 
   update() {
+
+    const delta = this.clock.getDelta();
+    //this.cameraControl.update(delta);
     const elapsedTime = this.clock.getElapsedTime();
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
     }
-    this.cameraControls.update();
+    this.cameraControls.update(delta);
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -96,12 +102,32 @@ class SceneManager {
     this.cameraControls = new OrbitControls(this.camera);
   }
 
+  setFlyControlCamera(){
+    // position and point the camera to the center of the scene
+    this.camera.position.x = 100;
+    this.camera.position.y = 100;
+    this.camera.position.z = 300;
+    this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+    this.cameraControls = new FlyControls(this.camera);
+
+    this.cameraControls.movementSpeed = 25;
+    this.cameraControls.domElement = document.querySelector("#root");
+    this.cameraControls.maxPolarAngle = Math.PI * 0.5;
+    this.cameraControls.rollSpeed = Math.PI / 24;
+    this.cameraControls.autoForward = true;
+    this.cameraControls.dragToLook = true;
+
+
+  }
+
   initializeScene() {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color("#ffffff");
   }
 
   setCameraPostion(x,y,z){
+    this.cameraControls = new OrbitControls(this.camera);
 
     this.camera.position.x = x;
     this.camera.position.y = y;
