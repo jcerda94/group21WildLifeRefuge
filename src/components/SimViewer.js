@@ -35,11 +35,7 @@ class SimViewer extends Component {
   }
 
   render () {
-    return (
-      <CanvasContainer ref={this.canvasContainer}>
-        <Button onClick={this.onClick}>Reset Camera</Button>
-      </CanvasContainer>
-    );
+    return <CanvasContainer ref={this.canvasContainer} />;
   }
 }
 
