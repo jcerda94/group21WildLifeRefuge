@@ -1,4 +1,6 @@
 import SceneManager from './SceneManager';
+import cameraControl from "./AmbientLight";
+import * as THREE from "three";
 
 function createCanvas (document, containerElement) {
   const canvas = document.createElement('canvas');
@@ -8,6 +10,7 @@ function createCanvas (document, containerElement) {
 
 class ThreeEntry {
   constructor (container) {
+    this.clock = new THREE.Clock();
     this.canvas = createCanvas(document, container);
     this.sceneManager = SceneManager(this.canvas);
     this.bindEventListeners();
@@ -28,6 +31,8 @@ class ThreeEntry {
   }
 
   render = () => {
+    //const delta = this.clock.getDelta();
+   // cameraControl.update(delta);
     requestAnimationFrame(this.render);
     this.sceneManager.update();
   }

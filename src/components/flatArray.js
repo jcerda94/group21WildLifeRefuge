@@ -8,7 +8,7 @@ import Cube from "../scenes/Cube";
 import {Camera} from "three";
 
 const options = [
-    'Top', 'Bottom View', 'Flyby View', 'First Person View'
+    'Top', 'Bottom View', 'Fly Control View', 'First Person View'
 ]
 
 class FlatArrayExample extends Component {
@@ -29,13 +29,14 @@ class FlatArrayExample extends Component {
         switch (selected) {
 
             case 'Top':
-               SceneManager.setCameraPostion(0,200,100);
+               SceneManager.setCameraPostion(0,500,0);
                console.log('You selected ', option.label)
                 break;
             case 'Bottom View':
                 SceneManager.setCameraPostion(0,10,100);
                 break;
-            case 'Flyby View':
+            case 'Fly Control View':
+               SceneManager.setFlyControlCamera();
 
                 break;
             case 'First Person View':
