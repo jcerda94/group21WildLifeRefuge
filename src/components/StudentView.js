@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "../css/simulation.css";
 import SimViewer from "./SimViewer";
+import ViewControl from "./ViewControl";
 import UIBar from "./UI/UIBar";
 import back from "../assets/back.png";
 import forward from "../assets/forward.png";
@@ -60,6 +61,7 @@ class StudentView extends Component {
           increment={this.state.increment}
         />
         {Controls}
+        <ViewControl/>
         <SimViewer height={this.state.height} />
       </Container>
     );
