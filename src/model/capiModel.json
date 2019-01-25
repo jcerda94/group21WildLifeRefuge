@@ -1,6 +1,5 @@
 {
-  "toggleContext": false,
-  "simContext" : "VIEWER",
+  "toggleContext": true,
   "studentMode": true,
   "authorMode": false,
   "reviewMode": false,
@@ -13,6 +12,6 @@
   "bigSage": 0,
   "level": 0,
   "score": 0,
-  "simObjects" : [],
+  "simObjects": [],
   "loggedIn": false
 }

@@ -22,10 +22,10 @@ const Container = styled.div`
 `;
 
 class StudentView extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
 
-    //TODO: Need to test reviewing behavior later
+    // TODO: Need to test reviewing behavior later
     this.state = {
       increment: this.props.increment,
       height: 0
@@ -42,15 +42,15 @@ class StudentView extends Component {
 
   findUIHeight = uiHeight => {
     this.setState({ height: window.innerHeight - uiHeight });
-  };
+  }
 
-  render() {
+  render () {
     const Controls = (
       <React.Fragment>
-        <ImgButton key="back" id="back" src={back} />
-        <ImgButton key="forward" id="forward" src={forward} />
-        <ResetButton key="reset" id="reset" src={reset} />
-        <ImgButton key="help" id="help" src={help} />
+        <ImgButton key='back' id='back' src={back} />
+        <ImgButton key='forward' id='forward' src={forward} />
+        <ResetButton key='reset' id='reset' src={reset} />
+        <ImgButton key='help' id='help' src={help} />
       </React.Fragment>
     );
     return (

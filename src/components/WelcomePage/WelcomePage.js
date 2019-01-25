@@ -36,22 +36,13 @@ const Background = styled.div`
 `;
 
 class WelcomePage extends React.Component {
-    constructor(props) {
-        super(props);
-        this.simModel = props.name;
-
-
-    }
-
-    render () {
-    const { handleLogin } = this.props;
+  render () {
+    const { handleLogin, name } = this.props;
     return (
-
       <React.Fragment>
         <Background />
-
         <Container>
-            <Header name = {this.simModel}/>
+          <Header name={name} />
           <Title title='Welcome to Willapa Wildlife Refuge' />
           <VerticalLine height={80} color='white' />
           <LessonName name='What do animals do in their free time?' />
