@@ -148,10 +148,19 @@ class SceneManager {
     this.subjects.push(sceneObject);
   }
 
-  removeObject (objectType) {
+  removeOneObject (objectType) {
     const sceneIndex = this.scene.children.findIndex((child) => {return child.type === objectType})
 
     this.scene.children.splice(sceneIndex, 1)
+  }
+
+  removeAllObjectsByType (objectType) {
+
+    function checkType(child) {
+      return child.type !== objectType;
+    }
+    
+    this.scene.children.filter(checkType)
   }
 
   onTransporterReady () {
