@@ -114,12 +114,6 @@ class SceneManager {
     }
   }
 
-  rotateCamera (elapsedTime) {
-    this.camera.position.x = 120 * Math.cos(elapsedTime / 8);
-    this.camera.position.z = 120 * Math.sin(elapsedTime / 8);
-    this.camera.lookAt(this.scene.position);
-  }
-
   createSceneSubjects () {
     this.subjects = [
       new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
@@ -196,7 +190,7 @@ class SceneManager {
       farPlane
     );
 
-    this.camera.position.set(0, 75, 100);
+    this.camera.position.set(-75, 40, 80);
 
     this.cameraControls = new OrbitControls(this.camera);
   }

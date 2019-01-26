@@ -19,16 +19,7 @@ class App extends Component {
   }
 
   render () {
-    let display = null;
-
-    if (!this.state.loggedIn) {
-      const name = this.capi.getValue({ key: "firstName" });
-      display = <WelcomePage name={name} handleLogin={this.handleLogin} />;
-    } else {
-      display = <StudentView increment={this.increment} />;
-    }
-
-    return display;
+    return <StudentView />;
   }
 }
 
