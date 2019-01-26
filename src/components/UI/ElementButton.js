@@ -18,7 +18,8 @@ class ElementButton extends Component {
   }
 
   onClick = () => {
-    this.props.increment(this.props.name);
+    const { increment } = this.props;
+    increment && increment(this.props.name);
 
     var color;
     switch (this.props.model) {
