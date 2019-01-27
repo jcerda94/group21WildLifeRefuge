@@ -149,18 +149,34 @@ class SceneManager {
   }
 
   removeOneObject (objectType) {
-    const sceneIndex = this.scene.children.findIndex((child) => {return child.type === objectType})
 
-    this.scene.children.splice(sceneIndex, 1)
   }
 
   removeAllObjectsByType (objectType) {
 
+  }
+
+  removeObject (objectType, numberRemoved, removeAll) {
     function checkType(child) {
       return child.type !== objectType;
     }
-    
-    this.scene.children.filter(checkType)
+
+    if (removeAll) {
+      this.scene.children.filter(checkType)
+    } else {
+
+      var removeCount = 0;
+
+      while (removeCount < numberRemoved){
+        const sceneIndex = this.scene.children.findIndex((child) => {return child.type === objectType});
+
+        if (sceneIndex >= 0) {
+          this.scene.children.splice(sceneIndex, 1)
+        }
+
+        removeCount++;
+      }
+    }
   }
 
   onTransporterReady () {
