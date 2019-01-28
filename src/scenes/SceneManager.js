@@ -148,15 +148,7 @@ class SceneManager {
     this.subjects.push(sceneObject);
   }
 
-  removeOneObject (objectType) {
-
-  }
-
-  removeAllObjectsByType (objectType) {
-
-  }
-
-  removeObject (objectType, numberRemoved, removeAll) {
+  removeObject (objectType, numberRemoved = 1, removeAll = false) {
     function checkType(child) {
       return child.type !== objectType;
     }
@@ -165,10 +157,11 @@ class SceneManager {
       this.scene.children.filter(checkType)
     } else {
 
+      var sceneIndex = 0;
       var removeCount = 0;
 
-      while (removeCount < numberRemoved){
-        const sceneIndex = this.scene.children.findIndex((child) => {return child.type === objectType});
+      while (sceneIndex >= 0 && removeCount < numberRemoved){
+        sceneIndex = this.scene.children.findIndex((child) => {return child.type === objectType});
 
         if (sceneIndex >= 0) {
           this.scene.children.splice(sceneIndex, 1)
