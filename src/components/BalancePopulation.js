@@ -4,16 +4,33 @@ import 'react-dropdown/style.css'
 import React, { Component } from 'react';
 import { getSceneManager } from '../scenes/SceneManager';
 
+import styled from "styled-components";
+
+const Container = styled.div`
+
+  position: absolute;
+  left: 2%;
+  top: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  background: #67F07F;   
+  width: 10%
+`;
+
+
 
 const options = [
-    'Top', 'Bottom View', 'Fly Control View', 'First Person View', 'Default'
+    'None', 'Snowshoe Hare', 'Big Sage Brush', 'Bluebunch Wheat Grass', 'Red Tail Hawk', 'Western Red Cedar Tree'
 ]
 
-class ViewControl extends Component {
+class BalancePopulation extends Component {
     constructor (props) {
         super(props)
         this.state = {
-            selected: 'Top'
+            selected: "Select an option",
+            simModel: props.sim,
         }
         this._onSelect = this._onSelect.bind(this)
     }
@@ -51,9 +68,13 @@ class ViewControl extends Component {
         const defaultOption = this.state.selected
         const placeHolderValue = typeof this.state.selected === 'string' ? this.state.selected : this.state.selected.label
 
+       this.simModel.firstName= placeHolderValue;
+
         return (
-            <section>
-                <h3>Select Views </h3>
+            <Container>
+                <h3>What would you do? </h3>
+                If there are too many snowshoe hares in wildlife refuge, what kind of population would you add to balance
+                    current ecosystem?
                 <Dropdown options={options} onChange={this._onSelect} value={defaultOption} placeholder="Select an option" />
                 <div className='result'>
                     You selected
@@ -61,9 +82,9 @@ class ViewControl extends Component {
                 </div>
 
 
-            </section>
+            </Container>
         )
     }
 }
 
-export default ViewControl;
+export default BalancePopulation;
