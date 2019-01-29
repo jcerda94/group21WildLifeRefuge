@@ -12,14 +12,6 @@ class CAPI {
     this.exposeKeys(Object.keys(baseModel));
     bindEvents(this.capiModel);
 
-    Transporter.addInitialSetupCompleteListener(() => {
-      Transporter.getDataRequest(
-        "stage",
-        "stage.InputTable.Configuration",
-        data => console.log("x50", data),
-        () => null
-      );
-    });
     Transporter.notifyOnReady();
   }
 
@@ -32,6 +24,14 @@ class CAPI {
 
   getTransporter = () => {
     return Transporter;
+  }
+
+  getCapiAdapter = () => {
+    return CapiAdapter;
+  }
+
+  getCapiModel = () => {
+    return this.capiModel;
   }
 
   getValue = ({ key }) => {
