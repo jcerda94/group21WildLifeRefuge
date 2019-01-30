@@ -129,7 +129,7 @@ class App extends Component {
         <WelcomePage name={this.simModel} handleLogin={this.handleLogin} />
       );
     } else if (this.state.studentMode) {
-      display = <StudentView increment={this.increment} simModel = {this.simModel}/>;
+      display = <StudentView increment={this.increment} name = {this.simModel}/>;
     } else if (this.state.authorMode) {
       display = (
         <AuthorView style={{ backgroundColor: "beige" }} state={this.state} />

@@ -2,7 +2,7 @@
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import React, { Component } from 'react';
-import { getSceneManager } from '../scenes/SceneManager';
+
 
 import styled from "styled-components";
 
@@ -16,7 +16,7 @@ const Container = styled.div`
   align-items: flex-start;
   justify-content: center;
   background: #67F07F;   
-  width: 10%
+  width: 15%
 `;
 
 
@@ -28,39 +28,25 @@ const options = [
 class BalancePopulation extends Component {
     constructor (props) {
         super(props)
+
+        this.simModel = props.name;
         this.state = {
             selected: "Select an option",
-            simModel: props.sim,
+
         }
         this._onSelect = this._onSelect.bind(this)
     }
 
     _onSelect (option) {
-        const SceneManager = getSceneManager();
+
 
         this.setState({selected: option})
-        var selected = option.label;
 
-        switch (selected) {
+        const placeHolderValue = typeof this.state.selected === 'string' ? this.state.selected : this.state.selected.label
 
-            case 'Top':
-                SceneManager.setCameraPosition(0,500,0);
-                console.log('You selected ', option.label)
-                break;
-            case 'Bottom View':
-                SceneManager.setCameraPosition(0,10,100);
-                break;
-            case 'Fly Control View':
-                SceneManager.setFlyControlCamera();
+        this.simModel.set('answer', placeHolderValue)
 
-                break;
-            case 'First Person View':
 
-                break;
-            default:
-                SceneManager.setCameraPosition(0,75,500);
-                break;
-        }
 
     }
 
@@ -68,7 +54,7 @@ class BalancePopulation extends Component {
         const defaultOption = this.state.selected
         const placeHolderValue = typeof this.state.selected === 'string' ? this.state.selected : this.state.selected.label
 
-       this.simModel.firstName= placeHolderValue;
+        this.simModel.set('answer', placeHolderValue)
 
         return (
             <Container>

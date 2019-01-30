@@ -26,12 +26,12 @@ const Container = styled.div`
 class StudentView extends Component {
   constructor(props) {
     super(props);
-
+    this.simModel = props.name;
     //TODO: Need to test reviewing behavior later
     this.state = {
       increment: this.props.increment,
       height: 0,
-      sim: props.simModel,
+
     };
 
     // Disables increment functionality if in review mode
@@ -66,7 +66,7 @@ class StudentView extends Component {
         />
         {Controls}
         <ViewControl/>
-        <BalancePopulation simModel = {this.sim}/>
+        <BalancePopulation name = {this.simModel}/>
         <SimViewer height={this.state.height} />
       </Container>
     );
