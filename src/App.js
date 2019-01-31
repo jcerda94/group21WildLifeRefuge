@@ -24,7 +24,8 @@ class App extends Component {
       score: 0,
       level: 0,
       simObjects: [],
-      loggedIn: false
+      loggedIn: false,
+      answer: "none"
     };
 
     this.simModel = new window.simcapi.CapiAdapter.CapiModel(this.state);
@@ -128,7 +129,7 @@ class App extends Component {
         <WelcomePage name={this.simModel} handleLogin={this.handleLogin} />
       );
     } else if (this.state.studentMode) {
-      display = <StudentView increment={this.increment} />;
+      display = <StudentView increment={this.increment} name = {this.simModel}/>;
     } else if (this.state.authorMode) {
       display = (
         <AuthorView style={{ backgroundColor: "beige" }} state={this.state} />

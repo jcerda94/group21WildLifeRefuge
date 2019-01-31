@@ -10,6 +10,7 @@ import help from "../assets/help.png";
 import styled from "styled-components";
 import ImgButton from "./UI/ImgButton";
 import ResetButton from "./UI/ResetButton";
+import BalancePopulation from "./BalancePopulation";
 
 const Container = styled.div`
   display: flex;
@@ -25,11 +26,12 @@ const Container = styled.div`
 class StudentView extends Component {
   constructor(props) {
     super(props);
-
+    this.simModel = props.name;
     //TODO: Need to test reviewing behavior later
     this.state = {
       increment: this.props.increment,
-      height: 0
+      height: 0,
+
     };
 
     // Disables increment functionality if in review mode
@@ -46,6 +48,8 @@ class StudentView extends Component {
   };
 
   render() {
+
+
     const Controls = (
       <React.Fragment>
         <ImgButton key="back" id="back" src={back} />
@@ -62,6 +66,7 @@ class StudentView extends Component {
         />
         {Controls}
         <ViewControl/>
+        <BalancePopulation name = {this.simModel}/>
         <SimViewer height={this.state.height} />
       </Container>
     );

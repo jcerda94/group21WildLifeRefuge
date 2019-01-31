@@ -2,11 +2,8 @@
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import React, { Component } from 'react';
-import SimViewer from './SimViewer';
 import { getSceneManager } from '../scenes/SceneManager';
-import * as THREE from 'three';
-import Cube from "../scenes/Cube";
-import {Camera} from "three";
+
 
 const options = [
     'Top', 'Bottom View', 'Fly Control View', 'First Person View', 'Default'
