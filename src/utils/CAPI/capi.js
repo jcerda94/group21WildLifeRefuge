@@ -1,5 +1,6 @@
 import { getValue } from "../helpers";
 import { bindEvents } from "./events";
+import { getSceneManager } from "../../scenes/SceneManager";
 
 const CapiAdapter = getValue("simcapi.CapiAdapter", window);
 const CapiModel = CapiAdapter && CapiAdapter.CapiModel;
@@ -11,8 +12,6 @@ class CAPI {
     this.capiModel = new CapiModel(baseModel);
     this.exposeKeys(Object.keys(baseModel));
     bindEvents(this.capiModel);
-
-    Transporter.notifyOnReady();
   }
 
   exposeKeys = keys => {

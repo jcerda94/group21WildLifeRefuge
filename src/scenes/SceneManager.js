@@ -5,6 +5,8 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import { getValue } from "../utils/helpers";
+import Hawk, { NAME as hawkName } from "./Hawk";
+import { getCapiInstance } from "../utils/CAPI/capi";
 
 class SceneManager {
   groundSize = {
@@ -53,11 +55,28 @@ class SceneManager {
 
       const color = getValue("material.color", modelToRemove);
       color.set && color.set(originalColor);
+      if (getValue("userData.name") === hawkName) {
+        const capi = getCapiInstance();
+        const currentHawkCount = capi.getValue({ key: "redtailHawkSelected" });
+        capi.setValue({
+          key: "redtailHawkSelected",
+          value: currentHawkCount - 1
+        });
+      }
       this.selected.splice(modelIndex, 1);
     } else {
       const color = getValue("material.color", model);
       const selectedColor = getValue("userData.color.selected", model);
+      const name = getValue("userData.name", model);
       color.set && color.set(selectedColor);
+      if (name === hawkName) {
+        const capi = getCapiInstance();
+        const currentHawkCount = capi.getValue({ key: "redtailHawkSelected" });
+        capi.setValue({
+          key: "redtailHawkSelected",
+          value: currentHawkCount + 1
+        });
+      }
       this.selected.push(model);
     }
   }
@@ -123,8 +142,17 @@ class SceneManager {
     ];
   }
 
-  addObject (sceneObject, position) {
+  addObject (sceneObject) {
     this.subjects.push(sceneObject);
+  }
+
+  onTransporterReady () {
+    const capi = getCapiInstance();
+    const hawkCount = capi.getValue({ key: "redtailHawkCount" });
+
+    for (let hawks = 0; hawks < hawkCount; hawks++) {
+      this.addObject(new Hawk(this.scene));
+    }
   }
 
   onWindowResize () {

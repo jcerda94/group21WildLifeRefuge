@@ -9,7 +9,6 @@ import help from "../assets/help.png";
 import styled from "styled-components";
 import ImgButton from "./UI/ImgButton";
 import ResetButton from "./UI/ResetButton";
-import { getCapiInstance } from "../utils/CAPI/capi";
 
 const Container = styled.div`
   display: flex;
@@ -46,15 +45,6 @@ class StudentView extends Component {
     this.setState({ height: window.innerHeight - uiHeight });
   }
 
-  capi = getCapiInstance()
-
-  getData = () => JSON.stringify(this.state.data, undefined, 2)
-  getCapiData = () => {
-    const T = this.capi.getTransporter();
-    T.getDataRequest("stage", "wildlifesim.toggleContext", data =>
-      this.setState({ data })
-    );
-  }
   render () {
     const Controls = (
       <React.Fragment>
@@ -70,13 +60,6 @@ class StudentView extends Component {
           reportHeight={this.findUIHeight}
           increment={this.state.increment}
         />
-
-        <button class='btn btn-primary' onClick={this.getCapiData}>
-          Get Data
-        </button>
-        <div style={{ position: "absolute", top: "35%", right: 0 }}>
-          {this.getData()}
-        </div>
         {Controls}
         <SimViewer height={this.state.height} />
       </Container>
