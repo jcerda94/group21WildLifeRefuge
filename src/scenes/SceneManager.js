@@ -5,11 +5,12 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import { getValue } from "../utils/helpers";
+import {FlyControls} from "../js/three/FlyControls";
 
 class SceneManager {
   groundSize = {
-    x: 100,
-    y: 100
+    x: 1000,
+    y: 1000
   }
   camera = null
   scene = null
@@ -63,12 +64,13 @@ class SceneManager {
   }
 
   update () {
+    const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
     }
 
-    this.cameraControls.update();
+    this.cameraControls.update(delta);
     this.renderer.render(this.scene, this.camera);
     this.checkIntersects();
   }
@@ -196,10 +198,38 @@ class SceneManager {
       farPlane
     );
 
-    this.camera.position.set(0, 75, 100);
+    this.camera.position.set(0, 75, 500);
 
     this.cameraControls = new OrbitControls(this.camera);
   }
+
+  setFlyControlCamera(){
+    // position and point the camera to the center of the scene
+    this.camera.position.x = 100;
+    this.camera.position.y = 100;
+    this.camera.position.z = 300;
+    this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+    this.cameraControls = new FlyControls(this.camera);
+
+    this.cameraControls.movementSpeed = 25;
+    this.cameraControls.domElement = document.querySelector("#root");
+    this.cameraControls.maxPolarAngle = Math.PI * 0.5;
+    this.cameraControls.rollSpeed = Math.PI / 24;
+    this.cameraControls.autoForward = true;
+    this.cameraControls.dragToLook = true;
+
+
+  }
+
+  setCameraPosition(x,y,z){
+    this.cameraControls = new OrbitControls(this.camera);
+
+    this.camera.position.x = x;
+    this.camera.position.y = y;
+    this.camera.position.z = z;
+  }
+
 
   initializeScene () {
     this.scene = new THREE.Scene();
@@ -216,6 +246,8 @@ class SceneManager {
     this.renderer.setSize(width, height);
   }
 }
+
+
 
 export const getSceneManager = () => {
   return SceneManager.instance || null;
