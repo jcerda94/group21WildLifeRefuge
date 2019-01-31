@@ -8,19 +8,19 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
+import MenuIcon from "@material-ui/core/Menu";
 
 const styles = {
   root: {
-    flexGrow: 3,
+    flexGrow: 3
   },
   grow: {
-    flexGrow: 3,
+    flexGrow: 3
   },
   menuButton: {
     marginLeft: -12,
-    marginRight: 20,
-  },
+    marginRight: 20
+  }
 };
 function UIBar(props) {
   const { classes } = props;
@@ -51,7 +51,7 @@ function UIBar(props) {
 }
 
 UIBar.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(UIBar);
