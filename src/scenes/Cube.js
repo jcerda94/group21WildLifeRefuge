@@ -12,7 +12,7 @@ async function Cube (scene, config, newName) {
   const material = new THREE.MeshBasicMaterial({ color });
   const cube = new THREE.Mesh(geometry, material);
   cube.position.set(position.x, position.y, position.z);
-  cube.name = name;
+  cube.name = newName;
   cube.userData = {
     selectable: true,
     color: {

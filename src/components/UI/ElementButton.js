@@ -21,18 +21,23 @@ class ElementButton extends Component {
     this.props.increment(this.props.name);
 
     var color;
+    var id = "";
     switch (this.props.model) {
       case "tree":
         color = "#00C060";
+        id = "tree"
         break;
       case "hawk":
         color = 0xcc0000;
+        id = "hawk";
         break;
       case "bush":
         color = 0x669900;
+        id = "bush";
         break;
       case "hare":
         color = 0xd9d9d9;
+        id = "hare";
         break;
       default:
         break;
@@ -57,7 +62,7 @@ class ElementButton extends Component {
       color
     };
 
-    SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig, "Hawk at ElemenButton"));
+    SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig, id ));
   }
 
   render () {

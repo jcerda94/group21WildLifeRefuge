@@ -8,12 +8,13 @@ import { getValue } from "../utils/helpers";
 import {FlyControls} from "../js/three/FlyControls";
 import Popup from 'react-popup';
 import React from 'react';
-import PopUp from "../components/PopUp"
+//import PopUp from "../components/PopUp"
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
+import PopUp, {getPopUpWindow} from "../components/PopUp"
 
 
 
@@ -204,6 +205,8 @@ class SceneManager {
       console.log("Model.object" + model.object.name);
       this.toggleSelected(model.object);
 
+      const popUpwindow = getPopUpWindow();
+      popUpwindow.popUpWindow(model.object.name);
     }
   }
 
