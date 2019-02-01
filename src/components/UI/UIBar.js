@@ -10,10 +10,10 @@ import IconButton from "@material-ui/core/IconButton";
 
 const styles = {
   root: {
-    flexGrow: 3
+    flexGrow: 0
   },
   grow: {
-    flexGrow: 3
+    flexGrow: 0
   },
   menuButton: {
     marginLeft: -12,
