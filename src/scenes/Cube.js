@@ -1,9 +1,10 @@
 const THREE = require("three");
 
-async function Cube (scene, config) {
+async function Cube (scene, config, newName) {
   const {
     color = "#0080FF",
     size = 3,
+    name = newName,
     position = { x: 0, y: 0, z: 0 }
   } = config;
 
@@ -11,6 +12,7 @@ async function Cube (scene, config) {
   const material = new THREE.MeshBasicMaterial({ color });
   const cube = new THREE.Mesh(geometry, material);
   cube.position.set(position.x, position.y, position.z);
+  cube.name = name;
   cube.userData = {
     selectable: true,
     color: {

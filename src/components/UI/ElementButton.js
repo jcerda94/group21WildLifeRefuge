@@ -57,7 +57,7 @@ class ElementButton extends Component {
       color
     };
 
-    SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
+    SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig, "Hawk at ElemenButton"));
   }
 
   render () {

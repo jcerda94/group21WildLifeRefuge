@@ -6,8 +6,31 @@ import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import { getValue } from "../utils/helpers";
 import {FlyControls} from "../js/three/FlyControls";
+import Popup from 'react-popup';
+import React from 'react';
+import PopUp from "../components/PopUp"
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Popover from '@material-ui/core/Popover';
+
+
+
+
+const styles = theme => ({
+  typography: {
+    margin: theme.spacing.unit * 2,
+  },
+});
+
+
 
 class SceneManager {
+  state = {
+    anchorEl: null,
+  };
+
   groundSize = {
     x: 1000,
     y: 1000
@@ -33,6 +56,19 @@ class SceneManager {
     this.createSceneSubjects();
   }
 
+  handleClick = event => {
+    this.setState({
+      anchorEl: event.currentTarget,
+    });
+  };
+
+  handleClose = () => {
+    this.setState({
+      anchorEl: null,
+    });
+  };
+
+
   setCanvas (canvas) {
     const { width, height } = canvas;
     this.canvas = canvas;
@@ -44,6 +80,7 @@ class SceneManager {
   }
 
   toggleSelected (model) {
+
     const modelIndex = this.selected.findIndex(
       selectedModel => model === selectedModel
     );
@@ -61,6 +98,8 @@ class SceneManager {
       color.set && color.set(selectedColor);
       this.selected.push(model);
     }
+
+
   }
 
   update () {
@@ -132,6 +171,7 @@ class SceneManager {
   }
 
   addObject (sceneObject, position) {
+
     this.subjects.push(sceneObject);
   }
 
@@ -150,6 +190,7 @@ class SceneManager {
   }
 
   handleClick = event => {
+
     const vector = this.convertClickToVector(event);
     this.raycaster.set(this.camera.position, vector);
     const intersects =
@@ -159,9 +200,19 @@ class SceneManager {
     const isSelectable = !!getValue("object.userData.selectable", model);
 
     if (isSelectable) {
+      console.log("Model.object" + model.object.material.color.getHexString());
+      console.log("Model.object" + model.object.name);
       this.toggleSelected(model.object);
+
     }
   }
+
+  handleClose = () => {
+    this.setState({
+      anchorEl: null,
+    });
+  };
+
 
   convertClickToVector = event => {
     const vector = new THREE.Vector3();
@@ -177,6 +228,7 @@ class SceneManager {
 
   onDocumentMouseClick = event => {
     this.handleClick(event);
+
   }
 
   onDocumentMouseMove = event => {

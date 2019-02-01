@@ -11,6 +11,7 @@ import styled from "styled-components";
 import ImgButton from "./UI/ImgButton";
 import ResetButton from "./UI/ResetButton";
 import BalancePopulation from "./BalancePopulation";
+import PopUp from "./PopUp"
 
 const Container = styled.div`
   display: flex;
@@ -67,6 +68,7 @@ class StudentView extends Component {
         {Controls}
         <ViewControl/>
         <BalancePopulation name = {this.simModel}/>
+        <PopUp/>
         <SimViewer height={this.state.height} />
       </Container>
     );
