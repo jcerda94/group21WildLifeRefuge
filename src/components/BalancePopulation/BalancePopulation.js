@@ -1,19 +1,17 @@
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import React, { Component } from "react";
-import { getCapiInstance } from "../utils/CAPI/capi";
+import { getCapiInstance } from "../../utils/CAPI/capi";
+import Paper from "@material-ui/core/Paper";
 import styled from "styled-components";
+import SelectDropdown from "../Styled/SelectDropdown";
 
-const Container = styled.div`
-  position: absolute;
-  left: 2%;
-  top: 25%;
+const Container = styled(Paper)`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  background: #67f07f;
-  width: 15%;
+  padding: 6px;
 `;
 
 const options = [
@@ -31,12 +29,11 @@ class BalancePopulation extends Component {
 
     this.simModel = getCapiInstance();
     this.state = {
-      selected: "Select an option"
+      selected: options[0]
     };
-    this._onSelect = this._onSelect.bind(this);
   }
 
-  _onSelect (option) {
+  _onSelect = option => {
     this.setState({ selected: option });
 
     const placeHolderValue =
@@ -48,11 +45,8 @@ class BalancePopulation extends Component {
   }
 
   render () {
-    const defaultOption = this.state.selected;
-    const placeHolderValue =
-      typeof this.state.selected === "string"
-        ? this.state.selected
-        : this.state.selected.label;
+    const { selected } = this.state;
+    const placeHolderValue = this.state.selected;
 
     this.simModel.setValue({ key: "answer", value: placeHolderValue });
 
@@ -61,10 +55,10 @@ class BalancePopulation extends Component {
         <h3>What would you do? </h3>
         If there are too many snowshoe hares in wildlife refuge, what kind of
         population would you add to balance current ecosystem?
-        <Dropdown
+        <SelectDropdown
           options={options}
           onChange={this._onSelect}
-          value={defaultOption}
+          value={selected}
           placeholder='Select an option'
         />
         <div className='result'>
