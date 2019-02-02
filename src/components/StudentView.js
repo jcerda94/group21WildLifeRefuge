@@ -49,6 +49,7 @@ class StudentView extends Component {
     this.setState({ height: window.innerHeight - uiHeight });
   }
   whileLoading(){
+      
       this.setState({
           loading: true
 
@@ -56,7 +57,10 @@ class StudentView extends Component {
   }
 
     whileNotLoading(){
+
         this.setState({
+            increment: this.props.increment,
+            height: 0,
             loading: false
 
         })
@@ -74,22 +78,28 @@ class StudentView extends Component {
       </React.Fragment>
     );
 
+       if(!loading == false)
+       {
+          return(<LoadingModels/>);
+       }else {
+           return (
+
+               <Container>
+                   <UIBar
+                       reportHeight={this.findUIHeight}
+                       increment={this.state.increment}
+                   />
+                   {Controls}
+                   <ViewControl/>
+                   <BalancePopulation/>
+
+                   <SimViewer height={this.state.height}/>
+               </Container>
+           );
+
+       }
 
 
-        return (
-
-            <Container>
-                <UIBar
-                    reportHeight={this.findUIHeight}
-                    increment={this.state.increment}
-                />
-                {Controls}
-                <ViewControl/>
-                <BalancePopulation/>
-
-                <SimViewer height={this.state.height}/>
-            </Container>
-        );
     }
 
 }
@@ -106,5 +116,5 @@ export default function (container) {
     if (!StudentView.instance) {
         StudentView.instance = new StudentView(container);
     }
-    return SubtleCrypto.instance;
+    return StudentView.instance;
 }
