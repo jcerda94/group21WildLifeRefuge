@@ -8,6 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import styled from "styled-components";
 import Drawer from "./components/UI/Drawer";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import BalancePopulation from "./components/BalancePopulation/BalancePopulation";
 
 const Container = styled.div`
   display: flex;
@@ -41,7 +42,7 @@ class App extends Component {
               <Fragment>
                 <UIBar />
                 <StudentView />
-                <Drawer />
+                <Drawer Content={BalancePopulation} />
               </Fragment>
             )}
           />
