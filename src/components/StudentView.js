@@ -63,7 +63,7 @@ class StudentView extends Component {
         />
         {Controls}
         <ViewControl />
-        <BalancePopulation name={this.simModel} />
+        <BalancePopulation />
         <SimViewer height={this.state.height} />
       </Container>
     );
