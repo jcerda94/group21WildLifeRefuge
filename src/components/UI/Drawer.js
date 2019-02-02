@@ -2,16 +2,24 @@ import React, { Component } from "react";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import { withStyles } from "@material-ui/core";
 import Subject from "../../utils/subject";
+import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "@material-ui/core/IconButton";
+import { relative } from "path";
 
 const styles = {
   list: {
     width: 250
+  },
+  menuButton: {
+    position: "absolute",
+    top: 0,
+    right: 0
   }
 };
 
 class Drawer extends Component {
   state = {
-    open: false
+    open: true
   }
 
   setDrawer = ({ to: value }) => {
@@ -46,13 +54,14 @@ class Drawer extends Component {
           onOpen={this.toggleDrawer}
         >
           <div style={{ width: "400px", height: "100%" }}>
-            {" "}
-            <div
-              tabIndex={0}
-              role='button'
+            <IconButton
+              className={classes.menuButton}
               onClick={this.toggleDrawer}
-              onKeyDown={this.toggleDrawer}
-            />
+              color='inherit'
+              aria-label='Menu'
+            >
+              <CloseIcon />
+            </IconButton>
           </div>
         </SwipeableDrawer>
       </div>
