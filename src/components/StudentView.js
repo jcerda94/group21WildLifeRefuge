@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "../css/simulation.css";
 import SimViewer from "./SimViewer";
+import ViewControl from "./ViewControl";
 import UIBar from "./UI/UIBar";
 import back from "../assets/back.png";
 import forward from "../assets/forward.png";
@@ -9,6 +10,7 @@ import help from "../assets/help.png";
 import styled from "styled-components";
 import ImgButton from "./UI/ImgButton";
 import ResetButton from "./UI/ResetButton";
+import BalancePopulation from "./BalancePopulation";
 
 const Container = styled.div`
   display: flex;
@@ -28,8 +30,7 @@ class StudentView extends Component {
     // TODO: Need to test reviewing behavior later
     this.state = {
       increment: this.props.increment,
-      height: 0,
-      data: { test: "test" }
+      height: 0
     };
 
     // Disables increment functionality if in review mode
@@ -61,6 +62,8 @@ class StudentView extends Component {
           increment={this.state.increment}
         />
         {Controls}
+        <ViewControl />
+        <BalancePopulation name={this.simModel} />
         <SimViewer height={this.state.height} />
       </Container>
     );
