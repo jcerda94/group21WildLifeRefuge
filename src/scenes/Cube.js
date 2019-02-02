@@ -7,7 +7,7 @@ async function Cube (scene, config) {
     position = { x: 0, y: 0, z: 0 }
   } = config;
 
-  const geometry = new THREE.CubeGeometry(size, size, size);
+  const geometry = new THREE.CubeGeometry(size, size * 3, size);
   const material = new THREE.MeshBasicMaterial({ color });
   const cube = new THREE.Mesh(geometry, material);
   cube.position.set(position.x, position.y, position.z);

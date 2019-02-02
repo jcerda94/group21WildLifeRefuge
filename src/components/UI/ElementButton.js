@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { getSceneManager } from "../../scenes/SceneManager";
 import Cube from "../../scenes/Cube";
+import { random } from "../../utils/helpers";
+import Hawk from "../../scenes/Hawk";
 
 class ElementButton extends Component {
   constructor (props) {
@@ -18,15 +20,19 @@ class ElementButton extends Component {
   }
 
   onClick = () => {
-    this.props.increment(this.props.name);
+    const { increment } = this.props;
+    increment && increment(this.props.name);
+    const SceneManager = getSceneManager();
 
-    var color;
+    let color = null;
     switch (this.props.model) {
       case "tree":
         color = "#00C060";
         break;
       case "hawk":
         color = 0xcc0000;
+        SceneManager.addObject(new Hawk(SceneManager.scene));
+        return;
         break;
       case "bush":
         color = 0x669900;
@@ -37,11 +43,6 @@ class ElementButton extends Component {
       default:
         break;
     }
-    function random (min, max) {
-      return Math.random() * (max - min) + min;
-    }
-
-    const SceneManager = getSceneManager();
 
     const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
     const heightBound = (0.95 * SceneManager.groundSize.y) / 2;

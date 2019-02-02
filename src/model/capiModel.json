@@ -1,19 +1,11 @@
 {
-  "toggleContext": false,
-  "simContext" : "VIEWER",
+  "toggleContext": true,
   "studentMode": true,
   "authorMode": false,
   "reviewMode": false,
-  "simEnabled": true,
-  "redCedar": 0,
-  "redHawk": 0,
-  "snowHare": 0,
-  "firstName": "John",
-  "lastName": "Deo",
-  "bigSage": 0,
-  "level": 0,
-  "score": 0,
-  "simObjects" : [],
-  "loggedIn": false
-
+  "redtailHawkCount": 0,
+  "redtailHawkSelected": 0,
+  "sageBushCount": 0,
+  "sageBushSelected": 0,
+  "inputData": 0
 }

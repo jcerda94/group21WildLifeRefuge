@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import ThreeEntry from "../scenes/ThreeEntry";
+import { getSceneManager } from "../scenes/SceneManager";
+import { getCapiInstance } from "../utils/CAPI/capi";
 
 const CanvasContainer = styled.div`
   flex: 1;
@@ -28,6 +30,13 @@ class SimViewer extends Component {
     this.sceneManager = new ThreeEntry(
       this.canvasContainer.current
     ).sceneManager;
+
+    const capi = getCapiInstance();
+    const Transporter = capi.getTransporter();
+    Transporter.addInitialSetupCompleteListener(() => {
+      getSceneManager().onTransporterReady();
+    });
+    Transporter.notifyOnReady();
   }
 
   onClick = () => {
@@ -35,11 +44,7 @@ class SimViewer extends Component {
   }
 
   render () {
-    return (
-      <CanvasContainer ref={this.canvasContainer}>
-        <Button onClick={this.onClick}>Reset Camera</Button>
-      </CanvasContainer>
-    );
+    return <CanvasContainer ref={this.canvasContainer} />;
   }
 }
 

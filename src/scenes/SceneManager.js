@@ -5,7 +5,9 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import { getValue } from "../utils/helpers";
-import {FlyControls} from "../js/three/FlyControls";
+import Hawk, { NAME as hawkName } from "./Hawk";
+import { getCapiInstance } from "../utils/CAPI/capi";
+import { FlyControls } from "../js/three/FlyControls";
 
 class SceneManager {
   groundSize = {
@@ -54,11 +56,28 @@ class SceneManager {
 
       const color = getValue("material.color", modelToRemove);
       color.set && color.set(originalColor);
+      if (getValue("userData.name") === hawkName) {
+        const capi = getCapiInstance();
+        const currentHawkCount = capi.getValue({ key: "redtailHawkSelected" });
+        capi.setValue({
+          key: "redtailHawkSelected",
+          value: currentHawkCount - 1
+        });
+      }
       this.selected.splice(modelIndex, 1);
     } else {
       const color = getValue("material.color", model);
       const selectedColor = getValue("userData.color.selected", model);
+      const name = getValue("userData.name", model);
       color.set && color.set(selectedColor);
+      if (name === hawkName) {
+        const capi = getCapiInstance();
+        const currentHawkCount = capi.getValue({ key: "redtailHawkSelected" });
+        capi.setValue({
+          key: "redtailHawkSelected",
+          value: currentHawkCount + 1
+        });
+      }
       this.selected.push(model);
     }
   }
@@ -116,12 +135,6 @@ class SceneManager {
     }
   }
 
-  rotateCamera (elapsedTime) {
-    this.camera.position.x = 120 * Math.cos(elapsedTime / 8);
-    this.camera.position.z = 120 * Math.sin(elapsedTime / 8);
-    this.camera.lookAt(this.scene.position);
-  }
-
   createSceneSubjects () {
     this.subjects = [
       new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
@@ -131,8 +144,17 @@ class SceneManager {
     ];
   }
 
-  addObject (sceneObject, position) {
+  addObject (sceneObject) {
     this.subjects.push(sceneObject);
+  }
+
+  onTransporterReady () {
+    const capi = getCapiInstance();
+    const hawkCount = capi.getValue({ key: "redtailHawkCount" });
+
+    for (let hawks = 0; hawks < hawkCount; hawks++) {
+      this.addObject(new Hawk(this.scene));
+    }
   }
 
   onWindowResize () {
@@ -198,12 +220,12 @@ class SceneManager {
       farPlane
     );
 
-    this.camera.position.set(0, 75, 500);
+    this.camera.position.set(-75, 40, 80);
 
     this.cameraControls = new OrbitControls(this.camera);
   }
 
-  setFlyControlCamera(){
+  setFlyControlCamera () {
     // position and point the camera to the center of the scene
     this.camera.position.x = 100;
     this.camera.position.y = 100;
@@ -218,18 +240,15 @@ class SceneManager {
     this.cameraControls.rollSpeed = Math.PI / 24;
     this.cameraControls.autoForward = true;
     this.cameraControls.dragToLook = true;
-
-
   }
 
-  setCameraPosition(x,y,z){
+  setCameraPosition (x, y, z) {
     this.cameraControls = new OrbitControls(this.camera);
 
     this.camera.position.x = x;
     this.camera.position.y = y;
     this.camera.position.z = z;
   }
-
 
   initializeScene () {
     this.scene = new THREE.Scene();
@@ -246,8 +265,6 @@ class SceneManager {
     this.renderer.setSize(width, height);
   }
 }
-
-
 
 export const getSceneManager = () => {
   return SceneManager.instance || null;
