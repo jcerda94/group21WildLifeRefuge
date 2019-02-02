@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import "./css/App.css";
 import WelcomePage from "./components/WelcomePage/WelcomePage";
 import UIBar from "./components/UI/UIBar";
@@ -7,6 +7,7 @@ import AuthorView from "./components/AuthorView";
 import Grid from "@material-ui/core/Grid";
 import styled from "styled-components";
 import Drawer from "./components/UI/Drawer";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -31,11 +32,21 @@ class App extends Component {
 
   render () {
     return (
-      <Container className='appRoot'>
-        <UIBar />
-        <StudentView />
-        <Drawer />
-      </Container>
+      <Router>
+        <Container className='appRoot'>
+          <Route exact path='/' component={WelcomePage} />
+          <Route
+            path='/sim'
+            component={() => (
+              <Fragment>
+                <UIBar />
+                <StudentView />
+                <Drawer />
+              </Fragment>
+            )}
+          />
+        </Container>
+      </Router>
     );
   }
 }
