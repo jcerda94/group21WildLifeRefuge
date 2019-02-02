@@ -9,6 +9,7 @@ import styled from "styled-components";
 import Drawer from "./components/UI/Drawer";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import BalancePopulation from "./components/BalancePopulation/BalancePopulation";
+import ViewControl from "./components/ViewControl";
 
 const Container = styled.div`
   display: flex;
@@ -42,7 +43,14 @@ class App extends Component {
               <Fragment>
                 <UIBar />
                 <StudentView />
-                <Drawer Content={BalancePopulation} />
+                <Drawer
+                  Content={() => (
+                    <Fragment>
+                      <Route component={BalancePopulation} />
+                      <Route component={ViewControl} />
+                    </Fragment>
+                  )}
+                />
               </Fragment>
             )}
           />

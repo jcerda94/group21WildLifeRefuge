@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { getCapiInstance } from "../../utils/CAPI/capi";
 import Paper from "@material-ui/core/Paper";
 import styled from "styled-components";
-import BalanceSelect from "./BalanceSelect";
+import SelectDropdown from "../Styled/SelectDropdown";
 
 const Container = styled(Paper)`
   display: flex;
@@ -55,7 +55,7 @@ class BalancePopulation extends Component {
         <h3>What would you do? </h3>
         If there are too many snowshoe hares in wildlife refuge, what kind of
         population would you add to balance current ecosystem?
-        <BalanceSelect
+        <SelectDropdown
           options={options}
           onChange={this._onSelect}
           value={selected}

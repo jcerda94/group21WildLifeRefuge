@@ -25,6 +25,7 @@ class SceneManager {
   subjects = []
   selected = []
   intersected = null
+  defaultCameraPosition = [-75, 40, 80]
 
   constructor (canvas) {
     this.setCanvas(canvas);
@@ -220,7 +221,7 @@ class SceneManager {
       farPlane
     );
 
-    this.camera.position.set(-75, 40, 80);
+    this.camera.position.set(...this.defaultCameraPosition);
 
     this.cameraControls = new OrbitControls(this.camera);
   }
@@ -248,6 +249,10 @@ class SceneManager {
     this.camera.position.x = x;
     this.camera.position.y = y;
     this.camera.position.z = z;
+  }
+
+  setDefaultCamera () {
+    this.camera.position.set(...this.defaultCameraPosition);
   }
 
   initializeScene () {

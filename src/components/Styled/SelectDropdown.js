@@ -5,7 +5,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 const Container = styled.div``;
 
-class BalanceSelect extends Component {
+class SelectDropdown extends Component {
   onChange = e => {
     const { onChange } = this.props;
     onChange && onChange(e.target.value);
@@ -35,4 +35,4 @@ class BalanceSelect extends Component {
   }
 }
 
-export default BalanceSelect;
+export default SelectDropdown;
