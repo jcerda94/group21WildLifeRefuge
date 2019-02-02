@@ -6,6 +6,7 @@ import StudentView from "./components/StudentView";
 import AuthorView from "./components/AuthorView";
 import Grid from "@material-ui/core/Grid";
 import styled from "styled-components";
+import Drawer from "./components/UI/Drawer";
 
 const Container = styled.div`
   display: flex;
@@ -33,6 +34,7 @@ class App extends Component {
       <Container className='appRoot'>
         <UIBar />
         <StudentView />
+        <Drawer />
       </Container>
     );
   }

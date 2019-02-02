@@ -5,9 +5,11 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import MenuIcon from "@material-ui/icons/Menu";
 import IconButton from "@material-ui/core/IconButton";
 import ModelAdd from "./ModelAdd";
 import ModelMenu from "./ModelMenu";
+import Subject from "../../utils/subject";
 
 const styles = {
   root: {
@@ -40,6 +42,10 @@ class UIBar extends Component {
     }
   }
 
+  toggleDrawer = position => () => {
+    Subject.next(`toggle ${position}`);
+  }
+
   render () {
     const { classes } = this.props;
     const { floraAnchor, faunaAnchor } = this.state;
@@ -50,6 +56,14 @@ class UIBar extends Component {
       <div className={classes.root}>
         <AppBar position='static'>
           <Toolbar>
+            <IconButton
+              className={classes.menuButton}
+              onClick={this.toggleDrawer("left")}
+              color='inherit'
+              aria-label='Menu'
+            >
+              <MenuIcon />
+            </IconButton>
             <Typography variant='h6' color='inherit' className={classes.grow}>
               Willapa Refuge
             </Typography>{" "}
