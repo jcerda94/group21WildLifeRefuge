@@ -4,7 +4,12 @@ const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
 async function GrassField (scene, config = { count: 500 }) {
-  const loader = new THREE.GLTFLoader();
+  console.log("at GrassField");
+  const manger = new THREE.LoadingManager();
+  manger.onStart =()=>{
+    console.log("start Loading");
+  }
+  const loader = new THREE.GLTFLoader(manger);
   const { count } = config;
 
   const grasses = new THREE.Object3D();
