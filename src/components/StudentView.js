@@ -11,6 +11,8 @@ import styled from "styled-components";
 import ImgButton from "./UI/ImgButton";
 import ResetButton from "./UI/ResetButton";
 import BalancePopulation from "./BalancePopulation";
+import LoadingModels from "./LoadingModels";
+import GrassField from "../scenes/GrassField";
 
 const Container = styled.div`
   display: flex;
@@ -30,7 +32,8 @@ class StudentView extends Component {
     // TODO: Need to test reviewing behavior later
     this.state = {
       increment: this.props.increment,
-      height: 0
+      height: 0,
+      loading: false
     };
 
     // Disables increment functionality if in review mode
@@ -45,8 +48,23 @@ class StudentView extends Component {
   findUIHeight = uiHeight => {
     this.setState({ height: window.innerHeight - uiHeight });
   }
+  whileLoading(){
+      this.setState({
+          loading: true
 
+      })
+  }
+
+    whileNotLoading(){
+        this.setState({
+            loading: false
+
+        })
+    }
   render () {
+
+    const {loading} = this.state;
+    console.log("is loading value is ==> " + loading );
     const Controls = (
       <React.Fragment>
         <ImgButton key='back' id='back' src={back} />
@@ -55,19 +73,38 @@ class StudentView extends Component {
         <ImgButton key='help' id='help' src={help} />
       </React.Fragment>
     );
-    return (
-      <Container>
-        <UIBar
-          reportHeight={this.findUIHeight}
-          increment={this.state.increment}
-        />
-        {Controls}
-        <ViewControl />
-        <BalancePopulation />
-        <SimViewer height={this.state.height} />
-      </Container>
-    );
-  }
+
+
+
+        return (
+
+            <Container>
+                <UIBar
+                    reportHeight={this.findUIHeight}
+                    increment={this.state.increment}
+                />
+                {Controls}
+                <ViewControl/>
+                <BalancePopulation/>
+
+                <SimViewer height={this.state.height}/>
+            </Container>
+        );
+    }
+
 }
 
-export default StudentView;
+//export default StudentView;
+
+
+export const getStudentView = () => {
+    return StudentView.instance || null;
+};
+
+
+export default function (container) {
+    if (!StudentView.instance) {
+        StudentView.instance = new StudentView(container);
+    }
+    return SubtleCrypto.instance;
+}

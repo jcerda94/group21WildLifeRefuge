@@ -9,6 +9,7 @@ import Hawk, { NAME as hawkName } from "./Hawk";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
 
+
 class SceneManager {
   groundSize = {
     x: 1000,
@@ -140,7 +141,7 @@ class SceneManager {
       new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
       new GrassField(this.scene, { count: 500 }),
       new AmbientLight(this.scene),
-      new DirectionalLight(this.scene)
+      new DirectionalLight(this.scene,)
     ];
   }
 

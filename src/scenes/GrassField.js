@@ -1,10 +1,37 @@
+import React, { Component}  from 'react';
+import LoadingModels from "../components/LoadingModels";
+import {getStudentView} from "../components/StudentView";
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
+
+
 async function GrassField (scene, config = { count: 500 }) {
-  const loader = new THREE.GLTFLoader();
+
+
+
+
+  const manager = new THREE.LoadingManager();
+  var isLoading = true;
+  manager.onStart=()=>{
+
+    console.log("Start Loading");
+   const studentView = getStudentView();
+   studentView.whileLoading();
+
+  }
+  manager.onLoad=()=>{
+
+    console.log("Done Loading");
+    isLoading = false;
+    const studentView = getStudentView();
+    studentView.whileNotLoading();
+
+
+  }
+  const loader = new THREE.GLTFLoader(manager);
   const { count } = config;
 
   const grasses = new THREE.Object3D();
