@@ -8,7 +8,7 @@ import { getSceneManager } from '../scenes/SceneManager';
 import {getValue} from "../utils/helpers";
 import styled from "styled-components";
 
-
+const hawkInfo = "You seclect a hawk";
 const Container = styled.div`
 
   position: absolute;
@@ -34,7 +34,7 @@ class PopUp extends React.Component {
   constructor(props){
       super(props);
       this.state = {
-          shown: props.shown,
+          shown: false,
       }
 
   }
@@ -73,7 +73,7 @@ class PopUp extends React.Component {
 
 
             <div>
-            <p> {name}</p>
+            <p> {hawkInfo}</p>
             </div>
                 <Button
                     aria-owns={open ? 'simple-popper' : undefined}
@@ -81,7 +81,7 @@ class PopUp extends React.Component {
                     variant="contained"
                     onClick={this.handleClick}
                 >
-                    Open Popover
+                    Close
                 </Button>
 
             </Container>

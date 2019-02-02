@@ -13,6 +13,7 @@ import ResetButton from "./UI/ResetButton";
 import BalancePopulation from "./BalancePopulation";
 import PopUp from "./PopUp"
 
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
