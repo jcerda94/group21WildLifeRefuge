@@ -6,45 +6,82 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-
+import ModelAdd from "./ModelAdd";
+import ModelMenu from "./ModelMenu";
 
 const styles = {
   root: {
-    flexGrow: 0
+    zIndex: 10
   },
   grow: {
-    flexGrow: 0
+    flexGrow: 1
   },
   menuButton: {
     marginLeft: -12,
     marginRight: 20
   }
 };
-function UIBar(props) {
-  const { classes } = props;
-  return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-          </IconButton>
-          <Typography variant="h6" color="inherit" className={classes.grow}>
-            Willapa Refuge
-          </Typography>
-          <Button color="inherit">Add Predator</Button>
-          <Button color="inherit">Remove Predator</Button>
-          <Button color="inherit">Add Prey</Button>
-          <Button color="inherit">Remove Prey</Button>
-          <Button color="inherit">Add Trees</Button>
-          <Button color="inherit">Remove Trees</Button>
-          <Button color="inherit">Add Bushes</Button>
-          <Button color="inherit">Remove Bushes</Button>
-          <Button color="inherit">Add Grasses</Button>
-          <Button color="inherit">Remove Grasses</Button>
-        </Toolbar>
-      </AppBar>
-    </div>
-  );
+
+class UIBar extends Component {
+  state = {
+    floraAnchor: null,
+    faunaAnchor: null
+  }
+
+  handleMenu = anchor => event => {
+    if (event.currentTarget !== this.state[anchor]) {
+      this.setState({ [anchor]: event.currentTarget });
+    }
+  }
+
+  handleClose = anchor => () => {
+    if (this.state[anchor]) {
+      this.setState({ [anchor]: null });
+    }
+  }
+
+  render () {
+    const { classes } = this.props;
+    const { floraAnchor, faunaAnchor } = this.state;
+    const floraOpen = Boolean(floraAnchor);
+    const faunaOpen = Boolean(faunaAnchor);
+
+    return (
+      <div className={classes.root}>
+        <AppBar position='static'>
+          <Toolbar>
+            <Typography variant='h6' color='inherit' className={classes.grow}>
+              Willapa Refuge
+            </Typography>{" "}
+            <Button onClick={this.handleMenu("floraAnchor")} color='inherit'>
+              Flora
+            </Button>
+            <Button onClick={this.handleMenu("faunaAnchor")} color='inherit'>
+              Fauna
+            </Button>
+            <ModelMenu
+              id='menu-fauna'
+              anchor={faunaAnchor}
+              open={faunaOpen}
+              onClose={this.handleClose("faunaAnchor")}
+            >
+              <ModelAdd label='Redtail Hawk' />
+              <ModelAdd label='Snowshoe Hare' />
+            </ModelMenu>
+            <ModelMenu
+              id='menu-flora'
+              anchor={floraAnchor}
+              open={floraOpen}
+              onClose={this.handleClose("floraAnchor")}
+            >
+              <ModelAdd label='Big Sagebush' />
+              <ModelAdd label='Western Cedar' />
+            </ModelMenu>
+          </Toolbar>
+        </AppBar>
+      </div>
+    );
+  }
 }
 
 UIBar.propTypes = {
@@ -52,4 +89,3 @@ UIBar.propTypes = {
 };
 
 export default withStyles(styles)(UIBar);
-
