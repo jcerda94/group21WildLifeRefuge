@@ -2,9 +2,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { Component } from "react";
 import "../css/simulation.css";
-import SimViewer from "./SimViewer";
-import ViewControl from "./ViewControl";
-import UIBar from "./UI/UIBar";
+
 import back from "../assets/back.png";
 import forward from "../assets/forward.png";
 import reset from "../assets/reset.png";
@@ -12,12 +10,7 @@ import help from "../assets/help.png";
 import styled from "styled-components";
 import ImgButton from "./UI/ImgButton";
 import ResetButton from "./UI/ResetButton";
-import BalancePopulation from "./BalancePopulation";
-import Loader from "../scenes/Loader";
 
-
-import GrassField from "../scenes/GrassField";
-import {getStudentView} from "./StudentView";
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
@@ -41,19 +34,19 @@ class LoadingModels extends Component{
 
 
         this.state ={
-            loading: false
+            loading: false,
+            grass: null
         }
     }
     async componentDidMount() {
-        const load = <Loader/>;
+
         console.log("Called  did mount");
         const manager = new THREE.LoadingManager();
         var isLoading = true;
         manager.onStart = () => {
 
             console.log("Start Loading");
-            //const studentView = getStudentView();
-            //studentView.whileLoading();
+
 
         }
         manager.onLoad = () => {
@@ -61,10 +54,9 @@ class LoadingModels extends Component{
             console.log("Done Loading");
             isLoading = false;
             this.setState({
-                loading: true
+                loading: true,
+                grass: originalGrass
             })
-           // const studentView = getStudentView();
-           // studentView.whileNotLoading();
 
 
         }
