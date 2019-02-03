@@ -78,27 +78,25 @@ class StudentView extends Component {
       </React.Fragment>
     );
 
-       if(!loading == false)
+       if(loading == true)
        {
           return(<LoadingModels/>);
-       }else {
+
+       }else if (loading == false) {
+           console.log("Am I called? ");
+
            return (
 
                <Container>
-                   <UIBar
-                       reportHeight={this.findUIHeight}
-                       increment={this.state.increment}
-                   />
-                   {Controls}
-                   <ViewControl/>
-                   <BalancePopulation/>
+
 
                    <SimViewer height={this.state.height}/>
+                   <LoadingModels/>
                </Container>
            );
 
-       }
 
+       }
 
     }
 

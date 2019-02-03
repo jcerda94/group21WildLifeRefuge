@@ -3,6 +3,7 @@ import styled from "styled-components";
 import ThreeEntry from "../scenes/ThreeEntry";
 import { getSceneManager } from "../scenes/SceneManager";
 import { getCapiInstance } from "../utils/CAPI/capi";
+import LoadingModels from "./LoadingModels";
 
 const CanvasContainer = styled.div`
   flex: 1;
@@ -25,8 +26,18 @@ const Button = styled.div`
 
 class SimViewer extends Component {
   canvasContainer = React.createRef()
+  constructor (props) {
+    super(props);
 
-  componentDidMount () {
+    // TODO: Need to test reviewing behavior later
+    this.state = {
+      increment: this.props.increment,
+      height: 0,
+      loading: true
+    };
+  }
+
+    componentDidMount () {
     this.sceneManager = new ThreeEntry(
       this.canvasContainer.current
     ).sceneManager;
@@ -43,9 +54,45 @@ class SimViewer extends Component {
     this.sceneManager.resetCamera();
   }
 
+  whileLoading(){
+
+    this.setState({
+      loading: true
+
+    })
+  }
+
+  whileNotLoading(){
+
+    this.setState({
+      increment: this.props.increment,
+      height: 0,
+      loading: false
+
+    })
+  }
+
   render () {
+
+    const {loading} = this.state;
+    if(loading == true){
+      return( <div>
+        <CanvasContainer ref={this.canvasContainer} />  </div>);
+
+    }
     return <CanvasContainer ref={this.canvasContainer} />;
   }
 }
 
-export default SimViewer;
+export const getSivView = () => {
+  return SimViewer.instance || null;
+};
+
+
+export default function (container) {
+  if (!SimViewer.instance) {
+    SimViewer.instance = new SimViewer(container);
+  }
+  return SimViewer.instance;
+}
+
