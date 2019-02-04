@@ -65,6 +65,10 @@ class SimViewer extends Component {
         <Fab color="primary" aria-label="Add" className={SimViewer.fab}>
         <AddIcon />
         </Fab>
+        <Fab color = "secondary" aria-label="Delete" className={SimViewer.fab}>
+        <DeleteIcon />
+      </Fab>
+
       </div>
      
     </CanvasContainer>
