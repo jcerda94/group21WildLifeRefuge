@@ -18,10 +18,12 @@ const CanvasContainer = styled.div`
 
 const styles = theme => ({
   fab: {
-    margin: theme.spacing.unit,
-  },
-  extendedIcon: {
-   margin:  theme.spacing.unit
+    margin: 0,
+    top: "auto",
+    right: 20,
+    bottom: 20,
+    left: "auto",
+    position: "fixed",
   },
 });
 
@@ -68,9 +70,7 @@ class SimViewer extends Component {
         <Fab color = "secondary" aria-label="Delete" className={SimViewer.fab}>
         <DeleteIcon />
       </Fab>
-
       </div>
-     
     </CanvasContainer>
     ;
   }
