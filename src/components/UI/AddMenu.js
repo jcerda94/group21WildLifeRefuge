@@ -8,6 +8,7 @@ import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import {styles as SimViewer} from "@material-ui/core/es/Button/Button";
+import AddModels from "../../scenes/AddModels";
 
 const Container = styled.div`
  position: absolute;
@@ -24,21 +25,43 @@ const DivMargin = styled.div`
 
 
 class AddMenu extends React.Component {
+
+
+    constructor (props) {
+        super(props);
+
+
+
+
+    }
     state = {
         anchorEl: null,
+
     };
+
+    componentDidMount() {
+
+    }
 
     handleClick = event => {
         this.setState({ anchorEl: event.currentTarget });
     };
 
-    handleClose = () => {
+    handleClose = (ev) => {
+
+        console.log(ev.nativeEvent.target.outerText);
+        const model = ev.nativeEvent.target.outerText;
+        var str = model;
+        str = str.slice(0, -1); // "12345.0"
+        new AddModels(str);
         this.setState({ anchorEl: null });
 
     };
 
     render() {
+        const tree = "tree";
         const { anchorEl } = this.state;
+
 
         return (
             <div>
@@ -64,11 +87,11 @@ class AddMenu extends React.Component {
                     open={Boolean(anchorEl)}
                     onClose={this.handleClose}
                 >
-                    <MenuItem onClick={this.handleClose}>Hare</MenuItem>
-                    <MenuItem onClick={this.handleClose}>HawK</MenuItem>
-                    <MenuItem onClick={this.handleClose}>Tree</MenuItem>
-                    <MenuItem onClick={this.handleClose}>Grass</MenuItem>
-                    <MenuItem onClick={this.handleClose}>Bush</MenuItem>
+                    <MenuItem onClick={this.handleClose}>{tree}</MenuItem>
+                    <MenuItem onClick={this.handleClose}>hawK</MenuItem>
+                    <MenuItem onClick={this.handleClose}>hare</MenuItem>
+                    <MenuItem onClick={this.handleClose}>grass</MenuItem>
+                    <MenuItem onClick={this.handleClose}>bush</MenuItem>
 
                 </Menu>
             </div>
