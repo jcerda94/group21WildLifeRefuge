@@ -25,9 +25,12 @@ const Container = styled.div`
  left: 45%;
  top: 90%;
  display: flex;
- flex-direction: column;
- align-items: flex-start;
+ grid-template-columns: auto, auto, auto;
  justify-content: center;
+`;
+
+const DivMargin = styled.div`
+  margin: 5px;
 `;
 
 class SimViewer extends Component {
@@ -53,14 +56,16 @@ class SimViewer extends Component {
   render () {
     return <CanvasContainer ref={this.canvasContainer}>
       <Container>
-      <div>
-        <Fab color="primary" aria-label="Add" className={SimViewer.fab}>
-        <AddIcon />
-        </Fab>
-        <Fab color = "secondary" aria-label="Delete" className={SimViewer.fab}>
-        <DeleteIcon />
-      </Fab>
-      </div>
+        <DivMargin> 
+          <Fab color="primary" aria-label="Add" className={SimViewer.fab}>
+          <AddIcon />
+          </Fab>
+        </DivMargin>
+        <DivMargin>
+          <Fab color = "secondary" aria-label="Delete" className={SimViewer.fab}>
+          <DeleteIcon />
+          </Fab>
+        </DivMargin>
       </Container>
     </CanvasContainer>
     ;
