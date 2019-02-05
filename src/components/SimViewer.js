@@ -41,6 +41,16 @@ const Button = styled.div`
   user-select: none;
 `;
 
+const Container = styled.div`
+ position: absolute;
+ left: 15%;
+ top: 40%;
+ display: flex;
+ flex-direction: column;
+ align-items: flex-start;
+ justify-content: center;
+`;
+
 class SimViewer extends Component {
   canvasContainer = React.createRef()
 
@@ -63,6 +73,7 @@ class SimViewer extends Component {
 
   render () {
     return <CanvasContainer ref={this.canvasContainer}>
+      <Container>
       <div>
         <Fab color="primary" aria-label="Add" className={SimViewer.fab}>
         <AddIcon />
@@ -71,6 +82,7 @@ class SimViewer extends Component {
         <DeleteIcon />
       </Fab>
       </div>
+      </Container>
     </CanvasContainer>
     ;
   }
