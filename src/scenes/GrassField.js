@@ -1,5 +1,7 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
+import {getLoadingModels} from "../components/LoadingModels";
+
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
@@ -16,12 +18,14 @@ async function GrassField (scene, config = { count: 500 }) {
       reject
     );
   });
+
+
   const bounds = getSceneManager().groundSize;
   bounds.x *= 0.95;
   bounds.y *= 0.95;
 
   for (let i = 0; i < count; i++) {
-    const grass = originalGrass.clone();
+    const grass = getLoadingModels().getGrass().clone();
     grass.children[0].children[0].userData = {
       selectable: true,
       color: {
