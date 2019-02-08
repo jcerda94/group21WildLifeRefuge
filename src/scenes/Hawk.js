@@ -18,7 +18,7 @@ function Hawk (scene) {
   const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
 
   const x = random(-widthBound, widthBound);
-  const y = 1.5;
+  const y = 100;
   const z = random(-heightBound, heightBound);
   const position = { x, y, z };
 

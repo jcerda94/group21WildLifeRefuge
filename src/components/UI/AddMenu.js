@@ -52,6 +52,7 @@ class AddMenu extends React.Component {
         console.log(ev.nativeEvent.target.outerText);
         const model = ev.nativeEvent.target.outerText;
         var str = model;
+
         str = str.slice(0, -1); // "12345.0"
         new AddModels(str);
         this.setState({ anchorEl: null });
@@ -88,7 +89,7 @@ class AddMenu extends React.Component {
                     onClose={this.handleClose}
                 >
                     <MenuItem onClick={this.handleClose}>{tree}</MenuItem>
-                    <MenuItem onClick={this.handleClose}>hawK</MenuItem>
+                    <MenuItem onClick={this.handleClose}>hawk</MenuItem>
                     <MenuItem onClick={this.handleClose}>hare</MenuItem>
                     <MenuItem onClick={this.handleClose}>grass</MenuItem>
                     <MenuItem onClick={this.handleClose}>bush</MenuItem>

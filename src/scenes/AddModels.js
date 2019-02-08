@@ -3,6 +3,9 @@ import { getSceneManager } from "./SceneManager";
 import Cube from "./Cube";
 import { random } from "../utils/helpers";
 import Hawk from "./Hawk";
+import Tree from "./Tree";
+import Hare from "./Hare";
+import Bush from "./Bush";
 
 
 function AddModels(model) {
@@ -20,22 +23,24 @@ function AddModels(model) {
         switch ((String)(model1)) {
 
             case "tree":
-                console.log("I am creating " + model1);
                 color = "#00C060";
+               SceneManager.addObject(new Tree(SceneManager.scene));
+               return;
                 break;
             case "hawk":
-                console.log("I am creating " + model1);
                 color = 0xcc0000;
                 SceneManager.addObject(new Hawk(SceneManager.scene));
                 return;
                 break;
             case 'bush':
-                console.log("I am creating " + model1);
+                SceneManager.addObject(new Bush(SceneManager.scene));
                 color = 0x669900;
+                return;
                 break;
             case "hare":
-                console.log("I am creating " + model1);
+               SceneManager.addObject(new Hare(SceneManager.scene));
                 color = 0xd9d9d9;
+                return;
                 break;
             default:
 
