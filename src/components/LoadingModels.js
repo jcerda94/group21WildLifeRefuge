@@ -2,12 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { Component } from "react";
 import "../css/simulation.css";
 import { getSceneManager } from "../scenes/SceneManager";
-
-
 import styled from "styled-components";
-import ImgButton from "./UI/ImgButton";
-import ResetButton from "./UI/ResetButton";
-
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
@@ -26,13 +21,8 @@ const Container = styled.div`
 
 
 class LoadingModels extends Component{
-
-
     constructor(props){
         super(props)
-
-
-
         this.state ={
             loading: false,
             grass: null
@@ -42,6 +32,7 @@ class LoadingModels extends Component{
     goToSim = () => {
         const { history } = this.props;
         history && history.push("/sim");
+        console.log("at got to sim");
     }
 
     componentDidMount = async () => {
@@ -80,7 +71,7 @@ class LoadingModels extends Component{
             loading: true,
             grass: originalGrass
         })
-        console.log("at loading 2 " + this.state.grass);
+        console.log("at loading 2  after setSate  " + typeof this.state.grass);
         this.goToSim();
 
 
@@ -89,20 +80,28 @@ class LoadingModels extends Component{
 
     getGrass(){
         const {grass} = this.state;
-        console.log("at loading 2  at get Grass" + grass);
+        console.log("at loading 2  at get Grass called time # " + grass);
+        if(!grass){
+            this.componentDidMount();
+
+        }
 
         return grass;
     }
     componentWillUnmount() {
+        console.log("at loading 2 " + typeof originalGrass);
     }
 
+    reLoad(){
 
+
+
+
+    }
     render(){
+        console.log("Called Render");
         const {originalGrass} = this.state;
-        //console.log("at loading " + typeof originalGrass);
         const {loading} = this.state;
-
-
 
         {
             return (
@@ -121,8 +120,11 @@ class LoadingModels extends Component{
 
 
 }
-export const getLoadingModels = () => {
-    return LoadingModels.instance || null;
+export const getLoadingModels = (container) => {
+    if (!LoadingModels.instance) {
+        LoadingModels.instance = new LoadingModels(container);
+    }
+    return LoadingModels.instance;
 };
 
 export default function (container) {

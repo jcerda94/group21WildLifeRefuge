@@ -23,9 +23,28 @@ const Container = styled.div`
 `;
 
 class App extends Component {
+    constructor(prpos){
+        super(prpos);
+
+        if (window.performance) {
+            if (performance.navigation.type == 1) {
+                alert( "This page is reloaded" );
+                this.goToSim();
+
+            } else {
+                alert( "This page is not reloaded");
+            }
+        }
+
+    }
   state = {
     loggedIn: false
   }
+    goToSim = () => {
+        console.log("called got to sime at App js");
+        const { history } = this.props;
+        history && history.push("/load");
+    }
 
   handleLogin = () => {
     if (!this.state.loggedIn) {

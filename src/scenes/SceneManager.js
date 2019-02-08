@@ -9,6 +9,7 @@ import Hawk, { NAME as hawkName } from "./Hawk";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
 
+
 class SceneManager {
   groundSize = {
     x: 1000,
@@ -34,6 +35,8 @@ class SceneManager {
     this.initializeCamera();
 
     this.createSceneSubjects();
+
+
   }
 
   setCanvas (canvas) {
