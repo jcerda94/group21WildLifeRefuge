@@ -29,6 +29,7 @@ function Tree (scene) {
 
     treeTrunk.position.y=0.25;
     var tree =new THREE.Object3D();
+    tree.castShadow = true;
     tree.add(treeTrunk);
     tree.add(treeTop1);
     tree.add(treeTop);
