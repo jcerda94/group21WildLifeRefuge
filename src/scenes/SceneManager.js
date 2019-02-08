@@ -149,6 +149,11 @@ class SceneManager {
     this.subjects.push(sceneObject);
   }
 
+  removeObject (sceneObject) {
+    this.subjects.slice(this.subjects.indexOf(sceneObject));
+  }
+
+  
   onTransporterReady () {
     const capi = getCapiInstance();
     const hawkCount = capi.getValue({ key: "redtailHawkCount" });

@@ -9,6 +9,7 @@ import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import {styles as SimViewer} from "@material-ui/core/es/Button/Button";
 import AddModels from "../../scenes/AddModels";
+import RemoveModels from "../../scenes/RemoveModels";
 
 const Container = styled.div`
  position: absolute;
@@ -25,18 +26,12 @@ const DivMargin = styled.div`
 
 
 class AddMenu extends React.Component {
-
-
     constructor (props) {
         super(props);
-
-
-
-
     }
     state = {
-        anchorEl: null,
-
+        anchorEl: null, 
+        doingRemove: false,
     };
 
     componentDidMount() {
@@ -44,17 +39,39 @@ class AddMenu extends React.Component {
     }
 
     handleClick = event => {
+        console.log("handleClick  clicked for " + event.nativeEvent.target.outerText);
         this.setState({ anchorEl: event.currentTarget });
+        this.setState({ doingRemove: false });
+    };
+
+    handleClickRemove = event => {
+        console.log("handleClickRemove clicked for " + event.nativeEvent.target.outerText);
+        this.setState({ anchorEl: event.currentTarget });
+        this.setState({ doingRemove: true });
     };
 
     handleClose = (ev) => {
 
-        console.log(ev.nativeEvent.target.outerText);
-        const model = ev.nativeEvent.target.outerText;
-        var str = model;
+        if(!this.state.doingRemove) 
+        {
+            console.log("Doing Add for " + ev.nativeEvent.target.outerText);
+            const model = ev.nativeEvent.target.outerText;
+            var str = model;
 
-        str = str.slice(0, -1); // "12345.0"
-        new AddModels(str);
+            str = str.slice(0, -1); // "12345.0"
+            new AddModels(str);
+        }
+        else
+        {
+            console.log("Doing Remove: for " + ev.nativeEvent.target.outerText);
+            const model = ev.nativeEvent.target.outerText;
+            var str = model;
+
+            console.log("Doing Remove:  str: '" + str + "'");
+            str = str.slice(0, -1); // "12345.0"
+            console.log("Doing Remove:  str: '" + str + "'");
+            new RemoveModels(str);  
+        }
         this.setState({ anchorEl: null });
 
     };
@@ -62,7 +79,7 @@ class AddMenu extends React.Component {
     render() {
         const tree = "tree";
         const { anchorEl } = this.state;
-
+        console.log("AddMenu render:");
 
         return (
             <div>
@@ -71,13 +88,17 @@ class AddMenu extends React.Component {
                         <Fab
                             aria-owns={anchorEl ? 'simple-menu' : undefined}
                             aria-haspopup="true"
-                            onClick={this.handleClick}
+                            onClick={this.handleClick} // in here set the "what we doing" flag
                             color="primary" aria-label="Add" className={SimViewer.fab}>
                             <AddIcon />
                         </Fab>
                     </DivMargin>
                     <DivMargin>
-                        <Fab color = "secondary" aria-label="Delete" className={SimViewer.fab}>
+                        <Fab 
+                            aria-owns={anchorEl ? 'simple-menu' : undefined}
+                            aria-haspopup="true"
+                            onClick={this.handleClickRemove} // in here set the "what we doing" flag
+                            color = "secondary" aria-label="Delete" className={SimViewer.fab}>
                             <DeleteIcon />
                         </Fab>
                     </DivMargin>
