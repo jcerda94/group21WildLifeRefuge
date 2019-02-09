@@ -17,9 +17,9 @@ function RemoveModels(model) {
     const SceneManager = getSceneManager();
     const {model1} = this.state;
 
-    console.log("RemoveModels:  model1: " + (String)(model1));
+//    console.log("RemoveModels:  model1: " + (String)(model1));
     // find the current object(s) of the type we want to remove
-    console.log("RemoveModels:  SceneManager.subjects.length: " + SceneManager.subjects.length);
+  //  console.log("RemoveModels:  SceneManager.subjects.length: " + SceneManager.subjects.length);
     // find the current object(s) of the type we want to remove
     for (var i = SceneManager.subjects.length - 1; i >= 0;  i--) {
         //console.log("RemoveModels: current models[%d]: %s", i, (String)(model1));
