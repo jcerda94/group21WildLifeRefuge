@@ -180,6 +180,13 @@ class SceneManager {
     this.subjects.push(sceneObject);
   }
 
+  removeObject (idx, sceneObject) {
+    //console.log("removeObject: sceneObject: " + idx);
+    this.subjects.splice(idx, 1);
+    this.scene.remove(sceneObject);
+  }
+
+  
   onTransporterReady () {
     const capi = getCapiInstance();
     const hawkCount = capi.getValue({ key: "redtailHawkCount" });

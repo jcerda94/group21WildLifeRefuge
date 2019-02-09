@@ -11,14 +11,15 @@ import Bush from "./Bush";
 function AddModels(model) {
     this.state= ({
       model1: model,
-    })
-
-
+    });
         let color = null;
         const SceneManager = getSceneManager();
         const {model1} = this.state;
 
-
+        //console.log("AddModels:  model1: " + (String)(model1));
+        for (var i = SceneManager.scene.children.length - 1; i >= 0;  i--) {
+            //console.log("current models[%d]: %s", i, SceneManager.scene.children[i].type);
+            }
 
         switch ((String)(model1)) {
 
@@ -32,18 +33,19 @@ function AddModels(model) {
                 SceneManager.addObject(new Hawk(SceneManager.scene));
                 return;
                 break;
-            case 'bush':
+            case "bush":
                 SceneManager.addObject(new Bush(SceneManager.scene));
                 color = 0x669900;
                 return;
                 break;
             case "hare":
-               SceneManager.addObject(new Hare(SceneManager.scene));
-                color = 0xd9d9d9;
-                return;
-                break;
+                SceneManager.addObject(new Hare(SceneManager.scene));
+                 color = 0xd9d9d9;
+                 return;
+                 break;
             default:
-
+                // grass isn't handled
+          //      console.log("AddModels:  Unknown model: " + (String)(model1));
                 break;
         }
 
@@ -62,7 +64,7 @@ function AddModels(model) {
         };
 
         SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
-    function update () {}
+        function update () {}
 
     return {
         update
@@ -70,6 +72,6 @@ function AddModels(model) {
 
 }
 
-export default AddModels
+export default AddModels; 
 
 
