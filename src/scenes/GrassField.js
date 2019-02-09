@@ -1,14 +1,16 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
-import {getLoadingModels} from "../components/LoadingModels";
+import { getLoadingModels } from "../components/LoadingModels";
 import LoadingModels from "../components/LoadingModels";
 
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
-async function GrassField (scene, config = { count: 500 }) {
+async function GrassField (scene, config = { count: 500 }, onLoad) {
+  const loadingManager = new THREE.LoadingManager();
+  loadingManager.onLoad = onLoad || (() => null);
 
-  const loader = new THREE.GLTFLoader();
+  const loader = new THREE.GLTFLoader(loadingManager);
   const { count } = config;
 
   const grasses = new THREE.Object3D();
@@ -19,22 +21,14 @@ async function GrassField (scene, config = { count: 500 }) {
       undefined,
       reject
     );
-
   });
-
 
   const bounds = getSceneManager().groundSize;
   bounds.x *= 0.95;
   bounds.y *= 0.95;
-  const loadedModel = getLoadingModels().getGrass();
-  if(loadedModel == null){
-
-    console.log("Modeles is " + loadedModel);
-
-  }
 
   for (let i = 0; i < count; i++) {
-    const grass = loadedModel.clone();
+    const grass = originalGrass.clone();
     grass.children[0].children[0].userData = {
       selectable: true,
       color: {
@@ -60,7 +54,6 @@ async function GrassField (scene, config = { count: 500 }) {
   }
 
   grasses.type = "Grass";
-
   scene.add(grasses);
 
   function update () {}
