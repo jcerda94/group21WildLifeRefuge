@@ -40,6 +40,13 @@ class CAPI {
   setValue = ({ key, value }) => {
     return this.capiModel.set(key, value);
   }
+
+  getValues = ({ keys }) => {
+    return keys.reduce((accum, key) => {
+      accum.push(this.capiModel.get(key));
+      return accum;
+    }, []);
+  }
 }
 
 CAPI.instance = null;

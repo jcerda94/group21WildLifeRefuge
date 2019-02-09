@@ -38,9 +38,7 @@ class SceneManager {
     this.initializeCamera();
 
     this.createSceneSubjects();
-
   }
-
 
   initializeLoadingScreen () {
     const { width, height } = this.screenDimensions;
@@ -70,7 +68,6 @@ class SceneManager {
 
   onLoad = () => {
     this.loaded = true;
-    new PreLoadModels();
   }
 
   resetCamera () {
@@ -185,19 +182,22 @@ class SceneManager {
   }
 
   removeObject (idx, sceneObject) {
-    //console.log("removeObject: sceneObject: " + idx);
+    // console.log("removeObject: sceneObject: " + idx);
     this.subjects.splice(idx, 1);
     this.scene.remove(sceneObject);
   }
 
-  
   onTransporterReady () {
     const capi = getCapiInstance();
-    const hawkCount = capi.getValue({ key: "redtailHawkCount" });
-
-    for (let hawks = 0; hawks < hawkCount; hawks++) {
-      this.addObject(new Hawk(this.scene));
-    }
+    const [hawks, hares, cedars, bushes] = capi.getValues({
+      keys: [
+        "redtailHawkCount",
+        "snowshoeHareCount",
+        "westernCedarCount",
+        "sageBushCount"
+      ]
+    });
+    new PreLoadModels({ hawks, hares, cedars, bushes });
   }
 
   onWindowResize () {
