@@ -38,7 +38,7 @@ const Background = styled.div`
 class WelcomePage extends React.Component {
   goToSim = () => {
     const { history } = this.props;
-    history && history.push("/load");
+    history && history.push("/sim");
   }
   render () {
     const { handleLogin, name } = this.props;
