@@ -4,12 +4,19 @@ import { withStyles } from "@material-ui/core";
 import Subject from "../../utils/subject";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
-import { relative } from "path";
+import styled from "styled-components";
+
+const DrawerContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 64px 12px 0 12px;
+  width: 400px;
+  height: 100%;
+`;
 
 const styles = {
-  list: {
-    width: 250
-  },
   menuButton: {
     position: "absolute",
     top: 0,
@@ -19,7 +26,7 @@ const styles = {
 
 class Drawer extends Component {
   state = {
-    open: false
+    open: true
   }
 
   setDrawer = ({ to: value }) => {
@@ -44,27 +51,26 @@ class Drawer extends Component {
   }
 
   render () {
-    const { classes } = this.props;
+    const { classes, Content } = this.props;
     const { open } = this.state;
     return (
-      <div className={classes.list}>
-        <SwipeableDrawer
-          open={open}
-          onClose={this.toggleDrawer}
-          onOpen={this.toggleDrawer}
-        >
-          <div style={{ width: "400px", height: "100%" }}>
-            <IconButton
-              className={classes.menuButton}
-              onClick={this.toggleDrawer}
-              color='inherit'
-              aria-label='Menu'
-            >
-              <CloseIcon />
-            </IconButton>
-          </div>
-        </SwipeableDrawer>
-      </div>
+      <SwipeableDrawer
+        open={open}
+        onClose={this.toggleDrawer}
+        onOpen={this.toggleDrawer}
+      >
+        <DrawerContentContainer>
+          <IconButton
+            className={classes.menuButton}
+            onClick={this.toggleDrawer}
+            color='inherit'
+            aria-label='Menu'
+          >
+            <CloseIcon />
+          </IconButton>
+          <Content />
+        </DrawerContentContainer>
+      </SwipeableDrawer>
     );
   }
 }

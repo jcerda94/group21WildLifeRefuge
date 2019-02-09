@@ -3,25 +3,21 @@ import styled from "styled-components";
 import ThreeEntry from "../scenes/ThreeEntry";
 import { getSceneManager } from "../scenes/SceneManager";
 import { getCapiInstance } from "../utils/CAPI/capi";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import AddMenu from "./UI/AddMenu";
 
 const CanvasContainer = styled.div`
   flex: 1;
   overflow: hidden;
 `;
 
-const Button = styled.div`
-  padding: 14px;
-  color: white;
-  font-size: 18px;
-  text-align: center;
-  border-radius: 20px;
-  background-color: tomato;
-  position: absolute;
-  top: 85px;
-  left: 25px;
-  cursor: pointer;
-  user-select: none;
-`;
+const styles = theme => ({
+  fab: {
+    margin: theme.spacing.unit,
+  },
+});
+
 
 class SimViewer extends Component {
   canvasContainer = React.createRef()
@@ -44,8 +40,16 @@ class SimViewer extends Component {
   }
 
   render () {
-    return <CanvasContainer ref={this.canvasContainer} />;
+    return <CanvasContainer ref={this.canvasContainer}>
+      <AddMenu/>
+
+    </CanvasContainer>
+    ;
   }
 }
 
-export default SimViewer;
+SimViewer.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(SimViewer);
