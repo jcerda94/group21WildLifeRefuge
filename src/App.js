@@ -10,6 +10,7 @@ import Drawer from "./components/UI/Drawer";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import BalancePopulation from "./components/BalancePopulation/BalancePopulation";
 import ViewControl from "./components/ViewControl";
+import LoadingModels from "./components/LoadingModels";
 
 const Container = styled.div`
   display: flex;

@@ -35,6 +35,7 @@ class SimViewer extends Component {
     Transporter.notifyOnReady();
   }
 
+
   onClick = () => {
     this.sceneManager.resetCamera();
   }
