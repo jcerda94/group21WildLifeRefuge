@@ -8,6 +8,7 @@ import { getValue } from "../utils/helpers";
 import Hawk, { NAME as hawkName } from "./Hawk";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
+import PreLoadModels from "./PreLoadModels";
 
 class SceneManager {
   groundSize = {
@@ -37,7 +38,9 @@ class SceneManager {
     this.initializeCamera();
 
     this.createSceneSubjects();
+
   }
+
 
   initializeLoadingScreen () {
     const { width, height } = this.screenDimensions;
@@ -67,6 +70,7 @@ class SceneManager {
 
   onLoad = () => {
     this.loaded = true;
+    new PreLoadModels();
   }
 
   resetCamera () {

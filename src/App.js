@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import BalancePopulation from "./components/BalancePopulation/BalancePopulation";
 import ViewControl from "./components/ViewControl";
 import LoadingModels from "./components/LoadingModels";
+import PreLoadModels from "./scenes/PreLoadModels";
 
 const Container = styled.div`
   display: flex;
@@ -44,6 +45,7 @@ class App extends Component {
               <Fragment>
                 <UIBar />
                 <StudentView />
+
                 <Drawer
                   Content={() => (
                     <Fragment>
