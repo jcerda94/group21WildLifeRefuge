@@ -16,7 +16,7 @@ function AddModels(model) {
         const SceneManager = getSceneManager();
         const {model1} = this.state;
 
-        //console.log("AddModels:  model1: " + (String)(model1));
+        console.log("AddModels:  model1: " + (String)(model1));
         for (var i = SceneManager.scene.children.length - 1; i >= 0;  i--) {
             //console.log("current models[%d]: %s", i, SceneManager.scene.children[i].type);
             }
@@ -49,6 +49,7 @@ function AddModels(model) {
                 break;
         }
 
+        console.log("AddModels:  SceneManager.groundSize.x: " + SceneManager.groundSize.x);
         const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
         const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
 

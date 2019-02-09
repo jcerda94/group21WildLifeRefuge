@@ -61,6 +61,8 @@ function Tree (scene) {
         name: NAME
     };
 
+    tree.type = "Tree";
+  
     scene.add(tree);
 
     function update () {}
