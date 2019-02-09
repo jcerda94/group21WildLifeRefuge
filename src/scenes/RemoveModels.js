@@ -30,7 +30,7 @@ function RemoveModels(model) {
             case "hawk":  if(SceneManager.scene.children[i].type == "Hawk"){ removeIt=true; } break;
             case "bush":  if(SceneManager.scene.children[i].type == "Bush"){ removeIt=true; } break;
             case "hare":  if(SceneManager.scene.children[i].type == "Hare"){ removeIt=true; } break;
-            case "gras":  if(SceneManager.scene.children[i].type == "Grass"){ removeIt=true; } break;
+            case "grass":  if(SceneManager.scene.children[i].type == "Grass"){ removeIt=true; } break;
             default:
           //      console.log("RemoveModels:  Unknown model: " + (String)(model1));
                 break;
