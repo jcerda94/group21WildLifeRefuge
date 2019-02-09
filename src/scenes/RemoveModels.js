@@ -22,8 +22,8 @@ function RemoveModels(model) {
   //  console.log("RemoveModels:  SceneManager.subjects.length: " + SceneManager.subjects.length);
     // find the current object(s) of the type we want to remove
     for (var i = SceneManager.subjects.length - 1; i >= 0;  i--) {
-        //console.log("RemoveModels: current models[%d]: %s", i, (String)(model1));
-        //console.log("RemoveModels: current type      : %s",    SceneManager.scene.children[i].type);
+        console.log("RemoveModels: current models[%d]: %s", i, (String)(model1));
+        console.log("RemoveModels: current type      : %s",    SceneManager.scene.children[i].type);
         var removeIt=false;
         switch ((String)(model1)) {
             case "tree":  if(SceneManager.scene.children[i].type == "Tree"){ removeIt=true; } break;
@@ -38,9 +38,9 @@ function RemoveModels(model) {
         if(removeIt)
         {
             //console.log("RemoveModels: for " + (String)(model1));
-            //console.log("RemoveModels: current subject count %d", SceneManager.subjects.length);
+            console.log("RemoveModels: current subject count %d", SceneManager.subjects.length);
             SceneManager.removeObject(i, SceneManager.scene.children[i]);
-            //console.log("RemoveModels: current subject count %d", SceneManager.subjects.length);
+            console.log("RemoveModels: current subject count %d", SceneManager.subjects.length);
         }
     }
 
