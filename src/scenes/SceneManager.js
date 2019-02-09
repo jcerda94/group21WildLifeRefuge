@@ -149,8 +149,10 @@ class SceneManager {
     this.subjects.push(sceneObject);
   }
 
-  removeObject (sceneObject) {
-    this.subjects.slice(this.subjects.indexOf(sceneObject));
+  removeObject (idx, sceneObject) {
+    //console.log("removeObject: sceneObject: " + idx);
+    this.subjects.splice(idx, 1);
+    this.scene.remove(sceneObject);
   }
 
   

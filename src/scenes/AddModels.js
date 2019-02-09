@@ -16,9 +16,9 @@ function AddModels(model) {
         const SceneManager = getSceneManager();
         const {model1} = this.state;
 
-        console.log("AddModels:  model1: " + (String)(model1));
+        //console.log("AddModels:  model1: " + (String)(model1));
         for (var i = SceneManager.scene.children.length - 1; i >= 0;  i--) {
-            console.log("current models[%d]: %s", i, SceneManager.scene.children[i].type);
+            //console.log("current models[%d]: %s", i, SceneManager.scene.children[i].type);
             }
 
         switch ((String)(model1)) {
@@ -45,7 +45,7 @@ function AddModels(model) {
                  break;
             default:
                 // grass isn't handled
-                console.log("AddModels:  Unknown model: " + (String)(model1));
+          //      console.log("AddModels:  Unknown model: " + (String)(model1));
                 break;
         }
 
