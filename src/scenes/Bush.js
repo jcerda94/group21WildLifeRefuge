@@ -4,6 +4,7 @@ import { getSceneManager } from "./SceneManager";
 const THREE = require("three");
 
 export const NAME = "bush";
+export const TYPE = "Bush";
 
 function Bush (scene) {
   const size = 5;
@@ -33,6 +34,7 @@ function Bush (scene) {
     name: NAME
   };
 
+  cube.type = TYPE;
   scene.add(cube);
 
   function update () {}

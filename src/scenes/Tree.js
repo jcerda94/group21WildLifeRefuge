@@ -4,6 +4,7 @@ import { getSceneManager } from "./SceneManager";
 const THREE = require("three");
 
 export const NAME = "tree";
+export const TYPE = "Tree";
 
 function Tree (scene) {
   var sides = 8;
@@ -58,7 +59,7 @@ function Tree (scene) {
     name: NAME
   };
 
-  tree.type = "Tree";
+  tree.type = TYPE;
 
   scene.add(tree);
 
