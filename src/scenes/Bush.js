@@ -10,8 +10,9 @@ function Bush (scene) {
     const color = "#2cdb26";
 
     const geometry = new THREE.CubeGeometry(size*3, size , size);
-    const material = new THREE.MeshBasicMaterial({ color });
+    const material = new THREE.MeshLambertMaterial({ color });
     const cube = new THREE.Mesh(geometry, material);
+          cube.castShadow = true;
 
     const SceneManager = getSceneManager();
     const widthBound = (0.95 * SceneManager.groundSize.x) / 2;

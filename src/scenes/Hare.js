@@ -25,6 +25,7 @@ function Hare (scene) {
   const position = { x, y, z };
 
   hareMesh.position.set(position.x, position.y, position.z);
+  hareMesh.castShadow = true;
   hareMesh.userData = {
     selectable: true,
     color: {

@@ -1,10 +1,10 @@
-import * as THREE from "three";
+const THREE = require('three');
 
 function Ground (scene, config) {
   const { size = { x: 100, y: 100 }, color = "#996600" } = config;
   const depth = 15;
   const geometry = new THREE.BoxBufferGeometry(size.x, depth, size.y);
-  const material = new THREE.MeshPhongMaterial({
+  const material = new THREE.MeshLambertMaterial({
     color
   });
 

@@ -9,6 +9,7 @@ import Hawk, { NAME as hawkName } from "./Hawk";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
+import SpotLight from "./SpotLight";
 
 class SceneManager {
   groundSize = {
@@ -141,6 +142,7 @@ class SceneManager {
 
         const selectable = getValue("userData.selectable", this.intersected);
         if (selectable) {
+          console.log("I am selected ");
           const highlight = getValue(
             "userData.color.highlight",
             this.intersected
@@ -175,6 +177,7 @@ class SceneManager {
     this.subjects = [
       new AmbientLight(this.scene),
       new DirectionalLight(this.scene),
+      new SpotLight(this.scene),
       new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
       new GrassField(this.scene, { count: 500 }, this.onLoad)
     ];
