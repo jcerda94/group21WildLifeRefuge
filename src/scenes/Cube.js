@@ -24,7 +24,9 @@ async function Cube (scene, config) {
   function update () {}
 
   return {
-    update
+    update,
+    model: cube,
+    created: new Date()
   };
 }
 

@@ -168,12 +168,17 @@ class SceneManager {
     }
   }
 
-  createSceneSubjects () {
+  async createSceneSubjects () {
+    const grassField = await new GrassField(
+      this.scene,
+      { count: 500 },
+      this.onLoad
+    );
     this.subjects = [
       new AmbientLight(this.scene),
       new DirectionalLight(this.scene),
       new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
-      new GrassField(this.scene, { count: 500 }, this.onLoad)
+      grassField
     ];
   }
 
@@ -185,6 +190,27 @@ class SceneManager {
     // console.log("removeObject: sceneObject: " + idx);
     this.subjects.splice(idx, 1);
     this.scene.remove(sceneObject);
+  }
+
+  removeMostRecentModelByType ({ type }) {
+    const lastCreated = this.subjects
+      .filter(subject => {
+        if (subject.model) {
+          return subject.model.type === type;
+        }
+        return false;
+      })
+      .map(subject => subject.created)
+      .reduce((a, b) => Math.max(a, b))
+      .valueOf();
+
+    const mostRecentModel = this.subjects.find(subject => {
+      if (subject.created) {
+        return subject.created.valueOf() === lastCreated;
+      }
+      return false;
+    });
+    console.log(mostRecentModel);
   }
 
   onTransporterReady () {

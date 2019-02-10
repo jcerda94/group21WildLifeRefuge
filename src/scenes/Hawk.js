@@ -38,7 +38,9 @@ function Hawk (scene) {
   function update () {}
 
   return {
-    update
+    update,
+    model: cube,
+    created: new Date()
   };
 }
 

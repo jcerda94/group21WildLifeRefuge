@@ -59,7 +59,9 @@ async function GrassField (scene, config = { count: 500 }, onLoad) {
   function update () {}
 
   return {
-    update
+    update,
+    model: grasses,
+    created: new Date()
   };
 }
 

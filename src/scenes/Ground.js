@@ -20,7 +20,9 @@ function Ground (scene, config) {
   function update (time) {}
 
   return {
-    update
+    update,
+    model: ground,
+    created: new Date()
   };
 }
 

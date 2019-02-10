@@ -40,7 +40,9 @@ function Hare (scene) {
   function update () {}
 
   return {
-    update
+    update,
+    model: hareMesh,
+    created: new Date()
   };
 }
 
