@@ -26,7 +26,7 @@ const styles = {
 
 class Drawer extends Component {
   state = {
-    open: true
+    open: false
   }
 
   setDrawer = ({ to: value }) => {

@@ -8,6 +8,7 @@ import { getValue } from "../utils/helpers";
 import Hawk, { NAME as hawkName } from "./Hawk";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
+import PreLoadModels from "./PreLoadModels";
 
 class SceneManager {
   groundSize = {
@@ -18,6 +19,7 @@ class SceneManager {
   scene = null
   renderer = null
   cameraControls = null
+  loaded = false
   raycaster = new THREE.Raycaster()
   mouse = new THREE.Vector2()
   clock = new THREE.Clock()
@@ -26,20 +28,49 @@ class SceneManager {
   selected = []
   intersected = null
   defaultCameraPosition = [-75, 40, 80]
+  loadingScreen = null
 
   constructor (canvas) {
     this.setCanvas(canvas);
+    this.initializeLoadingScreen();
     this.initializeScene();
     this.initializeRenderer();
     this.initializeCamera();
 
     this.createSceneSubjects();
+
+  }
+
+
+  initializeLoadingScreen () {
+    const { width, height } = this.screenDimensions;
+    const aspectRatio = width / height;
+    this.loadingScreen = {
+      scene: new THREE.Scene(),
+      camera: new THREE.PerspectiveCamera(70, aspectRatio, 0.1, 100),
+      indicator: new THREE.Mesh(
+        new THREE.CircleGeometry(1, 32),
+        new THREE.MeshBasicMaterial({
+          color: "#3f51b5",
+          side: THREE.DoubleSide
+        })
+      )
+    };
+    this.loadingScreen.scene.background = new THREE.Color("#FFFFFF");
+    this.loadingScreen.indicator.position.set(0, 0, 5);
+    this.loadingScreen.camera.lookAt(this.loadingScreen.indicator.position);
+    this.loadingScreen.scene.add(this.loadingScreen.indicator);
   }
 
   setCanvas (canvas) {
     const { width, height } = canvas;
     this.canvas = canvas;
     this.screenDimensions = { width, height };
+  }
+
+  onLoad = () => {
+    this.loaded = true;
+    new PreLoadModels();
   }
 
   resetCamera () {
@@ -91,6 +122,10 @@ class SceneManager {
     }
 
     this.cameraControls.update(delta);
+    if (!this.loaded) {
+      this.renderer.render(this.loadingScreen.scene, this.loadingScreen.camera);
+      return;
+    }
     this.renderer.render(this.scene, this.camera);
     this.checkIntersects();
   }
@@ -138,10 +173,10 @@ class SceneManager {
 
   createSceneSubjects () {
     this.subjects = [
-      new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
-      new GrassField(this.scene, { count: 500 }),
       new AmbientLight(this.scene),
-      new DirectionalLight(this.scene)
+      new DirectionalLight(this.scene),
+      new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
+      new GrassField(this.scene, { count: 500 }, this.onLoad)
     ];
   }
 
@@ -149,6 +184,13 @@ class SceneManager {
     this.subjects.push(sceneObject);
   }
 
+  removeObject (idx, sceneObject) {
+    //console.log("removeObject: sceneObject: " + idx);
+    this.subjects.splice(idx, 1);
+    this.scene.remove(sceneObject);
+  }
+
+  
   onTransporterReady () {
     const capi = getCapiInstance();
     const hawkCount = capi.getValue({ key: "redtailHawkCount" });
@@ -212,7 +254,7 @@ class SceneManager {
     const fieldOfView = 60;
     const aspectRatio = width / height;
     const nearPlane = 1;
-    const farPlane = 1000;
+    const farPlane = 4000;
 
     this.camera = new THREE.PerspectiveCamera(
       fieldOfView,

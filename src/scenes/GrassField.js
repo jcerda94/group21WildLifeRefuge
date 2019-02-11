@@ -1,15 +1,18 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
+import { getLoadingModels } from "../components/LoadingModels";
+import LoadingModels from "../components/LoadingModels";
+
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
-async function GrassField (scene, config = { count: 500 }) {
-  console.log("at GrassField");
-  const manger = new THREE.LoadingManager();
-  manger.onStart =()=>{
-    console.log("start Loading");
-  }
-  const loader = new THREE.GLTFLoader(manger);
+
+async function GrassField (scene, config = { count: 500 }, onLoad) {
+  const loadingManager = new THREE.LoadingManager();
+  loadingManager.onLoad = onLoad || (() => null);
+
+  const loader = new THREE.GLTFLoader(loadingManager);
+
   const { count } = config;
 
   const grasses = new THREE.Object3D();
@@ -21,6 +24,7 @@ async function GrassField (scene, config = { count: 500 }) {
       reject
     );
   });
+
   const bounds = getSceneManager().groundSize;
   bounds.x *= 0.95;
   bounds.y *= 0.95;
@@ -52,7 +56,6 @@ async function GrassField (scene, config = { count: 500 }) {
   }
 
   grasses.type = "Grass";
-
   scene.add(grasses);
 
   function update () {}
