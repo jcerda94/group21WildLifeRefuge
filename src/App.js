@@ -12,6 +12,7 @@ import BalancePopulation from "./components/BalancePopulation/BalancePopulation"
 import ViewControl from "./components/ViewControl";
 import LoadingModels from "./components/LoadingModels";
 import PreLoadModels from "./scenes/PreLoadModels";
+import PopUpInfo from "./components/PopUpInfo";
 
 const Container = styled.div`
   display: flex;
@@ -45,6 +46,7 @@ class App extends Component {
               <Fragment>
                 <UIBar />
                 <StudentView />
+                <PopUpInfo/>
 
                 <Drawer
                   Content={() => (

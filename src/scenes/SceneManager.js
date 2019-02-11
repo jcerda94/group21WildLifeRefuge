@@ -46,6 +46,7 @@ class SceneManager {
   initializeLoadingScreen () {
     const { width, height } = this.screenDimensions;
     const aspectRatio = width / height;
+
     this.loadingScreen = {
       scene: new THREE.Scene(),
       camera: new THREE.PerspectiveCamera(70, aspectRatio, 0.1, 100),
@@ -313,6 +314,11 @@ class SceneManager {
     });
     this.renderer.setPixelRatio(1);
     this.renderer.setSize(width, height);
+
+    //this.renderer.setClearColor(0x000000, 1.0);
+    //this.renderer.setSize(window.innerWidth, window.innerHeight);
+   // this.renderer.shadowMap.enabled = true;
+    //this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
   }
 }
 

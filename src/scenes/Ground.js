@@ -14,6 +14,7 @@ function Ground (scene, config) {
   const ground = new THREE.Mesh(geometry, material);
   ground.position.set(0, -depth / 2, 0);
   ground.receiveShadow = true;
+  ground.castShadow = true;
   ground.type = "Ground";
   scene.add(ground);
 
