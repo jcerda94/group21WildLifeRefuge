@@ -180,84 +180,65 @@ class SceneManager {
       this.addObject(new Hawk(this.scene));
     }
   }
-
   onWindowResize () {
     const { width, height } = this.canvas;
-
     this.screenDimensions.width = width;
     this.screenDimensions.height = height;
-
     this.renderer.setSize(width, height);
-
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
-
     this.renderer.setSize(width, height);
   }
-
   handleClick = event => {
     const vector = this.convertClickToVector(event);
     this.raycaster.set(this.camera.position, vector);
     const intersects =
-      this.raycaster.intersectObjects(this.scene.children, true) || [];
-
+        this.raycaster.intersectObjects(this.scene.children, true) || [];
     const model = intersects[0] || {};
     const isSelectable = !!getValue("object.userData.selectable", model);
-
     if (isSelectable) {
       this.toggleSelected(model.object);
     }
   }
-
   convertClickToVector = event => {
     const vector = new THREE.Vector3();
     const canvasTopOffset = this.canvas.getBoundingClientRect().top;
     vector.x = (event.clientX / this.canvas.width) * 2 - 1;
     vector.y = (-(event.clientY - canvasTopOffset) / this.canvas.height) * 2 + 1;
-
     vector.unproject(this.camera);
     vector.sub(this.camera.position);
     vector.normalize();
     return vector;
   }
-
   onDocumentMouseClick = event => {
     this.handleClick(event);
   }
-
   onDocumentMouseMove = event => {
     const vector = this.convertClickToVector(event);
     this.raycaster.set(this.camera.position, vector);
   }
-
   initializeCamera () {
     const { width, height } = this.screenDimensions;
     const fieldOfView = 60;
     const aspectRatio = width / height;
     const nearPlane = 1;
     const farPlane = 1000;
-
     this.camera = new THREE.PerspectiveCamera(
-      fieldOfView,
-      aspectRatio,
-      nearPlane,
-      farPlane
+        fieldOfView,
+        aspectRatio,
+        nearPlane,
+        farPlane
     );
-
     this.camera.position.set(-75, 40, 80);
-
     this.cameraControls = new OrbitControls(this.camera);
   }
-
   setFlyControlCamera () {
     // position and point the camera to the center of the scene
     this.camera.position.x = 100;
     this.camera.position.y = 100;
     this.camera.position.z = 300;
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-
     this.cameraControls = new FlyControls(this.camera);
-
     this.cameraControls.movementSpeed = 25;
     this.cameraControls.domElement = document.querySelector("#root");
     this.cameraControls.maxPolarAngle = Math.PI * 0.5;
@@ -265,20 +246,16 @@ class SceneManager {
     this.cameraControls.autoForward = true;
     this.cameraControls.dragToLook = true;
   }
-
   setCameraPosition (x, y, z) {
     this.cameraControls = new OrbitControls(this.camera);
-
     this.camera.position.x = x;
     this.camera.position.y = y;
     this.camera.position.z = z;
   }
-
   initializeScene () {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color("#ffffff");
   }
-
   initializeRenderer () {
     const { width, height } = this.screenDimensions;
     this.renderer = new THREE.WebGLRenderer({
@@ -289,11 +266,9 @@ class SceneManager {
     this.renderer.setSize(width, height);
   }
 }
-
 export const getSceneManager = () => {
   return SceneManager.instance || null;
 };
-
 export default function (container) {
   if (!SceneManager.instance) {
     SceneManager.instance = new SceneManager(container);
