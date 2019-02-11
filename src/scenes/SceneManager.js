@@ -143,7 +143,7 @@ class SceneManager {
 
         const selectable = getValue("userData.selectable", this.intersected);
         if (selectable) {
-          console.log("I am selected ");
+          console.log("I am selected " + selectable + "intersected " + this.intersected);
           const highlight = getValue(
             "userData.color.highlight",
             this.intersected
@@ -153,12 +153,14 @@ class SceneManager {
         }
       }
     } else {
+       //console.log("called else");
       this.resetIntersectedColor(this.intersected);
       this.intersected = null;
     }
   }
 
   resetIntersectedColor (intersected) {
+
     const selectableKey = "userData.selectable";
     if (intersected && getValue(selectableKey, intersected)) {
       const color = getValue("material.color", intersected);
@@ -166,6 +168,7 @@ class SceneManager {
         this.selected.findIndex(model => model === intersected) >= 0;
 
       if (color.set) {
+        console.log("it is tree was clicked");
         const colorKey = `userData.color.${
           isSelected ? "selected" : "original"
         }`;

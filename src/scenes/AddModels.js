@@ -25,6 +25,7 @@ function AddModels(model) {
 
             case "tree":
                 color = "#00C060";
+                console.log("called add tree");
                SceneManager.addObject(new Tree(SceneManager.scene));
                return;
                 break;
@@ -44,6 +45,7 @@ function AddModels(model) {
                  return;
                  break;
             default:
+                console.log("called add tree at default");
                 // grass isn't handled
           //      console.log("AddModels:  Unknown model: " + (String)(model1));
                 break;
