@@ -4,6 +4,7 @@ import { getSceneManager } from "./SceneManager";
 const THREE = require("three");
 
 export const NAME = "redtailHawk";
+export const TYPE = "Hawk";
 
 function Hawk (scene) {
   const size = 3;
@@ -33,12 +34,15 @@ function Hawk (scene) {
     name: NAME
   };
 
+  cube.type = TYPE;
   scene.add(cube);
 
   function update () {}
 
   return {
-    update
+    update,
+    model: cube,
+    created: new Date()
   };
 }
 
