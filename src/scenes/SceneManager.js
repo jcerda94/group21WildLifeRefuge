@@ -12,6 +12,8 @@ import Hare, { NAME as hareName, TYPE as hareType } from "./Hare";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
+import SpotLight from "./SpotLight";
+import {getPopUpInfo} from "../components/PopUpInfo";
 import { addListenerFor } from "../utils/CAPI/listeners";
 
 const modelMap = {
@@ -20,6 +22,7 @@ const modelMap = {
   [treeType]: Tree,
   [hareType]: Hare
 };
+
 
 class SceneManager {
   groundSize = {
@@ -38,7 +41,7 @@ class SceneManager {
   subjects = []
   selected = []
   intersected = null
-  defaultCameraPosition = [-75, 40, 80]
+  defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
 
   constructor (canvas) {
@@ -54,9 +57,10 @@ class SceneManager {
   initializeLoadingScreen () {
     const { width, height } = this.screenDimensions;
     const aspectRatio = width / height;
+
     this.loadingScreen = {
       scene: new THREE.Scene(),
-      camera: new THREE.PerspectiveCamera(70, aspectRatio, 0.1, 100),
+      camera: new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000),
       indicator: new THREE.Mesh(
         new THREE.CircleGeometry(1, 32),
         new THREE.MeshBasicMaterial({
@@ -146,7 +150,6 @@ class SceneManager {
       if (this.intersected !== intersects[0].object) {
         this.resetIntersectedColor(this.intersected);
         this.intersected = getValue("object", intersects[0]);
-
         const selectable = getValue("userData.selectable", this.intersected);
         if (selectable) {
           const highlight = getValue(
@@ -158,12 +161,38 @@ class SceneManager {
         }
       }
     } else {
+       //console.log("called else");
+      this.resetIntersectedColor(this.intersected);
+      this.intersected = null;
+    }
+    // look for tree
+    const intersects2 =
+        this.raycaster.intersectObjects(this.scene.tree, true) || [];
+    if (intersects2.length > 0) {
+      if (this.intersected !== intersects2[0].object) {
+        this.resetIntersectedColor(this.intersected);
+        this.intersected = getValue("object", intersects2[0]);
+
+        const selectable = getValue("userData.selectable", this.intersected);
+        if (selectable) {
+          console.log("tree is selected " + selectable + "intersected " + this.intersected);
+          const highlight = getValue(
+              "userData.color.highlight",
+              this.intersected
+          );
+          const color = getValue("material.color", this.intersected);
+          color.set && color.set(highlight);
+        }
+      }
+    } else {
+      //console.log("called else");
       this.resetIntersectedColor(this.intersected);
       this.intersected = null;
     }
   }
 
   resetIntersectedColor (intersected) {
+
     const selectableKey = "userData.selectable";
     if (intersected && getValue(selectableKey, intersected)) {
       const color = getValue("material.color", intersected);
@@ -188,6 +217,7 @@ class SceneManager {
     this.subjects = [
       new AmbientLight(this.scene),
       new DirectionalLight(this.scene),
+      new SpotLight(this.scene),
       new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
       grassField
     ];
@@ -323,9 +353,15 @@ class SceneManager {
 
     const model = intersects[0] || {};
     const isSelectable = !!getValue("object.userData.selectable", model);
-
+   // console.log("length of object " + intersects.length + " name : " + model.object.name);
+    if(intersects.length > 1 && model.object.name != "LowPolyGrass"){
+      getPopUpInfo().popUpInfo("tree", event);
+    }
     if (isSelectable) {
       this.toggleSelected(model.object);
+      const popUpInfo = getPopUpInfo();
+      console.log("mode is " + model.object.name);
+      popUpInfo.popUpInfo(model.object.name, event);
     }
   }
 
@@ -411,6 +447,11 @@ class SceneManager {
     });
     this.renderer.setPixelRatio(1);
     this.renderer.setSize(width, height);
+
+    //this.renderer.setClearColor(0x000000, 1.0);
+    //this.renderer.setSize(window.innerWidth, window.innerHeight);
+   // this.renderer.shadowMap.enabled = true;
+    //this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
   }
 }
 

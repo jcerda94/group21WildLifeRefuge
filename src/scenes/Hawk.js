@@ -33,6 +33,7 @@ function Hawk (scene) {
     },
     name: NAME
   };
+  cube.name = NAME;
 
   cube.type = TYPE;
   scene.add(cube);

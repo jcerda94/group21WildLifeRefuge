@@ -19,6 +19,7 @@ async function Cube (scene, config) {
       selected: "#000"
     }
   };
+  cube.name = "grass";
 
   scene.add(cube);
   function update () {}

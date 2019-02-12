@@ -53,10 +53,12 @@ function AddModels (model) {
   const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
   const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
 
+
   const x = random(-widthBound, widthBound);
   const y = 1.5;
   const z = random(-heightBound, heightBound);
   const position = { x, y, z };
+
 
   const cubeConfig = {
     size: 3,
