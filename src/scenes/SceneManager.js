@@ -41,7 +41,7 @@ class SceneManager {
   subjects = []
   selected = []
   intersected = null
-  defaultCameraPosition = [-75, 40, 80]
+  defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
 
   constructor (canvas) {
@@ -60,7 +60,7 @@ class SceneManager {
 
     this.loadingScreen = {
       scene: new THREE.Scene(),
-      camera: new THREE.PerspectiveCamera(70, aspectRatio, 0.1, 100),
+      camera: new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000),
       indicator: new THREE.Mesh(
         new THREE.CircleGeometry(1, 32),
         new THREE.MeshBasicMaterial({
