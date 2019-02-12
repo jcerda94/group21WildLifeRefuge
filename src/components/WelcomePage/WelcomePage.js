@@ -9,6 +9,7 @@ import User from "../../js/User";
 import Summary from "./Summary";
 import VerticalLine from "./VerticalLine";
 import Button from "../Styled/Button";
+import TextField from "@material-ui/core/TextField";
 
 const Container = styled.div`
   display: flex;
@@ -35,11 +36,16 @@ const Background = styled.div`
   background-position: center;
 `;
 
+const TFBackground = styled.div `
+  background-color: white;
+`;
+
 class WelcomePage extends React.Component {
   goToSim = () => {
     const { history } = this.props;
     history && history.push("/sim");
   }
+
   render () {
     const { handleLogin, name } = this.props;
     return (
@@ -59,6 +65,16 @@ class WelcomePage extends React.Component {
               "More steps to come"
             ]}
           />
+            <TFBackground>
+            <TextField
+                id="outlined-username-input"
+                label="User Name"
+                type="string"
+                autoComplete="current-password"
+                margin="normal"
+                variant="outlined"
+            />
+            </TFBackground>
           <Button
             label='Start Lesson'
             onClick={this.goToSim}
