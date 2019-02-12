@@ -4,6 +4,7 @@ import { getSceneManager } from "./SceneManager";
 const THREE = require("three");
 
 export const NAME = "hare";
+export const TYPE = "Hare";
 
 function Hare (scene) {
   const size = 3;
@@ -37,11 +38,13 @@ function Hare (scene) {
   };
 
   scene.add(hareMesh);
-
+  hareMesh.type = TYPE;
   function update () {}
 
   return {
-    update
+    update,
+    model: hareMesh,
+    created: new Date()
   };
 }
 

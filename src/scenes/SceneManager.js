@@ -5,12 +5,24 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import { getValue } from "../utils/helpers";
-import Hawk, { NAME as hawkName } from "./Hawk";
+import Hawk, { NAME as hawkName, TYPE as hawkType } from "./Hawk";
+import Bush, { NAME as bushName, TYPE as bushType } from "./Bush";
+import Tree, { NAME as treeName, TYPE as treeType } from "./Tree";
+import Hare, { NAME as hareName, TYPE as hareType } from "./Hare";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
 import SpotLight from "./SpotLight";
 import {getPopUpInfo} from "../components/PopUpInfo";
+import { addListenerFor } from "../utils/CAPI/listeners";
+
+const modelMap = {
+  [hawkType]: Hawk,
+  [bushType]: Bush,
+  [treeType]: Tree,
+  [hareType]: Hare
+};
+
 
 class SceneManager {
   groundSize = {
@@ -40,9 +52,7 @@ class SceneManager {
     this.initializeCamera();
 
     this.createSceneSubjects();
-
   }
-
 
   initializeLoadingScreen () {
     const { width, height } = this.screenDimensions;
@@ -73,7 +83,6 @@ class SceneManager {
 
   onLoad = () => {
     this.loaded = true;
-    new PreLoadModels();
   }
 
   resetCamera () {
@@ -199,13 +208,18 @@ class SceneManager {
     }
   }
 
-  createSceneSubjects () {
+  async createSceneSubjects () {
+    const grassField = await new GrassField(
+      this.scene,
+      { count: 500 },
+      this.onLoad
+    );
     this.subjects = [
       new AmbientLight(this.scene),
       new DirectionalLight(this.scene),
       new SpotLight(this.scene),
       new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
-      new GrassField(this.scene, { count: 500 }, this.onLoad)
+      grassField
     ];
   }
 
@@ -214,19 +228,107 @@ class SceneManager {
   }
 
   removeObject (idx, sceneObject) {
-    //console.log("removeObject: sceneObject: " + idx);
+    // console.log("removeObject: sceneObject: " + idx);
     this.subjects.splice(idx, 1);
     this.scene.remove(sceneObject);
   }
 
-  
+  removeMostRecentModelByType ({ type }) {
+    const lastCreated = this.subjects
+      .filter(subject => {
+        if (subject.model) {
+          return subject.model.type === type;
+        }
+        return false;
+      })
+      .map(subject => subject.created)
+      .reduce((a, b) => Math.max(a, b))
+      .valueOf();
+
+    const mostRecentModel = this.subjects.find(subject => {
+      if (subject.created) {
+        return subject.created.valueOf() === lastCreated;
+      }
+      return false;
+    });
+    this.scene.remove(mostRecentModel);
+  }
+
+  removeAllModelsByType ( type ) {
+    //console.log("RemoveAll: here " + type);
+    const modelsToRemove = this.subjects
+      .filter(subject => {
+        if (subject.model) {
+          return subject.model.type === type;
+        }
+        return false;
+      })
+      .map(({ model }) => model);
+
+    this.subjects = this.subjects.filter(subject => {
+      if (subject.model) {
+        return subject.model.type !== type;
+      }
+      return true;
+    });
+    modelsToRemove.forEach(model => this.scene.remove(model));
+  }
+
   onTransporterReady () {
     const capi = getCapiInstance();
-    const hawkCount = capi.getValue({ key: "redtailHawkCount" });
+    const [hawks, hares, cedars, bushes] = capi.getValues({
+      keys: [
+        "redtailHawkCount",
+        "snowshoeHareCount",
+        "westernCedarCount",
+        "sageBushCount"
+      ]
+    });
+    capi.addListenerFor({
+      key: "redtailHawkCount",
+      callback: this.handleModelCountChange({
+        type: "Hawk",
+        key: "redtailHawkCount"
+      })
+    });
 
-    for (let hawks = 0; hawks < hawkCount; hawks++) {
-      this.addObject(new Hawk(this.scene));
+    capi.addListenerFor({
+      key: "snowshoeHareCount",
+      callback: this.handleModelCountChange({
+        type: "Hare",
+        key: "snowshoeHareCount"
+      })
+    });
+
+    capi.addListenerFor({
+      key: "westernCedarCount",
+      callback: this.handleModelCountChange({
+        type: "Tree",
+        key: "westernCedarCount"
+      })
+    });
+
+    capi.addListenerFor({
+      key: "sageBushCount",
+      callback: this.handleModelCountChange({
+        type: "Bush",
+        key: "sageBushCount"
+      })
+    });
+
+    new PreLoadModels({ hawks, hares, cedars, bushes });
+  }
+
+  addObjects ({ type, count }) {
+    for (let i = 0; i < count; i++) {
+      this.addObject(new modelMap[type](this.scene));
     }
+  }
+
+  handleModelCountChange = ({ type, key }) => capiModel => {
+    this.removeAllModelsByType({ type });
+    const count = capiModel.get(key);
+    this.addObjects({ type, count });
   }
 
   onWindowResize () {

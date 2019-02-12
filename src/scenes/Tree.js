@@ -4,8 +4,10 @@ import { getSceneManager } from "./SceneManager";
 const THREE = require("three");
 
 export const NAME = "tree";
+export const TYPE = "Tree";
 
 function Tree (scene) {
+
 
     var sides=8;
     var tiers=6;
@@ -72,6 +74,7 @@ function Tree (scene) {
     return {
         update
     };
+
 }
 
 export default Tree;

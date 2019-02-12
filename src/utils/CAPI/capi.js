@@ -1,6 +1,7 @@
 import { getValue } from "../helpers";
 import { bindEvents } from "./events";
 import { getSceneManager } from "../../scenes/SceneManager";
+import { addListenerFor } from "../CAPI/listeners";
 
 const CapiAdapter = getValue("simcapi.CapiAdapter", window);
 const CapiModel = CapiAdapter && CapiAdapter.CapiModel;
@@ -39,6 +40,17 @@ class CAPI {
 
   setValue = ({ key, value }) => {
     return this.capiModel.set(key, value);
+  }
+
+  getValues = ({ keys }) => {
+    return keys.reduce((accum, key) => {
+      accum.push(this.capiModel.get(key));
+      return accum;
+    }, []);
+  }
+
+  addListenerFor = ({ key, callback }) => {
+    addListenerFor({ key, action: callback, capiModel: this.capiModel });
   }
 }
 

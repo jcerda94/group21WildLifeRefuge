@@ -6,11 +6,16 @@ import LoadingModels from "../components/LoadingModels";
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
+
+export const TYPE = "Grass";
+
+
 async function GrassField (scene, config = { count: 500 }, onLoad) {
   const loadingManager = new THREE.LoadingManager();
   loadingManager.onLoad = onLoad || (() => null);
 
   const loader = new THREE.GLTFLoader(loadingManager);
+
   const { count } = config;
 
   const grasses = new THREE.Object3D();
@@ -53,13 +58,15 @@ async function GrassField (scene, config = { count: 500 }, onLoad) {
     grasses.add(grass);
   }
 
-  grasses.type = "Grass";
+  grasses.type = TYPE;
   scene.add(grasses);
 
   function update () {}
 
   return {
-    update
+    update,
+    model: grasses,
+    created: new Date()
   };
 }
 
