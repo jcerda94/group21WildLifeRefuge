@@ -67,7 +67,7 @@ class PopUpInfo extends React.Component {
     };
 
     handleClose = () => {
-        console.log("Value of anchorEL" + this.state.anchorEl);
+        //console.log("Value of anchorEL" + this.state.anchorEl);
         this.setState({
             anchorEl: null,
         });
