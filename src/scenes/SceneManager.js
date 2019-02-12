@@ -10,6 +10,7 @@ import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
 import SpotLight from "./SpotLight";
+import {getPopUpInfo} from "../components/PopUpInfo";
 
 class SceneManager {
   groundSize = {
@@ -140,10 +141,8 @@ class SceneManager {
       if (this.intersected !== intersects[0].object) {
         this.resetIntersectedColor(this.intersected);
         this.intersected = getValue("object", intersects[0]);
-
         const selectable = getValue("userData.selectable", this.intersected);
         if (selectable) {
-          console.log("I am selected " + selectable + "intersected " + this.intersected);
           const highlight = getValue(
             "userData.color.highlight",
             this.intersected
@@ -154,6 +153,30 @@ class SceneManager {
       }
     } else {
        //console.log("called else");
+      this.resetIntersectedColor(this.intersected);
+      this.intersected = null;
+    }
+    // look for tree
+    const intersects2 =
+        this.raycaster.intersectObjects(this.scene.tree, true) || [];
+    if (intersects2.length > 0) {
+      if (this.intersected !== intersects2[0].object) {
+        this.resetIntersectedColor(this.intersected);
+        this.intersected = getValue("object", intersects2[0]);
+
+        const selectable = getValue("userData.selectable", this.intersected);
+        if (selectable) {
+          console.log("tree is selected " + selectable + "intersected " + this.intersected);
+          const highlight = getValue(
+              "userData.color.highlight",
+              this.intersected
+          );
+          const color = getValue("material.color", this.intersected);
+          color.set && color.set(highlight);
+        }
+      }
+    } else {
+      //console.log("called else");
       this.resetIntersectedColor(this.intersected);
       this.intersected = null;
     }
@@ -168,7 +191,6 @@ class SceneManager {
         this.selected.findIndex(model => model === intersected) >= 0;
 
       if (color.set) {
-        console.log("it is tree was clicked");
         const colorKey = `userData.color.${
           isSelected ? "selected" : "original"
         }`;
@@ -232,6 +254,9 @@ class SceneManager {
 
     if (isSelectable) {
       this.toggleSelected(model.object);
+      const popUpInfo = getPopUpInfo();
+      console.log("mode is " + model.object.name);
+      popUpInfo.popUpInfo(model.object.name, event);
     }
   }
 

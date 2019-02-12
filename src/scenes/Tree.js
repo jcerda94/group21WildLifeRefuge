@@ -28,7 +28,7 @@ function Tree (scene) {
     var treeTrunk = new THREE.Mesh( treeTrunkGeometry, trunkMaterial );
 
     treeTrunk.position.y=0.25;
-    var tree =new THREE.Group();
+    var tree =new THREE.Object3D();
     tree.castShadow = true;
 
     tree.add(treeTrunk);
@@ -61,6 +61,7 @@ function Tree (scene) {
         },
         name: NAME
     };
+    tree.name = NAME;
 
     tree.type = "Tree";
   

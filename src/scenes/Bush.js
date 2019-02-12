@@ -24,6 +24,7 @@ function Bush (scene) {
     const position = { x, y, z };
 
     cube.position.set(position.x, position.y, position.z);
+
     cube.userData = {
         selectable: true,
         color: {
@@ -33,6 +34,7 @@ function Bush (scene) {
         },
         name: NAME
     };
+    cube.name = NAME;
 
     scene.add(cube);
 
