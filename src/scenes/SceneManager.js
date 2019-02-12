@@ -224,7 +224,8 @@ class SceneManager {
     this.scene.remove(mostRecentModel);
   }
 
-  removeAllModelsByType ({ type }) {
+  removeAllModelsByType ( type ) {
+    //console.log("RemoveAll: here " + type);
     const modelsToRemove = this.subjects
       .filter(subject => {
         if (subject.model) {
@@ -240,7 +241,6 @@ class SceneManager {
       }
       return true;
     });
-
     modelsToRemove.forEach(model => this.scene.remove(model));
   }
 
