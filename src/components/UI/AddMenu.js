@@ -110,7 +110,7 @@ class AddMenu extends React.Component {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleClose}>{tree}</MenuItem>
+          <MenuItem onClick={this.handleClose}>tree</MenuItem>
           <MenuItem onClick={this.handleClose}>hawk</MenuItem>
           <MenuItem onClick={this.handleClose}>hare</MenuItem>
           <MenuItem onClick={this.handleClose}>grass</MenuItem>

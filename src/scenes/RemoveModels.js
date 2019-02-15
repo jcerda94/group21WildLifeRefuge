@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { getSceneManager } from "./SceneManager";
 import Cube from "./Cube";
 import { random } from "../utils/helpers";
-import Hawk from "./Hawk";
-import Tree from "./Tree";
-import Hare from "./Hare";
-import Bush from "./Bush";
-import { stringify } from "querystring";
+//import Hawk from "./Hawk";
+//import Tree from "./Tree";
+//import Hare from "./Hare";
+//import Bush from "./Bush";
+//import { stringify } from "querystring";
 
 function RemoveModels (model) {
   this.state = {
@@ -22,9 +22,9 @@ function RemoveModels (model) {
   // find the current object(s) of the type we want to remove
   for (var i = SceneManager.subjects.length - 1; i >= 0; i--) {
      //console.log("RemoveModels: current models[%d]: %s", i, (String)(model1));
-  
+
     var removeIt = false;
-    switch (String(model1)) {
+    switch (String(model1).trim()) {
       case "tree":
         if(SceneManager.removeAllModelsByType("Tree")) {  
           removeIt = true;
@@ -51,7 +51,7 @@ function RemoveModels (model) {
         }
         break;
       default:
-        //      console.log("RemoveModels:  Unknown model: " + (String)(model1));
+        //console.log("RemoveModels:  Unknown model: " + (String)(model1));
         break;
     }
     if (removeIt) {
