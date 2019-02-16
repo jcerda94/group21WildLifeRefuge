@@ -18,9 +18,9 @@ import { addListenerFor } from "../utils/CAPI/listeners";
 
 const modelMap = {
   [hawkType]: Hawk,
+  [hareType]: Hare,
   [bushType]: Bush,
-  [treeType]: Tree,
-  [hareType]: Hare
+  [treeType]: Tree
 };
 
 
@@ -314,6 +314,23 @@ class SceneManager {
         type: "Bush",
         key: "sageBushCount"
       })
+    });
+
+    capi.addListenerFor({
+      key: "inputTable",
+      callback: capi => {
+        let values = capi
+          .get("inputTable")
+          .map(value => Number(JSON.parse(value)[0]));
+        console.log(values);
+        const typeKeys = Object.keys(modelMap);
+        values.forEach((value, i) => {
+          this.removeAllModelsByType({ type: typeKeys[i] });
+          for (let j = 0; j < value; j++) {
+            this.addObject(new modelMap[typeKeys[i]](this.scene));
+          }
+        });
+      }
     });
 
     new PreLoadModels({ hawks, hares, cedars, bushes });

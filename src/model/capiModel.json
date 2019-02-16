@@ -10,5 +10,6 @@
   "sageBushCount": 0,
   "sageBushSelected": 0,
   "westernCedarCount": 0,
-  "westernCedarSelected": 0
+  "westernCedarSelected": 0,
+  "inputTable": []
 }
