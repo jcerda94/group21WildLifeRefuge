@@ -72,7 +72,9 @@ function Tree (scene) {
     function update () {}
 
     return {
-        update
+        update,
+        model: tree,
+        created: new Date()
     };
 
 }
