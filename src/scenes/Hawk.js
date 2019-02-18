@@ -52,7 +52,7 @@ function Hawk (scene) {
 
 
   const tween3 = new TWEEN.Tween(cube.position)
-      .to({ x: -100, y: 100, z: -100 }, 10000)
+      .to({ x: -100, y: 0, z: -100 }, 10000)
       .start();
 
   tween1.chain(tween2);
