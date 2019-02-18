@@ -8,7 +8,7 @@ export const TYPE = "Tree";
 
 function Tree (scene) {
 
-
+    console.log("Added anther tree");
     var sides=8;
     var tiers=6;
     var treeGeometry = new THREE.ConeGeometry( 10, 10, sides, tiers);
