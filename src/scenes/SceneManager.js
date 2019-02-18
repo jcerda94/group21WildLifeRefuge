@@ -5,7 +5,7 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import { getValue } from "../utils/helpers";
-import Hawk, { NAME as hawkName, TYPE as hawkType } from "./Hawk";
+import Hawk, {getHawk, NAME as hawkName, TYPE as hawkType} from "./Hawk";
 import Bush, { NAME as bushName, TYPE as bushType } from "./Bush";
 import Tree, { NAME as treeName, TYPE as treeType } from "./Tree";
 import Hare, { NAME as hareName, TYPE as hareType } from "./Hare";
@@ -130,7 +130,9 @@ class SceneManager {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
     for (let i = 0; i < this.subjects.length; i++) {
+
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
+
     }
 
     this.cameraControls.update(delta);
