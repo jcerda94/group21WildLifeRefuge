@@ -55,9 +55,7 @@ class AddMenu extends React.Component {
       //var str = model;
       //onDayChange = (date) => (event) => { ...your code }
 
-      //<MenuItem onClick={onDayChange('2 days past')}>2 Days past</MenuItem>
 
-     // str = str.slice(0, -1); // "12345.0"
       // console.log("Doing Add:  str: '" + str + "'");
       new AddModels(add);
     } else {
