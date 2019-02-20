@@ -63,7 +63,7 @@ function Hawk(scene) {
             .to({
               x: getSceneManager().subjects[i].model.position.x, y: getSceneManager().subjects[i].model.position.y,
               z: getSceneManager().subjects[i].model.position.z
-            }, 10000)
+            }, 10000);
           tween2.chain(tween3);
           tween3.chain(tween1);
         }
