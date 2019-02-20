@@ -15,20 +15,20 @@
 }
 </style>
 <script>
-    class EventObserver {
+class EventObserver {
   constructor() {
     this.observers = [];
   }
 
-  subscribe(fn) {
+  subscribe(fn) { // fn's are functions/methods that get pushed on a list
     this.observers.push(fn);
   }
 
-  unsubscribe(fn) {
+  unsubscribe(fn) { // fn's are functions/methods that removed from the list
     this.observers = this.observers.filter((subscriber) => subscriber !== fn);
   }
 
-  broadcast(data) {
+  broadcast(data) { // the list of fn's are called when this observer is triggered, with the 'data' argument for each
     this.observers.forEach((subscriber) => subscriber(data));
   }
 }
