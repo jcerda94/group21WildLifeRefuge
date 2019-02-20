@@ -8,8 +8,6 @@ export const TYPE = "Hawk";
 
 var TWEEN = require("@tweenjs/tween.js");
 
-
-
 function Hawk (scene) {
 
   console.log("Added another Hawk");
