@@ -9,34 +9,34 @@ function WesternRedCedar(size, coneAge, pollinated) {
     this.diameterFeet;
     this.heightFeet;
     this.size;
-    this.leafColor = '#99ff33'; //Lighter Green with Yellow Tint (w3schools colorpicker)
+    this.leafColor = "#99ff33"; //Lighter Green with Yellow Tint (w3schools colorpicker)
     this.leafLengthInches = (Math.random() * 0.039) + 0.157;
     this.leafBreadthInches = (Math.random() * 0.039) + 0.47;
-    this.coneColor = '#9ACD32';
+    this.coneColor = "#9ACD32";
     this.coneAge = coneAge; //age in months
     this.pollinated = false;
     this.coneLengthInches = (Math.random() * 0.39) * 0.71;
     this.coneBreadthInches = (Math.random() * 0.16) * 0.20;
     this.coneScales = (Math.random() * 8) + 14;
-    this.scientificName = 'Thuja plicata';
-    this.commonName = 'Western Red Cedar';
+    this.scientificName = "Thuja plicata";
+    this.commonName = "Western Red Cedar";
 
     //Reference: https://en.wikipedia.org/wiki/Thuja_plicata
-    if (this.size.toLowerCase() === 'small') {
+    if (this.size.toLowerCase() === "small") {
         this.heightFeet = (Math.random() * 213.0) + 218.7;
         this.diameterFeet = (Math.random() * 9.8) + 10.9;
-    } else if (this.size.toLowerCase() === 'medium') {
+    } else if (this.size.toLowerCase() === "medium") {
         this.heightFeet = (Math.random() * 218.8) + 224.4;
         this.diameterFeet = (Math.random() * 11) + 12;
-    } else if (this.size.toLowerCase() === 'large') {
+    } else if (this.size.toLowerCase() === "large") {
         this.heightFeet = (Math.random() * 224.5) + 230;
         this.diameterFeet = (Math.random() * 12.1) + 13.1;
     }
 
     if (coneAge < 6) {
-        this.coneColor = '#9ACD32';
+        this.coneColor = "#9ACD32";
     } else if (coneAge >= 6 && pollinated) {
-        this.coneColor = '#996633';
+        this.coneColor = "#996633";
     }
 }
 

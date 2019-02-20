@@ -1,4 +1,3 @@
-import { getCapiInstance } from "../utils/CAPI/capi";
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 const THREE = require("three");

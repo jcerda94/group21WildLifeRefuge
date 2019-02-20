@@ -11,6 +11,6 @@ function User(firstName, lastName, age, level, score){
 }
 
 
-export default User
+export default User;
 
 

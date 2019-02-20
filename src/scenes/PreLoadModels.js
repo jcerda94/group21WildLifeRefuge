@@ -1,6 +1,4 @@
 import { getSceneManager } from "./SceneManager";
-import { random } from "../utils/helpers";
-import Cube from "./Cube";
 import Hawk from "./Hawk";
 import Tree from "./Tree";
 import Hare from "./Hare";

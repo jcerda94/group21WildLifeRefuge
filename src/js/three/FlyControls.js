@@ -11,7 +11,7 @@ __FlyControls = function ( object, domElement ) {
 	this.object = object;
 
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
-	if ( domElement ) this.domElement.setAttribute( 'tabindex', -1 );
+	if ( domElement ) this.domElement.setAttribute( "tabindex", -1 );
 
 	// API
 
@@ -29,13 +29,14 @@ __FlyControls = function ( object, domElement ) {
 
 	this.mouseStatus = 0;
 
-	this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
+	this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, 
+		pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
 	this.moveVector = new THREE.Vector3( 0, 0, 0 );
 	this.rotationVector = new THREE.Vector3( 0, 0, 0 );
 
 	this.handleEvent = function ( event ) {
 
-		if ( typeof this[ event.type ] == 'function' ) {
+		if ( typeof this[ event.type ] == "function" ) {
 
 			this[ event.type ]( event );
 
@@ -197,7 +198,8 @@ __FlyControls = function ( object, domElement ) {
 		this.object.translateY( this.moveVector.y * moveMult );
 		this.object.translateZ( this.moveVector.z * moveMult );
 
-		this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1 ).normalize();
+		this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, 
+			this.rotationVector.z * rotMult, 1 ).normalize();
 		this.object.quaternion.multiply( this.tmpQuaternion );
 
 		// expose the rotation vector for convenience
@@ -214,7 +216,7 @@ __FlyControls = function ( object, domElement ) {
 		this.moveVector.y = ( -this.moveState.down    + this.moveState.up );
 		this.moveVector.z = ( -forward + this.moveState.back );
 
-		//console.log( 'move:', [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
+		//console.log( "move:", [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
 
 	};
 
@@ -224,7 +226,7 @@ __FlyControls = function ( object, domElement ) {
 		this.rotationVector.y = ( -this.moveState.yawRight  + this.moveState.yawLeft );
 		this.rotationVector.z = ( -this.moveState.rollRight + this.moveState.rollLeft );
 
-		//console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
+		//console.log( "rotate:", [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
 
 	};
 
@@ -258,14 +260,14 @@ __FlyControls = function ( object, domElement ) {
 
 	};
 
-	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
+	this.domElement.addEventListener( "contextmenu", function ( event ) { event.preventDefault(); }, false );
 
-	this.domElement.addEventListener( 'mousemove', bind( this, this.mousemove ), false );
-	this.domElement.addEventListener( 'mousedown', bind( this, this.mousedown ), false );
-	this.domElement.addEventListener( 'mouseup',   bind( this, this.mouseup ), false );
+	this.domElement.addEventListener( "mousemove", bind( this, this.mousemove ), false );
+	this.domElement.addEventListener( "mousedown", bind( this, this.mousedown ), false );
+	this.domElement.addEventListener( "mouseup",   bind( this, this.mouseup ), false );
 
-	this.domElement.addEventListener( 'keydown', bind( this, this.keydown ), false );
-	this.domElement.addEventListener( 'keyup',   bind( this, this.keyup ), false );
+	this.domElement.addEventListener( "keydown", bind( this, this.keydown ), false );
+	this.domElement.addEventListener( "keyup",   bind( this, this.keyup ), false );
 
 	this.updateMovementVector();
 	this.updateRotationVector();

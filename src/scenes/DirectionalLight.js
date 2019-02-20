@@ -1,4 +1,4 @@
-const THREE = require('three');
+const THREE = require("three");
 
 function DirectionalLight (scene, config = {}) {
   const directional = new THREE.DirectionalLight(0xffffff, 0.5);

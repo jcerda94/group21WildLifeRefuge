@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {getSceneManager} from "../../scenes/SceneManager";
 import ImgButton from "./ImgButton";
 
