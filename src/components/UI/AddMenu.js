@@ -46,24 +46,25 @@ class AddMenu extends React.Component {
     this.setState({ doingRemove: true });
   }
 
-  handleClose = ev => {
+  handleClose = (add) => ev => {
     if (!this.state.doingRemove) {
       // console.log("Doing Add for " + ev.nativeEvent.target.outerText);
-      const model = ev.nativeEvent.target.outerText;
-      var str = model;
+      //const model = ev.nativeEvent.target.outerText;
+      //var str = model;
+      //onDayChange = (date) => (event) => { ...your code }
 
-      //str = str.slice(0, -1); // "12345.0"
+
       // console.log("Doing Add:  str: '" + str + "'");
-      new AddModels(str);
+      new AddModels(add);
     } else {
       // console.log("Doing Remove: for " + ev.nativeEvent.target.outerText);
-      const model = ev.nativeEvent.target.outerText;
-      var str = model;
+      //const model = ev.nativeEvent.target.outerText;
+      //var str = model;
 
       // console.log("Doing Remove:  str: '" + str + "'");
       // str = str.slice(0, -1); // "12345.0"
       // console.log("Doing Remove:  str: '" + str + "'");
-      new RemoveModels(str);
+      new RemoveModels(add);
 
     }
     this.setState({ anchorEl: null });
@@ -108,11 +109,11 @@ class AddMenu extends React.Component {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleClose}>tree</MenuItem>
-          <MenuItem onClick={this.handleClose}>hawk</MenuItem>
-          <MenuItem onClick={this.handleClose}>hare</MenuItem>
-          <MenuItem onClick={this.handleClose}>grass</MenuItem>
-          <MenuItem onClick={this.handleClose}>bush</MenuItem>
+          <MenuItem onClick={this.handleClose("tree")}>tree</MenuItem>
+          <MenuItem onClick={this.handleClose("hawk")}>hawk</MenuItem>
+          <MenuItem onClick={this.handleClose("hare")}>hare</MenuItem>
+          <MenuItem onClick={this.handleClose("grass")}>grass</MenuItem>
+          <MenuItem onClick={this.handleClose("bush")}>bush</MenuItem>
         </Menu>
       </div>
     );

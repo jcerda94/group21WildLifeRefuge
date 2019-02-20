@@ -168,8 +168,9 @@ class SceneManager {
       this.intersected = null;
     }
     // look for tree
-    const intersects2 =
-        this.raycaster.intersectObjects(this.scene.tree, true) || [];
+   // const intersects2 =
+    //    this.raycaster.intersectObject(this.scene.tree, true);
+    /*
     if (intersects2.length > 0) {
       if (this.intersected !== intersects2[0].object) {
         this.resetIntersectedColor(this.intersected);
@@ -191,7 +192,9 @@ class SceneManager {
       this.resetIntersectedColor(this.intersected);
       this.intersected = null;
     }
+    */
   }
+
 
   resetIntersectedColor (intersected) {
 
@@ -372,7 +375,6 @@ class SceneManager {
 
     const model = intersects[0] || {};
     const isSelectable = !!getValue("object.userData.selectable", model);
-   // console.log("length of object " + intersects.length + " name : " + model.object.name);
     if(intersects.length > 1 && model.object.name != "LowPolyGrass"){
       getPopUpInfo().popUpInfo("tree", event);
     }
