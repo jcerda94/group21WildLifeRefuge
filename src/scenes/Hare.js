@@ -39,7 +39,10 @@ function Hare (scene) {
 
   scene.add(hareMesh);
   hareMesh.type = TYPE;
-  function update () {}
+  function update () 
+  {
+    //console.log("hare update");
+  }
 
   return {
     update,

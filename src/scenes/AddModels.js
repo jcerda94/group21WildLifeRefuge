@@ -1,4 +1,3 @@
-import React, { Component } from "react";
 import { getSceneManager } from "./SceneManager";
 import Cube from "./Cube";
 import { random } from "../utils/helpers";

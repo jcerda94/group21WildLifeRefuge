@@ -1,4 +1,4 @@
-const THREE = require('three');
+const THREE = require("three");
 
 function AmbientLight (scene, config = {}) {
   const ambientLight = new THREE.AmbientLight(0x808080);
