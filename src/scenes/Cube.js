@@ -1,6 +1,8 @@
 const THREE = require("three");
 
-async function Cube (scene, config) {
+export const NAME = "grass";
+export const TYPE = "Grass";
+function Cube (scene, config) {
   const {
     color = "#0080FF",
     size = 3,
@@ -17,9 +19,11 @@ async function Cube (scene, config) {
       original: color,
       highlight: "#f7ff6d",
       selected: "#000"
-    }
+    },
+    name: NAME
   };
-  cube.name = "grass";
+  cube.name = NAME;
+  cube.type = TYPE;
 
   scene.add(cube);
   function update () {}
