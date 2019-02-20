@@ -1,4 +1,4 @@
-import { getCapiInstance } from "../utils/CAPI/capi";
+
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 const THREE = require("three");
@@ -10,7 +10,6 @@ var TWEEN = require("@tweenjs/tween.js");
 
 function Hawk (scene) {
 
-  console.log("Added another Hawk");
   const size = 3;
   const color = "#db7093";
 
@@ -53,11 +52,26 @@ function Hawk (scene) {
       .to({ x: -100, y: 0, z: -100 }, 10000)
       .start();
 
+  function checkForHare() {
+    for(let i = 4; i < getSceneManager().subjects.length; i ++){
+      //console.log("length : " + getSceneManager().subjects.length );
+      if(getSceneManager().subjects.length > 4){
+
+      if(getSceneManager().subjects[i].model.name == "hare"){
+        //console.log(" I am created");
+        tween3 = new TWEEN.Tween(cube.position)
+            .to({ x: getSceneManager().subjects[i].model.position.x, y: getSceneManager().subjects[i].model.position.y,
+              z: getSceneManager().subjects[i].model.position.z }, 10000)
+        tween2.chain(tween3);
+        tween3.chain(tween1);
+        }
+      }
+    }
+  }
   tween1.chain(tween2);
   tween2.chain(tween3);
   tween3.chain(tween1);
   function update () { console.log("hawk updated");
-
     TWEEN.update();
   }
 
