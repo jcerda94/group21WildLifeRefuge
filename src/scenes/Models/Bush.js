@@ -1,13 +1,11 @@
-import { getCapiInstance } from "../utils/CAPI/capi";
-import { random } from "../utils/helpers";
-import { getSceneManager } from "./SceneManager";
+import { random } from "../../utils/helpers";
+import { getSceneManager } from "../SceneManager";
 const THREE = require("three");
 
 export const NAME = "bush";
 export const TYPE = "Bush";
 
 function Bush (scene) {
-
   const size = 5;
   const color = "#2cdb26";
 
@@ -46,7 +44,6 @@ function Bush (scene) {
     model: cube,
     created: new Date()
   };
-
 }
 
 export default Bush;

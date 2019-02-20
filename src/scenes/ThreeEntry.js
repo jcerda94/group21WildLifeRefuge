@@ -1,5 +1,4 @@
 import SceneManager from "./SceneManager";
-import * as THREE from "three";
 
 function createCanvas (document, containerElement) {
   const canvas = document.createElement("canvas");
@@ -7,18 +6,8 @@ function createCanvas (document, containerElement) {
   return canvas;
 }
 
-
-
 class ThreeEntry {
   constructor (container) {
-    /*
-    this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setClearColor(0x000000, 1.0);
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
-
-    */
     this.canvas = createCanvas(document, container);
     this.sceneManager = SceneManager(this.canvas);
     this.bindEventListeners();
@@ -49,7 +38,6 @@ class ThreeEntry {
   }
 
   render = () => {
-
     requestAnimationFrame(this.render);
     this.sceneManager.update();
   }

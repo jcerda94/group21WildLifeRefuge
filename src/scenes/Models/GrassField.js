@@ -1,7 +1,7 @@
-import { random } from "../utils/helpers";
-import { getSceneManager } from "./SceneManager";
-import { getLoadingModels } from "../components/LoadingModels";
-import LoadingModels from "../components/LoadingModels";
+import { random } from "../../utils/helpers";
+import { getSceneManager } from "../SceneManager";
+import { getLoadingModels } from "../../components/LoadingModels";
+import LoadingModels from "../../components/LoadingModels";
 
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");

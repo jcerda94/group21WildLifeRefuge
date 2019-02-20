@@ -1,4 +1,3 @@
-import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import React, { Component } from "react";
 import { getCapiInstance } from "../../utils/CAPI/capi";

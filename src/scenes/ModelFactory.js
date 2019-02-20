@@ -1,28 +1,48 @@
+import TreeModel from "./Models/Tree";
+
 const Hawk = () => {};
 const Hare = () => {};
 const Bush = () => {};
-const Tree = () => {};
+const Tree = () => {
+  const { model, created } = TreeModel();
+  return {
+    update: () => {},
+    model,
+    created
+  };
+};
+const Cube = () => {};
+const Ground = () => {};
+const Grass = () => {};
 
 const MODEL_TYPES = {
   Hawk: {
     type: "hawk",
     model: Hawk
   },
-  Hawk: {
+  Hare: {
     type: "hare",
     model: Hare
   },
-  Hawk: {
+  Bush: {
     type: "bush",
     model: Bush
   },
-  Hawk: {
+  Tree: {
     type: "tree",
     model: Tree
   },
   Cube: {
     type: "cube",
     model: Cube
+  },
+  Ground: {
+    type: "Ground",
+    model: Ground
+  },
+  Grass: {
+    type: "Grass",
+    model: Grass
   }
 };
 
@@ -43,3 +63,5 @@ class modelFactory {
     }
   }
 }
+
+export default new modelFactory();

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { getSceneManager } from "../../scenes/SceneManager";
-import Cube from "../../scenes/Cube";
+import Cube from "../../scenes/Models/Cube";
 import { random } from "../../utils/helpers";
-import Hawk from "../../scenes/Hawk";
+import Hawk from "../../scenes/Models/Hawk";
 
 class ElementButton extends Component {
   constructor (props) {
@@ -10,12 +10,12 @@ class ElementButton extends Component {
 
     // TODO: Refactor to use an HTML button or other type of component, use of null anchor tags is highly discouraged
     this.button = (
-        <div className='dropdown'>
-          <button className='dropbtn'>{this.props.addText}</button>
-          <div className='dropdown-content'>
-            <button onClick={e => this.onClick()}>{this.props.title}</button>
-          </div>
+      <div className='dropdown'>
+        <button className='dropbtn'>{this.props.addText}</button>
+        <div className='dropdown-content'>
+          <button onClick={e => this.onClick()}>{this.props.title}</button>
         </div>
+      </div>
     );
   }
 

@@ -1,10 +1,8 @@
 import { getSceneManager } from "./SceneManager";
-import { random } from "../utils/helpers";
-import Cube from "./Cube";
-import Hawk from "./Hawk";
-import Tree from "./Tree";
-import Hare from "./Hare";
-import Bush from "./Bush";
+import Hawk from "./Models/Hawk";
+import Tree from "./Models/Tree";
+import Hare from "./Models/Hare";
+import Bush from "./Models/Bush";
 
 function PreLoadModels ({ hawks, hares, cedars, bushes }) {
   const SceneManager = getSceneManager();
