@@ -8,7 +8,7 @@ export const TYPE = "Hawk";
 
 var TWEEN = require("@tweenjs/tween.js");
 
-function Hawk (scene) {
+function Hawk(scene) {
 
   const size = 3;
   const color = "#db7093";
@@ -41,29 +41,31 @@ function Hawk (scene) {
   cube.type = TYPE;
   scene.add(cube);
   const tween1 = new TWEEN.Tween(cube.position)
-      .to({ x: 500, y: 100, z: -100 }, 10000);
+    .to({ x: 500, y: 100, z: -100 }, 10000);
 
 
   const tween2 = new TWEEN.Tween(cube.position)
-      .to({ x: -500, y: 100, z: 100 }, 10000);
+    .to({ x: -500, y: 100, z: 100 }, 10000);
 
 
   const tween3 = new TWEEN.Tween(cube.position)
-      .to({ x: -100, y: 0, z: -100 }, 10000)
-      .start();
+    .to({ x: -100, y: 0, z: -100 }, 10000)
+    .start();
 
   function checkForHare() {
-    for(let i = 4; i < getSceneManager().subjects.length; i ++){
+    for (let i = 4; i < getSceneManager().subjects.length; i++) {
       //console.log("length : " + getSceneManager().subjects.length );
-      if(getSceneManager().subjects.length > 4){
+      if (getSceneManager().subjects.length > 4) {
 
-      if(getSceneManager().subjects[i].model.name == "hare"){
-        //console.log(" I am created");
-        tween3 = new TWEEN.Tween(cube.position)
-            .to({ x: getSceneManager().subjects[i].model.position.x, y: getSceneManager().subjects[i].model.position.y,
-              z: getSceneManager().subjects[i].model.position.z }, 10000)
-        tween2.chain(tween3);
-        tween3.chain(tween1);
+        if (getSceneManager().subjects[i].model.name == "hare") {
+          //console.log(" I am created");
+          tween3 = new TWEEN.Tween(cube.position)
+            .to({
+              x: getSceneManager().subjects[i].model.position.x, y: getSceneManager().subjects[i].model.position.y,
+              z: getSceneManager().subjects[i].model.position.z
+            }, 10000)
+          tween2.chain(tween3);
+          tween3.chain(tween1);
         }
       }
     }
@@ -71,7 +73,9 @@ function Hawk (scene) {
   tween1.chain(tween2);
   tween2.chain(tween3);
   tween3.chain(tween1);
-  function update () { console.log("hawk updated");
+  function update() {
+    console.log("hawk updated");
+    checkForHare();
     TWEEN.update();
   }
 
