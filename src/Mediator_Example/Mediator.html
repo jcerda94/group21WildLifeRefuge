@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewpoint" content="width=device-width">
+    <title>Mediator Example</title>
+    <style>
+        body {
+            font-family: Arial;
+            font-size: 12px;
+            line-break: 1.6em;
+        }
+
+        p {
+            margin-bottom: 1.6
+        }
+    </style>
+</head>
+
+<body>
+    <p id="p1"></p>
+    <p id="p2"></p>
+    <p id="p3"></p>
+    <p id="p4"></p>
+    <p id="p5"></p>
+    <p id="p6"></p>
+    <p id="p7"></p>
+    <p id="p8"></p>
+    <p id="p9"></p>
+
+    <script>
+        var createClass = function () {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor)
+                        descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function (Constructor, protoProps, staticProps) {
+                if (protoProps)
+                    defineProperties(Constructor.prototype, protoProps);
+                if (staticProps)
+                    defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
+
+        function classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+
+        var Mediator = function () {
+            function Mediator() {
+                classCallCheck(this, Mediator);
+
+                this.handlers = [];
+            }
+
+            createClass(Mediator, [{
+                key: 'addHandler',
+                value: function addHandler(handler) {
+                    if (this.isValidHandler(handler)) {
+                        this.handlers.push(handler);
+                        return this;
+                    }
+                    var error = new Error('Attempt to register an invalid handler with the mediator.');
+                    error.handler = handler;
+                    throw error;
+                }
+            }, {
+                key: 'isValidHandler',
+                value: function isValidHandler(handler) {
+                    return typeof handler.canHandle === 'function' && typeof handler.handle === 'function';
+                }
+            }, {
+                key: 'request',
+                value: function request(message) {
+                    for (var i = 0; i < this.handlers.length; i++) {
+                        var handler = this.handlers[i];
+                        if (handler.canHandle(message)) {
+                            return handler.handle(message);
+                        }
+                    }
+                    var error = new Error('Mediator was unable to satisfy request.');
+                    error.request = message;
+                    return error;
+                }
+            }]);
+
+            return Mediator;
+        }();
+
+        var sayHelloHandler = {
+            canHandle: function (message) {
+                return message.name;
+            },
+            handle: function (message) {
+                return {
+                    name: message.name,
+                    say: 'Hello, ' + message.name + '!'
+                };
+            }
+        };
+        var doubleHandler = {
+            canHandle: function (message) {
+                return message.op && message.op === 'x2';
+            },
+            handle: function (message) {
+                return {
+                    value: message.value,
+                    answer: message.value * 2
+                };
+            }
+        };
+        var tooColdHandler = {
+            canHandle: function (message) {
+                return message.temp && message.temp < 60;
+            },
+            handle: function (message) {
+                return {
+                    temp: message.temp,
+                    message: 'It is too cold! Time to curl up by the fire'
+                };
+            }
+        };
+        var tooHotHandler = {
+            canHandle: function (message) {
+                return message.temp && message.temp > 90;
+            },
+            handle: function (message) {
+                return {
+                    temp: message.temp,
+                    message: 'It is too hot! Air conditioner please!'
+                };
+            }
+        };
+        var niceDayHandler = {
+            canHandle: function (message) {
+                return message.temp && message.temp >= 60 && message.temp <= 90;
+            },
+            handle: function (message) {
+                return {
+                    temp: message.temp,
+                    message: 'It should be a pleasant day today! Enjoy!'
+                };
+            }
+        };
+        var promiseHandler = {
+            canHandle: function (message) {
+                return message.type === 'promise';
+            },
+            handle: function (message) {
+                return new Promise(function (resolve) {
+                    var delay = message.delay || 1000;
+                    setTimeout(function () {
+                        resolve({
+                            delay: delay,
+                            timestamp: Date.now()
+                        });
+                    }, delay);
+                });
+            }
+        };
+
+
+
+        var mediator = new Mediator();
+        mediator.addHandler(sayHelloHandler);
+        mediator.addHandler(doubleHandler);
+        mediator.addHandler(tooColdHandler);
+        mediator.addHandler(tooHotHandler);
+        mediator.addHandler(niceDayHandler);
+        mediator.addHandler(promiseHandler);
+
+        var firstRequest = { name: 'Jacob' };
+        var firstReply = mediator.request(firstRequest);
+
+        var secondRequest = { op: 'x3', value: 3 };
+        var secondReply = mediator.request(secondRequest);
+
+        var thirdRequest = { temp: 20 };
+        var thirdReply = mediator.request(thirdRequest);
+
+        var fourthRequest = { temp: 110 };
+        var fourthReply = mediator.request(fourthRequest);
+
+        var fifthRequest = { temp: 75 };
+        var fifthReply = mediator.request(fifthRequest);
+
+        var sixthRequest = { type: 'promise', delay: 3000 };
+        var sixthReply = mediator.request(sixthRequest);
+
+
+        function write(element, request, reply) {
+            document.getElementById(element).innerHTML = 'Request: ' + JSON.stringify(request, null, 2) + '<br/>Reply: ' + JSON.stringify(reply, null, 2);
+        }
+        write('p1', firstRequest, firstReply);
+        write('p2', secondRequest, secondReply);
+        write('p3', thirdRequest, thirdReply);
+        write('p4', fourthRequest, fourthReply);
+        write('p5', fifthRequest, fifthReply);
+        sixthReply.then(function (reply) {
+            write('p6', sixthRequest, reply);
+        });
+
+    </script>
+
+
+</body>
+
+</html>
