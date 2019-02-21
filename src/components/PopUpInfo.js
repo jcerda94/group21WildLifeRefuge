@@ -1,9 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Popover from '@material-ui/core/Popover';
+import React from "react";
+import PropTypes from "prop-types";
+import Popover from "@material-ui/core/Popover";
 
 const hare = <div>
     <strong>Snowshoe hare:</strong> <br/>
@@ -74,27 +71,27 @@ class PopUpInfo extends React.Component {
     };
 
     popUpInfo(name,event){
-       if(name == 'hare') {
+       if(name == "hare") {
            this.setState({
                info: hare,
                anchorEl: event.currentTarget,
            });
-       }else   if(name == 'redtailHawk') {
+       }else   if(name == "redtailHawk") {
            this.setState({
                info: hawk,
                anchorEl: event.currentTarget,
            });
-       }else   if(name == 'bush') {
+       }else   if(name == "bush") {
            this.setState({
                info: bush,
                anchorEl: event.currentTarget,
            });
-       }else   if(name == 'grass' || name == 'LowPolyGrass') {
+       }else   if(name == "grass" || name == "LowPolyGrass") {
            this.setState({
                info: grass,
                anchorEl: event.currentTarget,
            });
-       }else   if(name == 'tree') {
+       }else   if(name == "tree") {
            this.setState({
                info: tree,
                anchorEl: event.currentTarget,
@@ -117,12 +114,12 @@ class PopUpInfo extends React.Component {
                     //anchorEl={anchorEl}
                     onClose={this.handleClose}
                     anchorOrigin={{
-                        vertical: 'center',
-                        horizontal: 'center',
+                        vertical: "center",
+                        horizontal: "center",
                     }}
                     transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center',
+                        vertical: "top",
+                        horizontal: "center",
                     }}
                 >
                     {info}

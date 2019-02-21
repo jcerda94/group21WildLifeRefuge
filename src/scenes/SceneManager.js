@@ -375,7 +375,7 @@ class SceneManager {
 
     const model = intersects[0] || {};
     const isSelectable = !!getValue("object.userData.selectable", model);
-    if(intersects.length > 1 && model.object.name != "LowPolyGrass"){
+    if(intersects.length > 1 && model.object.name !== "LowPolyGrass"){
       getPopUpInfo().popUpInfo("tree", event);
     }
     if (isSelectable) {

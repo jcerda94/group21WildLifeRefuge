@@ -1,4 +1,3 @@
-import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import React, { Component } from "react";
 import { getCapiInstance } from "../../utils/CAPI/capi";
@@ -59,9 +58,9 @@ class BalancePopulation extends Component {
           options={options}
           onChange={this._onSelect}
           value={selected}
-          placeholder='Select an option'
+          placeholder="Select an option"
         />
-        <div className='result'>
+        <div className="result">
           You selected
           <strong> {placeHolderValue} </strong>
         </div>

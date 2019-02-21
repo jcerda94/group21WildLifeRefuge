@@ -5,7 +5,6 @@ import Steps from "./Steps";
 import Header from "./Header";
 import styled from "styled-components";
 import Title from "./Title";
-import User from "../../js/User";
 import Summary from "./Summary";
 import VerticalLine from "./VerticalLine";
 import Button from "../Styled/Button";

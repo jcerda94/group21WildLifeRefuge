@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 
 class AuthorView extends Component {
@@ -10,9 +10,9 @@ class AuthorView extends Component {
                 <h2>Sim State:</h2>
                 <pre> {JSON.stringify(this.props.state, undefined, 2)} </pre>
             </div>
-        )
+        );
     }
 
 }
 
-export default AuthorView
+export default AuthorView;

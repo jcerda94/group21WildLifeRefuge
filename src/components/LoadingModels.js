@@ -1,7 +1,6 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from "@material-ui/core/CircularProgress";
 import React, { Component } from "react";
 import "../css/simulation.css";
-import { getSceneManager } from "../scenes/SceneManager";
 import styled from "styled-components";
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
@@ -22,11 +21,11 @@ const Container = styled.div`
 
 class LoadingModels extends Component{
     constructor(props){
-        super(props)
+        super(props);
         this.state ={
             loading: false,
             grass: null
-        }
+        };
     }
 
     goToSim = () => {
@@ -45,13 +44,13 @@ class LoadingModels extends Component{
             console.log("Start Loading");
 
 
-        }
+        };
         manager.onLoad = () => {
 
             isLoading = false;
 
 
-        }
+        };
         const loader = new THREE.GLTFLoader(manager);
 
 
@@ -70,7 +69,7 @@ class LoadingModels extends Component{
         this.setState({
             loading: true,
             grass: originalGrass
-        })
+        });
         console.log("at loading 2  after setSate  " + typeof this.state.grass);
         this.goToSim();
 

@@ -1,15 +1,15 @@
 
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
+import { getHawkObserver } from "./observer.js"; 
 const THREE = require("three");
 
 export const NAME = "redtailHawk";
 export const TYPE = "Hawk";
 
-var TWEEN = require('@tweenjs/tween.js');
-var tween3 = {};
+var TWEEN = require("@tweenjs/tween.js");
 
-function Hawk (scene) {
+function Hawk(scene) {
 
   const size = 3;
   const color = "#db7093";
@@ -42,43 +42,51 @@ function Hawk (scene) {
   cube.type = TYPE;
   scene.add(cube);
   const tween1 = new TWEEN.Tween(cube.position)
-      .to({ x: 500, y: 100, z: -100 }, 10000)
+    .to({ x: 500, y: 100, z: -100 }, 10000);
 
 
   const tween2 = new TWEEN.Tween(cube.position)
-      .to({ x: -500, y: 100, z: 100 }, 10000)
-      .start();
+    .to({ x: -500, y: 100, z: 100 }, 10000);
 
-  function checkForHare() {
-    for(let i = 4; i < getSceneManager().subjects.length; i ++){
-      //console.log("length : " + getSceneManager().subjects.length );
-      if(getSceneManager().subjects.length > 4){
+  var tween3 = new TWEEN.Tween(cube.position)
+    .to({ x: -100, y: 0, z: -100 }, 10000)
+    .start();
 
-      if(getSceneManager().subjects[i].model.name == "hare"){
-        //console.log(" I am created");
-        tween3 = new TWEEN.Tween(cube.position)
-            .to({ x: getSceneManager().subjects[i].model.position.x, y: getSceneManager().subjects[i].model.position.y,
-              z: getSceneManager().subjects[i].model.position.z }, 10000)
-        tween2.chain(tween3);
-        tween3.chain(tween1);
+
+  // hawk must track it's position and look for hares nearby as it flys
+  getHawkObserver().subscribe((position) => {
+    //console.log("hawkObserver method called for Hawk: ");
+    checkForHare(position);
+  });
+    
+  function checkForHare(position) {
+    for (let i = 4; i < getSceneManager().subjects.length; i++) {
+      //console.log("Hawk:checkForHare:  length : " + getSceneManager().subjects.length );
+      if (getSceneManager().subjects.length > 4) {
+
+        if (getSceneManager().subjects[i].model.name == "hare") {
+          //console.log(" Found a hare: " + position.x + ":" + position.y + ":" + position.z);
+          //JWC  tween3 = new TWEEN.Tween(cube.position)
+          tween3 = new TWEEN.Tween(position)
+            .to({
+              x: getSceneManager().subjects[i].model.position.x, y: getSceneManager().subjects[i].model.position.y,
+              z: getSceneManager().subjects[i].model.position.z
+            }, 10000);
+          tween2.chain(tween3);
+          tween3.chain(tween1);
         }
       }
     }
   }
   tween1.chain(tween2);
-  tween2.chain(tween1);
-  function update () { //console.log("I am updated");
-    checkForHare();
-    /*
-  //console.log(getSceneManager().subjects[5].model.name);
-    hare_x = getSceneManager().subjects[5].model.position.x;
-    hare_y = getSceneManager().subjects[5].model.position.y;
-    hare_z = getSceneManager().subjects[5].model.position.z;
-    console.log("x : " + hare_x);
-    console.log("y : " + hare_y);
-    console.log("z : " + hare_z);
+  tween2.chain(tween3);
+  tween3.chain(tween1);
 
-*/
+  function update() {
+    //console.log("hawk updated"); 
+    // get the position and then it should call the observers
+    //checkForHare();
+    getHawkObserver().broadcast(cube.position);
     TWEEN.update();
   }
 
@@ -88,5 +96,4 @@ function Hawk (scene) {
     created: new Date()
   };
 }
-
 export default Hawk;
