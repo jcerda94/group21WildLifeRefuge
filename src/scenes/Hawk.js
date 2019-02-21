@@ -44,14 +44,11 @@ function Hawk(scene) {
   const tween1 = new TWEEN.Tween(cube.position)
     .to({ x: 500, y: 100, z: -100 }, 10000);
 
-
   const tween2 = new TWEEN.Tween(cube.position)
-    .to({ x: -500, y: 100, z: 100 }, 10000);
-
-  var tween3 = new TWEEN.Tween(cube.position)
-    .to({ x: -100, y: 0, z: -100 }, 10000)
+    .to({ x: -500, y: 100, z: 100 }, 10000)
     .start();
 
+  var tween3 = {};
 
   // hawk must track it's position and look for hares nearby as it flys
   getHawkObserver().subscribe((position) => {
