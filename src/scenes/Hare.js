@@ -39,7 +39,7 @@ function Hare (scene) {
   };
 
   getHawkObserver().subscribe((position) => {
-    console.log("hawkObserver method called for hare: ");
+    //console.log("hawkObserver method called for hare: ");
     //checkForHare(position);
   });
 
