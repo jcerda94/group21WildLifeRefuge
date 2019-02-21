@@ -81,12 +81,20 @@ function Hawk(scene) {
   tween1.chain(tween2);
   tween2.chain(tween3);
   tween3.chain(tween1);
-
+  var count=1;
   function update() {
-    //console.log("hawk updated"); 
-    // get the position and then it should call the observers
-    //checkForHare();
-    getHawkObserver().broadcast(cube.position);
+    count++;
+    //console.log("hawk updated: " + count++); 
+    
+    // The updates happen very often for small position changes 
+    // This made the hawk behave erratically. 
+    // The observers probably don't care if the hawk moves a small distance
+    // May want to make this delta-position based.
+    // for now just scale back the number of times the position is reported to the other animals.
+    
+
+    if(count % 30 == 0)
+      getHawkObserver().broadcast(cube.position);
     TWEEN.update();
   }
 

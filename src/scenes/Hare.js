@@ -7,7 +7,7 @@ const THREE = require("three");
 export const NAME = "hare";
 export const TYPE = "Hare";
 
-function Hare (scene) {
+function Hare (scene, hareCount) {
   const size = 3;
   const color = "#db7093";
 
@@ -37,9 +37,11 @@ function Hare (scene) {
     },
     name: NAME
   };
+  var myName = "hare_" + hareCount;
+  //console.log("subscribe to hawkObserver for " + myName);
 
   getHawkObserver().subscribe((position) => {
-    //console.log("hawkObserver method called for hare: ");
+    //console.log("hawkObserver method called for " + myName);
     //checkForHare(position);
   });
 

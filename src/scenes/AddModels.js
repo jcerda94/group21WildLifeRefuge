@@ -6,6 +6,7 @@ import Tree from "./Tree";
 import Hare from "./Hare";
 import Bush from "./Bush";
 
+var hareCount = 0;
 function AddModels (model) {
 
   let color = null;
@@ -22,7 +23,7 @@ function AddModels (model) {
       SceneManager.addObject(new Bush(SceneManager.scene));
       break;
     case "hare":
-      SceneManager.addObject(new Hare(SceneManager.scene));
+      SceneManager.addObject(new Hare(SceneManager.scene, hareCount++));
       break;
     case "grass":
       const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
