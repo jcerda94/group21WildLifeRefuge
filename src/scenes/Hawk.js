@@ -55,7 +55,7 @@ function Hawk(scene) {
 
   // hawk must track it's position and look for hares nearby as it flys
   getHawkObserver().subscribe((position) => {
-    //console.log("hawkObserver method called: ");
+    console.log("hawkObserver method called for Hawk: ");
     checkForHare(position);
   });
     
@@ -83,7 +83,7 @@ function Hawk(scene) {
   tween3.chain(tween1);
 
   function update() {
-    //console.log("hawk updated"); 
+    console.log("hawk updated"); 
     // get the position and then it should call the observers
     //checkForHare();
     getHawkObserver().broadcast(cube.position);

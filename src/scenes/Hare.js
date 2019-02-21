@@ -38,10 +38,10 @@ function Hare (scene) {
     name: NAME
   };
 
-//  getHawkObserver().subscribe((position) => {
-//    console.log("hawkObserver method called for hare: ");
-//    //checkForHare(position);
-//  });
+  getHawkObserver().subscribe((position) => {
+    console.log("hawkObserver method called for hare: ");
+    //checkForHare(position);
+  });
 
   scene.add(hareMesh);
   hareMesh.type = TYPE;

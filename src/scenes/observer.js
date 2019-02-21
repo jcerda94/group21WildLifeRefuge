@@ -1,4 +1,3 @@
-const hawkObserver = new EventObserver();
 
 class EventObserver {
   constructor() {
@@ -18,6 +17,7 @@ class EventObserver {
   }
 }
 
+const hawkObserver = new EventObserver();
 //export default hawkObserver;
 export const getHawkObserver = () => {
     return hawkObserver;
