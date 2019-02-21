@@ -51,23 +51,23 @@ function Hawk (scene) {
   cube.type = TYPE;
   scene.add(cube);
   const tween1 = new TWEEN.Tween(cube.position)
-      .to({ x: 500, y: 100, z: -100 }, 10000);
+      .to({ x: 500, y: 100, z: -100 }, 10000/3);
 
 
   const tween2 = new TWEEN.Tween(cube.position)
-      .to({ x: -500, y: 100, z: 100 }, 10000)
+      .to({ x: -500, y: 100, z: 100 }, 10000/3)
       .start();
 function checkForHare() {
   for(let i = 4; i < getSceneManager().subjects.length; i ++){
-    console.log("length : " + getSceneManager().subjects.length );
+    //console.log("length : " + getSceneManager().subjects.length );
     if(getSceneManager().subjects.length > 4){
 
       if(getSceneManager().subjects[i].model.name == "hare"){
 
-        console.log(" I am created");
+       // console.log(" I am created");
         tween3 = new TWEEN.Tween(cube.position)
             .to({ x: getSceneManager().subjects[i].model.position.x, y: getSceneManager().subjects[i].model.position.y,
-              z: getSceneManager().subjects[i].model.position.z }, 10000)
+              z: getSceneManager().subjects[i].model.position.z }, 10000/3)
         tween2.chain(tween3);
         tween3.chain(tween1);
       }
