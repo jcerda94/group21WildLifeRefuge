@@ -51,7 +51,7 @@ function Hawk (scene) {
   cube.type = TYPE;
   scene.add(cube);
   const tween1 = new TWEEN.Tween(cube.position)
-      .to({ x: 500, y: 100, z: -100 }, 10000)
+      .to({ x: 500, y: 100, z: -100 }, 10000);
 
 
   const tween2 = new TWEEN.Tween(cube.position)
@@ -79,6 +79,7 @@ function checkForHare() {
 
 
   tween1.chain(tween2);
+  tween2.chain(tween1)
 
 
   function getX(){
