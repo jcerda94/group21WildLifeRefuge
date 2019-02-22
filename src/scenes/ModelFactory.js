@@ -1,8 +1,34 @@
 import TreeModel from "./Tree";
+import HawkModel from "./Hawk";
+import HareModel from "./Hare";
+import BushModel from "./Bush";
+import CubeModel from "./Cube";
+import GroundModel from "./Ground";
 
-const Hawk = () => {};
-const Hare = () => {};
-const Bush = () => {};
+const Hawk = () => {
+  const { model, created, update } = HawkModel();
+  return {
+    model,
+    created,
+    update
+  };
+};
+const Hare = () => {
+  const { model, created, update } = HareModel();
+  return {
+    model,
+    created,
+    update
+  };
+};
+const Bush = () => {
+  const { model, created, update } = BushModel();
+  return {
+    model,
+    created,
+    update
+  };
+};
 const Tree = () => {
   const { model, created } = TreeModel();
   return {
@@ -11,9 +37,30 @@ const Tree = () => {
     created
   };
 };
-const Cube = () => {};
-const Ground = () => {};
-const Grass = () => {};
+const Cube = () => {
+  const { model, created, update } = HareModel();
+  return {
+    model,
+    created,
+    update
+  };
+};
+const Ground = () => {
+  const { model, created, update } = HareModel();
+  return {
+    model,
+    created,
+    update
+  };
+};
+const Grass = () => {
+  const { model, created, update } = HareModel();
+  return {
+    model,
+    created,
+    update
+  };
+};
 
 const MODEL_TYPES = {
   Hawk: {
