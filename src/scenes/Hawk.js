@@ -1,5 +1,5 @@
-import { random } from "../../utils/helpers";
-import { getSceneManager } from "../SceneManager";
+import { random } from "../utils/helpers";
+import { getSceneManager } from "./SceneManager";
 const THREE = require("three");
 
 export const NAME = "redtailHawk";

@@ -1,18 +1,14 @@
 import * as THREE from "three";
 import { OrbitControls } from "../js/three/OrbitControls";
-import Ground from "./Models/Ground";
-import GrassField from "./Models/GrassField";
+import Ground from "./Ground";
+import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import { getValue } from "../utils/helpers";
-import Hawk, {
-  getHawk,
-  NAME as hawkName,
-  TYPE as hawkType
-} from "./Models/Hawk";
-import Bush, { NAME as bushName, TYPE as bushType } from "./Models/Bush";
-import Tree, { NAME as treeName, TYPE as treeType } from "./Models/Tree";
-import Hare, { NAME as hareName, TYPE as hareType } from "./Models/Hare";
+import Hawk, { getHawk, NAME as hawkName, TYPE as hawkType } from "./Hawk";
+import Bush, { NAME as bushName, TYPE as bushType } from "./Bush";
+import Tree, { NAME as treeName, TYPE as treeType } from "./Tree";
+import Hare, { NAME as hareName, TYPE as hareType } from "./Hare";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";

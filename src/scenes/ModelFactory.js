@@ -1,4 +1,4 @@
-import TreeModel from "./Models/Tree";
+import TreeModel from "./Tree";
 
 const Hawk = () => {};
 const Hare = () => {};

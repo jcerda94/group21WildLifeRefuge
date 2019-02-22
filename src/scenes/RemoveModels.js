@@ -1,5 +1,5 @@
 import { getSceneManager } from "./SceneManager";
-import Cube from "./Models/Cube";
+import Cube from "./Cube";
 import { random } from "../utils/helpers";
 
 function RemoveModels (model) {

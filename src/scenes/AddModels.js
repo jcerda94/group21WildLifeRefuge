@@ -1,10 +1,10 @@
 import { getSceneManager } from "./SceneManager";
 import { random } from "../utils/helpers";
-import Cube from "./Models/Cube";
-import Hawk from "./Models/Hawk";
-import Tree from "./Models/Tree";
-import Hare from "./Models/Hare";
-import Bush from "./Models/Bush";
+import Cube from "./Cube";
+import Hawk from "./Hawk";
+import Tree from "./Tree";
+import Hare from "./Hare";
+import Bush from "./Bush";
 
 function AddModels (model) {
   this.state = {

@@ -1,8 +1,8 @@
 import { getSceneManager } from "./SceneManager";
-import Hawk from "./Models/Hawk";
-import Tree from "./Models/Tree";
-import Hare from "./Models/Hare";
-import Bush from "./Models/Bush";
+import Hawk from "./Hawk";
+import Tree from "./Tree";
+import Hare from "./Hare";
+import Bush from "./Bush";
 
 function PreLoadModels ({ hawks, hares, cedars, bushes }) {
   const SceneManager = getSceneManager();
