@@ -164,28 +164,6 @@ class SceneManager {
       this.resetIntersectedColor(this.intersected);
       this.intersected = null;
     }
-    // look for tree
-    // const intersects2 =
-    //   this.raycaster.intersectObjects(this.scene.tree, true) || [];
-    // if (intersects2.length > 0) {
-    //   if (this.intersected !== intersects2[0].object) {
-    //     this.resetIntersectedColor(this.intersected);
-    //     this.intersected = getValue("object", intersects2[0]);
-
-    //     const selectable = getValue("userData.selectable", this.intersected);
-    //     if (selectable) {
-    //       const highlight = getValue(
-    //         "userData.color.highlight",
-    //         this.intersected
-    //       );
-    //       const color = getValue("material.color", this.intersected);
-    //       color.set && color.set(highlight);
-    //     }
-    //   }
-    // } else {
-    //   this.resetIntersectedColor(this.intersected);
-    //   this.intersected = null;
-    // }
   }
 
   resetIntersectedColor (intersected) {
@@ -317,22 +295,6 @@ class SceneManager {
         type: "Bush",
         key: "sageBushCount"
       })
-    });
-
-    capi.addListenerFor({
-      key: "inputTable",
-      callback: capi => {
-        let values = capi
-          .get("inputTable")
-          .map(value => Number(JSON.parse(value)[0]));
-        const typeKeys = Object.keys(modelMap);
-        values.forEach((value, i) => {
-          this.removeAllModelsByType({ type: typeKeys[i] });
-          for (let j = 0; j < value; j++) {
-            this.addObject(new modelMap[typeKeys[i]](this.scene));
-          }
-        });
-      }
     });
 
     new PreLoadModels({ hawks, hares, cedars, bushes });

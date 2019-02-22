@@ -7,7 +7,7 @@ export const TYPE = "Hawk";
 
 var TWEEN = require("@tweenjs/tween.js");
 
-function Hawk (scene) {
+function Hawk () {
   console.log("Added another Hawk");
   const size = 3;
   const color = "#db7093";
@@ -38,7 +38,7 @@ function Hawk (scene) {
   cube.name = NAME;
 
   cube.type = TYPE;
-  scene.add(cube);
+
   const tween1 = new TWEEN.Tween(cube.position).to(
     { x: 500, y: 100, z: -100 },
     10000

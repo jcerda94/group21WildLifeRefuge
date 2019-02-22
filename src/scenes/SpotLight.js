@@ -1,6 +1,6 @@
 const THREE = require("three");
 
-function SpotLight (scene, config = {}) {
+function SpotLight (config = {}) {
   const spotLight = new THREE.SpotLight(0xffffff);
   spotLight.position.set(500, 150, 500);
   spotLight.shadow.camera.near = 20;

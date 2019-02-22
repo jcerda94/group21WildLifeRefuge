@@ -5,7 +5,7 @@ const THREE = require("three");
 export const NAME = "hare";
 export const TYPE = "Hare";
 
-function Hare (scene) {
+function Hare () {
   const size = 3;
   const color = "#db7093";
 
@@ -36,7 +36,6 @@ function Hare (scene) {
     name: NAME
   };
 
-  scene.add(hareMesh);
   hareMesh.type = TYPE;
   function update () {}
 

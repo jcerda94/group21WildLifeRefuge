@@ -1,6 +1,6 @@
 const THREE = require("three");
 
-function DirectionalLight (scene, config = {}) {
+function DirectionalLight (config = {}) {
   const directional = new THREE.DirectionalLight(0xffffff, 0.5);
   directional.position.set(1, 1, 1);
   function update () {}

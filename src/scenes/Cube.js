@@ -1,6 +1,6 @@
 const THREE = require("three");
 
-async function Cube (scene, config) {
+async function Cube (config) {
   const {
     color = "#0080FF",
     size = 3,
@@ -21,7 +21,6 @@ async function Cube (scene, config) {
   };
   cube.name = "grass";
 
-  scene.add(cube);
   function update () {}
 
   return {
