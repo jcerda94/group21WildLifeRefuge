@@ -41,8 +41,8 @@ const Tree = () => {
     created
   };
 };
-const Cube = () => {
-  const { model, created, update } = CubeModel();
+const Cube = config => {
+  const { model, created, update } = CubeModel(config);
   return {
     model,
     created,
@@ -156,7 +156,7 @@ class modelFactory {
       case MODEL_TYPES.Directional.type:
         return MODEL_TYPES.Directional.model();
       default:
-        return MODEL_TYPES.Cube.model();
+        return MODEL_TYPES.Cube.model(config);
     }
   }
 }

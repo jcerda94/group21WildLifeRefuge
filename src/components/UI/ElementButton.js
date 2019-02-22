@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { getSceneManager } from "../../scenes/SceneManager";
-import Cube from "../../scenes/Models/Cube";
 import { random } from "../../utils/helpers";
-import Hawk from "../../scenes/Models/Hawk";
+import ModelFactory from "../../scenes/ModelFactory";
 
 class ElementButton extends Component {
   constructor (props) {
@@ -31,7 +30,7 @@ class ElementButton extends Component {
         break;
       case "hawk":
         color = 0xcc0000;
-        SceneManager.addObject(new Hawk(SceneManager.scene));
+        SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hawk" }));
         return;
         break;
       case "bush":
@@ -58,7 +57,9 @@ class ElementButton extends Component {
       color
     };
 
-    SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
+    SceneManager.addObject(
+      ModelFactory.makeSceneObject({ type: "cube", config: cubeConfig })
+    );
   }
 
   render () {

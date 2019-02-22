@@ -1,10 +1,6 @@
 import { getSceneManager } from "./SceneManager";
 import { random } from "../utils/helpers";
-import Cube from "./Cube";
-import Hawk from "./Hawk";
-import Tree from "./Tree";
-import Hare from "./Hare";
-import Bush from "./Bush";
+import ModelFactory from "./ModelFactory";
 
 function AddModels (model) {
   this.state = {
@@ -17,18 +13,18 @@ function AddModels (model) {
   switch (String(model1)) {
     case "tree":
       color = "#00C060";
-      SceneManager.addObject(new Tree(SceneManager.scene));
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "tree" }));
       return;
     case "hawk":
       color = 0xcc0000;
-      SceneManager.addObject(new Hawk(SceneManager.scene));
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hawk" }));
       return;
     case "bush":
-      SceneManager.addObject(new Bush(SceneManager.scene));
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "bush" }));
       color = 0x669900;
       return;
     case "hare":
-      SceneManager.addObject(new Hare(SceneManager.scene));
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
       color = 0xd9d9d9;
       return;
     default:
@@ -54,7 +50,9 @@ function AddModels (model) {
     color
   };
 
-  SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
+  SceneManager.addObject(
+    ModelFactory.makeSceneObject({ type: "cube", config: cubeConfig })
+  );
   function update () {}
 
   return {

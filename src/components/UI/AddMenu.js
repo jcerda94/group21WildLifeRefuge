@@ -25,7 +25,6 @@ const DivMargin = styled.div`
 `;
 
 class AddMenu extends React.Component {
-
   constructor (props) {
     super(props);
   }
@@ -54,8 +53,7 @@ class AddMenu extends React.Component {
       const model = ev.nativeEvent.target.outerText;
       var str = model;
 
-      str = str.slice(0, -1); // "12345.0"
-      // console.log("Doing Add:  str: '" + str + "'");
+      console.log("Doing Add:  str: '" + str + "'");
       new AddModels(str);
     } else {
       // console.log("Doing Remove: for " + ev.nativeEvent.target.outerText);
@@ -66,7 +64,6 @@ class AddMenu extends React.Component {
       // str = str.slice(0, -1); // "12345.0"
       // console.log("Doing Remove:  str: '" + str + "'");
       new RemoveModels(str);
-
     }
     this.setState({ anchorEl: null });
   }
