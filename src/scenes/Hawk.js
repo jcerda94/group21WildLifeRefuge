@@ -57,7 +57,7 @@ function Hawk () {
   hawk.type = TYPE;
 
   const tween1 = new TWEEN.Tween(hawk.position).to(
-    { x: 500, y: 0, z: -100 },
+    { x: 500, y: 150, z: -100 },
     10000/3
   );
 
@@ -90,11 +90,14 @@ function Hawk () {
           );
           tween2.chain(tween3);
           tween3.chain(tween1);
+          console.log("Colliding " + hareMesh.position.y);
+          hareMesh.position.y = hawk.position.y - 4;
+          cube.position.y = hawk.position.y;
          // let aHare = SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
 
           if(collide){
           //  hawk.add(hareMesh);
-            console.log("Colliding " + hawk.position.y);
+            //console.log("Colliding " + hawk.position.y);
 
             //collide = false;
           }
@@ -112,8 +115,8 @@ function Hawk () {
     checkForHare();
     getHawkObserver().broadcast(cube.position);
     TWEEN.update();
-    hareMesh.position.y = hawk.position.y - 4;
-    cube.position.y = hawk.position.y;
+   // hareMesh.position.y = hawk.position.y - 4;
+
   }
 
   return {
