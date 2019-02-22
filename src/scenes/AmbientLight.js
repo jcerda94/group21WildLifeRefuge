@@ -1,15 +1,14 @@
 const THREE = require("three");
 
-function AmbientLight (scene, config = {}) {
+function AmbientLight (config = {}) {
   const ambientLight = new THREE.AmbientLight(0x808080);
-        ambientLight.castShadow = true;
-
-  scene.add(ambientLight);
+  ambientLight.castShadow = true;
 
   function update () {}
 
   return {
-    update
+    update,
+    light: ambientLight
   };
 }
 

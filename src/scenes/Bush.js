@@ -5,8 +5,7 @@ const THREE = require("three");
 export const NAME = "bush";
 export const TYPE = "Bush";
 
-function Bush (scene) {
-
+function Bush () {
   const size = 5;
   const color = "#2cdb26";
 
@@ -36,7 +35,6 @@ function Bush (scene) {
 
   cube.type = TYPE;
   cube.name = NAME;
-  scene.add(cube);
 
   function update () {}
 
@@ -45,7 +43,6 @@ function Bush (scene) {
     model: cube,
     created: new Date()
   };
-
 }
 
 export default Bush;
