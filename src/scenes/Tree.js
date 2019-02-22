@@ -1,3 +1,9 @@
+/*
+  Reference:
+  1. For create tree: URL: https://gamedevelopment.tutsplus.com/tutorials/creating-a-simple-3d-endless-runner-game-using-three-js--cms-29157
+
+ */
+
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 const THREE = require("three");
