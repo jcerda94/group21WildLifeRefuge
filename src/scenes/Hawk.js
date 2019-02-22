@@ -1,6 +1,8 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
+import ModelFactory from "./ModelFactory";
+import AddModels from "./AddModels";
 const THREE = require("three");
 
 export const NAME = "redtailHawk";
@@ -9,12 +11,22 @@ export const TYPE = "Hawk";
 var TWEEN = require("@tweenjs/tween.js");
 
 function Hawk () {
+  let collide = true;
   const size = 3;
   const color = "#db7093";
 
   const geometry = new THREE.CubeGeometry(size, size * 5, size);
   const material = new THREE.MeshBasicMaterial({ color });
   const cube = new THREE.Mesh(geometry, material);
+ // cube.position.y = 5;
+
+  // create a sphere
+  var sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
+  var sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
+  var hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+ // hareMesh.position.y = 0;
+
+  hareMesh.name = "hare";
 
   const SceneManager = getSceneManager();
   const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
@@ -25,8 +37,13 @@ function Hawk () {
   const z = random(-heightBound, heightBound);
   const position = { x, y, z };
 
-  cube.position.set(position.x, position.y, position.z);
-  cube.userData = {
+  let hawk = new THREE.Object3D();
+  hawk.position.set(position.x, position.y, position.z);
+  hareMesh.position.y = hawk.position.y - 4;
+  cube.position.y = hawk.position.y;
+  hawk.add(cube);
+  hawk.add(hareMesh);
+  hawk.userData = {
     selectable: true,
     color: {
       original: color,
@@ -35,15 +52,16 @@ function Hawk () {
     },
     name: NAME
   };
-  cube.name = NAME;
 
-  cube.type = TYPE;
-  const tween1 = new TWEEN.Tween(cube.position).to(
-    { x: 500, y: 100, z: -100 },
+  hawk.name = NAME;
+  hawk.type = TYPE;
+
+  const tween1 = new TWEEN.Tween(hawk.position).to(
+    { x: 500, y: 0, z: -100 },
     10000/3
   );
 
-  const tween2 = new TWEEN.Tween(cube.position)
+  const tween2 = new TWEEN.Tween(hawk.position)
     .to({ x: -500, y: 100, z: 100 }, 10000/3)
     .start();
 
@@ -62,7 +80,7 @@ function Hawk () {
         if (getSceneManager().subjects[i].model.name == "hare") {
           // console.log(" Found a hare: " + position.x + ":" + position.y + ":" + position.z);
           // JWC  tween3 = new TWEEN.Tween(cube.position)
-          tween3 = new TWEEN.Tween(cube.position).to(
+          tween3 = new TWEEN.Tween(hawk.position).to(
             {
               x: getSceneManager().subjects[i].model.position.x,
               y: getSceneManager().subjects[i].model.position.y,
@@ -72,6 +90,15 @@ function Hawk () {
           );
           tween2.chain(tween3);
           tween3.chain(tween1);
+         // let aHare = SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
+
+          if(collide){
+          //  hawk.add(hareMesh);
+            console.log("Colliding " + hawk.position.y);
+
+            //collide = false;
+          }
+
         }
       }
     }
@@ -85,11 +112,13 @@ function Hawk () {
     checkForHare();
     getHawkObserver().broadcast(cube.position);
     TWEEN.update();
+    hareMesh.position.y = hawk.position.y - 4;
+    cube.position.y = hawk.position.y;
   }
 
   return {
     update,
-    model: cube,
+    model: hawk,
     created: new Date()
   };
 }
