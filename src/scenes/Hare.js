@@ -42,7 +42,7 @@ function Hare () {
     // checkForHare(position);
   });
 
-  scene.add(hareMesh);
+  //scene.add(hareMesh);
   hareMesh.type = TYPE;
   function update () {
     // console.log("hare update");

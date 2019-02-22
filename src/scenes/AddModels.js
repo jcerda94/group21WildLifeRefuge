@@ -6,7 +6,7 @@ function AddModels (model) {
   let color = null;
   const SceneManager = getSceneManager();
 
-  switch (String(model1)) {
+  switch (String(model)) {
     case "tree":
       color = "#00C060";
       SceneManager.addObject(ModelFactory.makeSceneObject({ type: "tree" }));
