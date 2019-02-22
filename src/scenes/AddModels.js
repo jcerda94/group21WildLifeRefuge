@@ -3,12 +3,8 @@ import { random } from "../utils/helpers";
 import ModelFactory from "./ModelFactory";
 
 function AddModels (model) {
-  this.state = {
-    model1: model
-  };
   let color = null;
   const SceneManager = getSceneManager();
-  const { model1 } = this.state;
 
   switch (String(model1)) {
     case "tree":
@@ -33,26 +29,6 @@ function AddModels (model) {
       break;
   }
 
-  // console.log(
-  //   "AddModels:  SceneManager.groundSize.x: " + SceneManager.groundSize.x
-  // );
-  const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
-  const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
-
-  const x = random(-widthBound, widthBound);
-  const y = 1.5;
-  const z = random(-heightBound, heightBound);
-  const position = { x, y, z };
-
-  const cubeConfig = {
-    size: 3,
-    position,
-    color
-  };
-
-  SceneManager.addObject(
-    ModelFactory.makeSceneObject({ type: "cube", config: cubeConfig })
-  );
   function update () {}
 
   return {

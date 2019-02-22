@@ -1,6 +1,6 @@
 function BigSagebrush() {
-    this.scientificName = 'Artemisia tridentata';
-    this.commonName = 'Big Sagebrush';
+    this.scientificName = "Artemisia tridentata";
+    this.commonName = "Big Sagebrush";
 }
 
 BigSagebrush.prototype = {
@@ -13,4 +13,4 @@ BigSagebrush.prototype = {
     }
 };
 
-export default BigSagebrush
+export default BigSagebrush;

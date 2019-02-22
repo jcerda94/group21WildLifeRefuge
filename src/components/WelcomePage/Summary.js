@@ -5,22 +5,22 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    `
+    `;
 
 const Text = styled.p`
     color = #FFFFFF;
     font-size: 14px;
-`
+`;
 
 class Summary extends Component {
     render () {
-        const { summary } = this.props
+        const { summary } = this.props;
 
         return (
             <Container>
                 <Text>{summary}</Text>
             </Container>
-        )
+        );
     }
 }
 

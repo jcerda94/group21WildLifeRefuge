@@ -1,5 +1,7 @@
 const THREE = require("three");
 
+export const NAME = "grass";
+export const TYPE = "Grass";
 async function Cube (config) {
   const {
     color = "#0080FF",
@@ -17,9 +19,11 @@ async function Cube (config) {
       original: color,
       highlight: "#f7ff6d",
       selected: "#000"
-    }
+    },
+    name: NAME
   };
-  cube.name = "grass";
+  cube.name = NAME;
+  cube.type = TYPE;
 
   function update () {}
 

@@ -1,6 +1,6 @@
 function BluebunchWheatGrass() {
-    this.scientificName = 'Pseudoroegneria spicata';
-    this.commonName = 'Bluebunch Wheatgrass';
+    this.scientificName = "Pseudoroegneria spicata";
+    this.commonName = "Bluebunch Wheatgrass";
 }
 
 BluebunchWheatGrass.prototype = {

@@ -1,6 +1,9 @@
 import { getSceneManager } from "./SceneManager";
-import Cube from "./Cube";
-import { random } from "../utils/helpers";
+// import Hawk from "./Hawk";
+// import Tree from "./Tree";
+// import Hare from "./Hare";
+// import Bush from "./Bush";
+// import { stringify } from "querystring";
 
 function RemoveModels (model) {
   this.state = {

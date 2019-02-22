@@ -161,9 +161,36 @@ class SceneManager {
         }
       }
     } else {
+      // console.log("called else");
       this.resetIntersectedColor(this.intersected);
       this.intersected = null;
     }
+    // look for tree
+    // const intersects2 =
+    //    this.raycaster.intersectObject(this.scene.tree, true);
+    /*
+    if (intersects2.length > 0) {
+      if (this.intersected !== intersects2[0].object) {
+        this.resetIntersectedColor(this.intersected);
+        this.intersected = getValue("object", intersects2[0]);
+
+        const selectable = getValue("userData.selectable", this.intersected);
+        if (selectable) {
+          console.log("tree is selected " + selectable + "intersected " + this.intersected);
+          const highlight = getValue(
+              "userData.color.highlight",
+              this.intersected
+          );
+          const color = getValue("material.color", this.intersected);
+          color.set && color.set(highlight);
+        }
+      }
+    } else {
+      console.log("called else");
+      this.resetIntersectedColor(this.intersected);
+      this.intersected = null;
+    }
+    */
   }
 
   resetIntersectedColor (intersected) {
@@ -335,7 +362,7 @@ class SceneManager {
 
     const model = intersects[0] || {};
     const isSelectable = !!getValue("object.userData.selectable", model);
-    if (intersects.length > 1 && model.object.name != "LowPolyGrass") {
+    if (intersects.length > 1 && model.object.name !== "LowPolyGrass") {
       getPopUpInfo().popUpInfo("tree", event);
     }
     if (isSelectable) {

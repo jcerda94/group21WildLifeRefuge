@@ -12,26 +12,26 @@ function SnowshoeHare(gender, color, size, speed)
     this.size = size;
     this.color = color;
     this.speed = speed;
-    this.scientificName =  'Lepus americanus';
-    this.commonName = 'Snowshoe Hare'
-    this.animalType = 'Mammals';
-    this.diet = 'Herbivores';
-    this.avgLifeSpan = '1 year';
+    this.scientificName =  "Lepus americanus";
+    this.commonName = "Snowshoe Hare";
+    this.animalType = "Mammals";
+    this.diet = "Herbivores";
+    this.avgLifeSpan = "1 year";
 
     //references: https://beta.eol.org/pages/133023/data and http://www.animalspot.net/snowshoe-hare.html
 
-        if (this.size.toLowerCase() === 'small') {
+        if (this.size.toLowerCase() === "small") {
             this.lengthInches = (Math.random() * 7);
             this.weightOunces = (Math.random() * 32);
-        } else if (this.size.toLowerCase() === 'medium') {
+        } else if (this.size.toLowerCase() === "medium") {
             this.lengthInches = (Math.random() * 8.5)
             this.weightOunces = (Math.random() * 45);
-        } else if (this.size.toLowerCase() === 'large') {
+        } else if (this.size.toLowerCase() === "large") {
             this.lengthInches = (Math.random() * 10);
             this.weightOunces = (Math.random() * 64);
         }
         //hare only has one speed level; they are naturally fast so their speed is normal.
-        if (this.speed.toLowerCase() === 'normal')
+        if (this.speed.toLowerCase() === "normal")
         {
             this.speedMph = (Math.random() * 24);
         }

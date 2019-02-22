@@ -1,5 +1,6 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
+import { getHawkObserver } from "./observer.js";
 const THREE = require("three");
 
 export const NAME = "hare";
@@ -36,8 +37,16 @@ function Hare () {
     name: NAME
   };
 
+  getHawkObserver().subscribe(position => {
+    // console.log("hawkObserver method called for hare: ");
+    // checkForHare(position);
+  });
+
+  scene.add(hareMesh);
   hareMesh.type = TYPE;
-  function update () {}
+  function update () {
+    // console.log("hare update");
+  }
 
   return {
     update,

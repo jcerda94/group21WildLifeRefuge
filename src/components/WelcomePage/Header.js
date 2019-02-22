@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import User from "../../js/User";
 import styled from "styled-components";
 
 const Container = styled.div`

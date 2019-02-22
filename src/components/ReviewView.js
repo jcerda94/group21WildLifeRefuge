@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import StudentView from "./StudentView";
 
 
@@ -9,7 +9,7 @@ class ReviewView extends Component {
     //TODO: Need to create data structure to store previous student answers/responses for reviewing
     render(){
         const reviewState = {
-            'questionState': this.props.questionState
+            "questionState": this.props.questionState
         };
 
         return (

@@ -58,9 +58,9 @@ class BalancePopulation extends Component {
           options={options}
           onChange={this._onSelect}
           value={selected}
-          placeholder='Select an option'
+          placeholder="Select an option"
         />
-        <div className='result'>
+        <div className="result">
           You selected
           <strong> {placeHolderValue} </strong>
         </div>
