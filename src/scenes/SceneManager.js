@@ -205,18 +205,25 @@ class SceneManager {
   }
 
   async createSceneSubjects () {
-    const grassField = await new GrassField(
-      this.scene,
-      { count: 500 },
-      this.onLoad
-    );
+    const grassField = await ModelFactory.makeSceneObject({
+      type: "grassField",
+      config: { onLoad: this.onLoad }
+    });
+
     this.subjects = [
-      new AmbientLight(this.scene),
-      new DirectionalLight(this.scene),
-      new SpotLight(this.scene),
-      new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
+      ModelFactory.makeSceneObject({ type: "ambientLight" }),
+      ModelFactory.makeSceneObject({ type: "directionalLight" }),
+      ModelFactory.makeSceneObject({ type: "spotLight" }),
+      ModelFactory.makeSceneObject({
+        type: "ground",
+        config: { size: this.groundSize, color: "#996600" }
+      }),
       grassField
     ];
+
+    this.subjects.forEach(subject => {
+      this.scene.add(subject.model);
+    });
   }
 
   addObject (sceneObject) {

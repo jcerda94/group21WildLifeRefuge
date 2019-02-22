@@ -7,12 +7,11 @@ function SpotLight (scene, config = {}) {
   spotLight.shadow.camera.far = 50;
   spotLight.castShadow = true;
 
-  scene.add(spotLight);
-
   function update () {}
 
   return {
-    update
+    update,
+    light: spotLight
   };
 }
 
