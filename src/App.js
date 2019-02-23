@@ -3,15 +3,11 @@ import "./css/App.css";
 import WelcomePage from "./components/WelcomePage/WelcomePage";
 import UIBar from "./components/UI/UIBar";
 import StudentView from "./components/StudentView";
-import AuthorView from "./components/AuthorView";
-import Grid from "@material-ui/core/Grid";
 import styled from "styled-components";
 import Drawer from "./components/UI/Drawer";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import BalancePopulation from "./components/BalancePopulation/BalancePopulation";
 import ViewControl from "./components/ViewControl";
-import LoadingModels from "./components/LoadingModels";
-import PreLoadModels from "./scenes/PreLoadModels";
 import PopUpInfo from "./components/PopUpInfo";
 
 const Container = styled.div`
@@ -46,7 +42,7 @@ class App extends Component {
               <Fragment>
                 <UIBar />
                 <StudentView />
-                <PopUpInfo/>
+                <PopUpInfo />
 
                 <Drawer
                   Content={() => (

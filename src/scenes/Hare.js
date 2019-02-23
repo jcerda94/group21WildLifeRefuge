@@ -7,7 +7,6 @@ export const NAME = "hare";
 export const TYPE = "Hare";
 
 function Hare () {
-  const size = 3;
   const color = "#db7093";
 
   // create a sphere

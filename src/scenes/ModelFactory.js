@@ -66,7 +66,7 @@ const Grass = async config => {
   };
 };
 const Ambient = () => {
-  const { light, created, update } = AmbientLight();
+  const { light, update } = AmbientLight();
   return {
     model: light,
     created: new Date(),
@@ -74,7 +74,7 @@ const Ambient = () => {
   };
 };
 const Directional = () => {
-  const { light, created, update } = DirectionalLight();
+  const { light, update } = DirectionalLight();
   return {
     model: light,
     created: new Date(),
@@ -82,7 +82,7 @@ const Directional = () => {
   };
 };
 const Spot = () => {
-  const { light, created, update } = SpotLight();
+  const { light, update } = SpotLight();
   return {
     model: light,
     created: new Date(),

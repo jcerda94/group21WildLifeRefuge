@@ -40,7 +40,7 @@ class WelcomePage extends React.Component {
     history && history.push("/sim");
   }
   render () {
-    const { handleLogin, name } = this.props;
+    const { name } = this.props;
     return (
       <React.Fragment>
         <Background />

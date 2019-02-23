@@ -1,6 +1,5 @@
 import { getValue } from "../helpers";
 import { bindEvents } from "./events";
-import { getSceneManager } from "../../scenes/SceneManager";
 import { addListenerFor } from "../CAPI/listeners";
 
 const CapiAdapter = getValue("simcapi.CapiAdapter", window);

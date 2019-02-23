@@ -1,28 +1,12 @@
 import * as THREE from "three";
 import { OrbitControls } from "../js/three/OrbitControls";
-import Ground from "./Ground";
-import GrassField from "./GrassField";
-import AmbientLight from "./AmbientLight";
-import DirectionalLight from "./DirectionalLight";
 import { getValue } from "../utils/helpers";
-import Hawk, { getHawk, NAME as hawkName, TYPE as hawkType } from "./Hawk";
-import Bush, { NAME as bushName, TYPE as bushType } from "./Bush";
-import Tree, { NAME as treeName, TYPE as treeType } from "./Tree";
-import Hare, { NAME as hareName, TYPE as hareType } from "./Hare";
+import { NAME as hawkName } from "./Hawk";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
-import SpotLight from "./SpotLight";
 import { getPopUpInfo } from "../components/PopUpInfo";
-import { addListenerFor } from "../utils/CAPI/listeners";
 import ModelFactory from "./ModelFactory";
-
-const modelMap = {
-  [hawkType]: Hawk,
-  [hareType]: Hare,
-  [bushType]: Bush,
-  [treeType]: Tree
-};
 
 class SceneManager {
   groundSize = {
@@ -161,36 +145,9 @@ class SceneManager {
         }
       }
     } else {
-      // console.log("called else");
       this.resetIntersectedColor(this.intersected);
       this.intersected = null;
     }
-    // look for tree
-    // const intersects2 =
-    //    this.raycaster.intersectObject(this.scene.tree, true);
-    /*
-    if (intersects2.length > 0) {
-      if (this.intersected !== intersects2[0].object) {
-        this.resetIntersectedColor(this.intersected);
-        this.intersected = getValue("object", intersects2[0]);
-
-        const selectable = getValue("userData.selectable", this.intersected);
-        if (selectable) {
-          console.log("tree is selected " + selectable + "intersected " + this.intersected);
-          const highlight = getValue(
-              "userData.color.highlight",
-              this.intersected
-          );
-          const color = getValue("material.color", this.intersected);
-          color.set && color.set(highlight);
-        }
-      }
-    } else {
-      console.log("called else");
-      this.resetIntersectedColor(this.intersected);
-      this.intersected = null;
-    }
-    */
   }
 
   resetIntersectedColor (intersected) {

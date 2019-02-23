@@ -42,7 +42,6 @@ class Drawer extends Component {
   }
 
   componentDidMount () {
-    const { open } = this.state;
     Subject.subscribe("toggle left", this.toggleDrawer);
   }
 
