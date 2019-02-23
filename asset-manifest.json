@@ -1,0 +1,15 @@
+{
+  "main.css": "/my-app/static/css/main.87da3de1.chunk.css",
+  "main.js": "/my-app/static/js/main.bf9b11a3.chunk.js",
+  "main.js.map": "/my-app/static/js/main.bf9b11a3.chunk.js.map",
+  "runtime~main.js": "/my-app/static/js/runtime~main.caff8f44.js",
+  "runtime~main.js.map": "/my-app/static/js/runtime~main.caff8f44.js.map",
+  "static/css/2.9bfd7439.chunk.css": "/my-app/static/css/2.9bfd7439.chunk.css",
+  "static/js/2.66c957be.chunk.js": "/my-app/static/js/2.66c957be.chunk.js",
+  "static/js/2.66c957be.chunk.js.map": "/my-app/static/js/2.66c957be.chunk.js.map",
+  "index.html": "/my-app/index.html",
+  "precache-manifest.43739d29c4434ae817eb4bb1aa4fea33.js": "/my-app/precache-manifest.43739d29c4434ae817eb4bb1aa4fea33.js",
+  "service-worker.js": "/my-app/service-worker.js",
+  "static/css/2.9bfd7439.chunk.css.map": "/my-app/static/css/2.9bfd7439.chunk.css.map",
+  "static/css/main.87da3de1.chunk.css.map": "/my-app/static/css/main.87da3de1.chunk.css.map"
+}
