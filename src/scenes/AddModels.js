@@ -1,53 +1,35 @@
 import { getSceneManager } from "./SceneManager";
-import Cube from "./Cube";
 import { random } from "../utils/helpers";
-import Hawk from "./Hawk";
-import Tree from "./Tree";
-import Hare from "./Hare";
-import Bush from "./Bush";
+import ModelFactory from "./ModelFactory";
 
 var hareCount = 0;
 function AddModels (model) {
-
   let color = null;
   const SceneManager = getSceneManager();
 
-  switch (model){
+  switch (String(model)) {
     case "tree":
-      SceneManager.addObject(new Tree(SceneManager.scene));
-      break;
+      color = "#00C060";
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "tree" }));
+      return;
     case "hawk":
-      SceneManager.addObject(new Hawk(SceneManager.scene));
-      break;
+      color = 0xcc0000;
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hawk" }));
+      return;
     case "bush":
-      SceneManager.addObject(new Bush(SceneManager.scene));
-      break;
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "bush" }));
+      color = 0x669900;
+      return;
     case "hare":
-      SceneManager.addObject(new Hare(SceneManager.scene, hareCount++));
-      break;
-    case "grass":
-      const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
-      const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
+      color = 0xd9d9d9;
+      return;
 
-      const x = random(-widthBound, widthBound);
-      const y = 1.5;
-      const z = random(-heightBound, heightBound);
-      const position = { x, y, z };
-
-      const cubeConfig = {
-        size: 3,
-        position,
-        color
-      };
-
-      SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
-      break;
     default:
       // grass isn't handled
       //      console.log("AddModels:  Unknown model: " + (String)(model1));
       break;
   }
-
 
   function update () {}
 

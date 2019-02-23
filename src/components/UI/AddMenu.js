@@ -23,7 +23,6 @@ const DivMargin = styled.div`
 `;
 
 class AddMenu extends React.Component {
-
   constructor (props) {
     super(props);
   }
@@ -46,26 +45,24 @@ class AddMenu extends React.Component {
     this.setState({ doingRemove: true });
   }
 
-  handleClose = (add) => ev => {
+  handleClose = add => ev => {
     if (!this.state.doingRemove) {
       // console.log("Doing Add for " + ev.nativeEvent.target.outerText);
-      //const model = ev.nativeEvent.target.outerText;
-      //var str = model;
-      //onDayChange = (date) => (event) => { ...your code }
-
+      // const model = ev.nativeEvent.target.outerText;
+      // var str = model;
+      // onDayChange = (date) => (event) => { ...your code }
 
       // console.log("Doing Add:  str: '" + str + "'");
       new AddModels(add);
     } else {
       // console.log("Doing Remove: for " + ev.nativeEvent.target.outerText);
-      //const model = ev.nativeEvent.target.outerText;
-      //var str = model;
+      // const model = ev.nativeEvent.target.outerText;
+      // var str = model;
 
       // console.log("Doing Remove:  str: '" + str + "'");
       // str = str.slice(0, -1); // "12345.0"
       // console.log("Doing Remove:  str: '" + str + "'");
       new RemoveModels(add);
-
     }
     this.setState({ anchorEl: null });
   }

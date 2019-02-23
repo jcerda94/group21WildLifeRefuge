@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { getSceneManager } from "../../scenes/SceneManager";
-import Cube from "../../scenes/Cube";
 import { random } from "../../utils/helpers";
-import Hawk from "../../scenes/Hawk";
+import ModelFactory from "../../scenes/ModelFactory";
 
 class ElementButton extends Component {
   constructor (props) {
@@ -10,12 +9,12 @@ class ElementButton extends Component {
 
     // TODO: Refactor to use an HTML button or other type of component, use of null anchor tags is highly discouraged
     this.button = (
-        <div className='dropdown'>
-          <button className='dropbtn'>{this.props.addText}</button>
-          <div className='dropdown-content'>
-            <button onClick={e => this.onClick()}>{this.props.title}</button>
-          </div>
+      <div className='dropdown'>
+        <button className='dropbtn'>{this.props.addText}</button>
+        <div className='dropdown-content'>
+          <button onClick={e => this.onClick()}>{this.props.title}</button>
         </div>
+      </div>
     );
   }
 
@@ -31,7 +30,7 @@ class ElementButton extends Component {
         break;
       case "hawk":
         color = 0xcc0000;
-        SceneManager.addObject(new Hawk(SceneManager.scene));
+        SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hawk" }));
         return;
         break;
       case "bush":
@@ -58,7 +57,9 @@ class ElementButton extends Component {
       color
     };
 
-    SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
+    SceneManager.addObject(
+      ModelFactory.makeSceneObject({ type: "cube", config: cubeConfig })
+    );
   }
 
   render () {
