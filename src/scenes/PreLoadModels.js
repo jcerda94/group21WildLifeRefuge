@@ -1,19 +1,22 @@
 import { getSceneManager } from "./SceneManager";
-import ModelFactory from "./ModelFactory";
+import Hawk from "./Hawk";
+import Tree from "./Tree";
+import Hare from "./Hare";
+import Bush from "./Bush";
 
 function PreLoadModels ({ hawks, hares, cedars, bushes }) {
   const SceneManager = getSceneManager();
   for (let i = 0; i < cedars; i++) {
-    SceneManager.addObject(ModelFactory.makeSceneObject({ type: "tree" }));
+    SceneManager.addObject(new Tree(SceneManager.scene));
   }
   for (let i = 0; i < bushes; i++) {
-    SceneManager.addObject(ModelFactory.makeSceneObject({ type: "bush" }));
+    SceneManager.addObject(new Bush(SceneManager.scene));
   }
   for (let i = 0; i < hawks; i++) {
-    SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hawk" }));
+    SceneManager.addObject(new Hawk(SceneManager.scene));
   }
   for (let i = 0; i < hares; i++) {
-    SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
+    SceneManager.addObject(new Hare(SceneManager.scene));
   }
 
   function update () {}

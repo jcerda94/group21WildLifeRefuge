@@ -4,15 +4,17 @@ import { getSceneManager } from "./SceneManager";
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
+
 export const TYPE = "Grass";
 
-async function GrassField (config) {
+
+async function GrassField (scene, config = { count: 500 }, onLoad) {
   const loadingManager = new THREE.LoadingManager();
-  loadingManager.onLoad = config.onLoad || (() => null);
+  loadingManager.onLoad = onLoad || (() => null);
 
   const loader = new THREE.GLTFLoader(loadingManager);
 
-  const { count = 500 } = config;
+  const { count } = config;
 
   const grasses = new THREE.Object3D();
   const originalGrass = await new Promise((resolve, reject) => {
@@ -27,6 +29,7 @@ async function GrassField (config) {
   const bounds = getSceneManager().groundSize;
   bounds.x *= 0.95;
   bounds.y *= 0.95;
+
   for (let i = 0; i < count; i++) {
     const grass = originalGrass.clone();
     grass.children[0].children[0].userData = {
@@ -54,6 +57,7 @@ async function GrassField (config) {
   }
 
   grasses.type = TYPE;
+  scene.add(grasses);
 
   function update () {}
 

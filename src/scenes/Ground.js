@@ -2,7 +2,7 @@ const THREE = require("three");
 
 export const TYPE = "Ground";
 
-function Ground (config) {
+function Ground (scene, config) {
   const { size = { x: 100, y: 100 }, color = "#996600" } = config;
   const depth = 15;
   const geometry = new THREE.BoxBufferGeometry(size.x, depth, size.y);
@@ -20,6 +20,8 @@ function Ground (config) {
   ground.castShadow = true;
 
   ground.type = TYPE;
+
+  scene.add(ground);
 
   function update (time) {}
 

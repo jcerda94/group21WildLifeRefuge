@@ -1,18 +1,22 @@
 const THREE = require("three");
 
-function SpotLight (config = {}) {
-  const spotLight = new THREE.SpotLight(0xffffff);
-  spotLight.position.set(500, 150, 500);
-  spotLight.shadow.camera.near = 20;
-  spotLight.shadow.camera.far = 50;
-  spotLight.castShadow = true;
 
-  function update () {}
+function SpotLight(scene, config = {}) {
 
-  return {
-    update,
-    light: spotLight
-  };
+    const spotLight = new THREE.SpotLight(0xffffff);
+    spotLight.position.set(500, 150, 500);
+    spotLight.shadowCameraNear = 20;
+    spotLight.shadowCameraFar = 50;
+    spotLight.castShadow = true;
+
+    scene.add(spotLight);
+
+    function update() {}
+
+    return{
+        update
+    };
+
 }
 
 export default SpotLight;

@@ -5,7 +5,7 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import { getValue } from "../utils/helpers";
-import Hawk, { getHawk, NAME as hawkName, TYPE as hawkType } from "./Hawk";
+import Hawk, {getHawk, NAME as hawkName, TYPE as hawkType} from "./Hawk";
 import Bush, { NAME as bushName, TYPE as bushType } from "./Bush";
 import Tree, { NAME as treeName, TYPE as treeType } from "./Tree";
 import Hare, { NAME as hareName, TYPE as hareType } from "./Hare";
@@ -13,9 +13,8 @@ import { getCapiInstance } from "../utils/CAPI/capi";
 import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
 import SpotLight from "./SpotLight";
-import { getPopUpInfo } from "../components/PopUpInfo";
+import {getPopUpInfo} from "../components/PopUpInfo";
 import { addListenerFor } from "../utils/CAPI/listeners";
-import ModelFactory from "./ModelFactory";
 
 const modelMap = {
   [hawkType]: Hawk,
@@ -23,6 +22,7 @@ const modelMap = {
   [bushType]: Bush,
   [treeType]: Tree
 };
+
 
 class SceneManager {
   groundSize = {
@@ -130,7 +130,9 @@ class SceneManager {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
     for (let i = 0; i < this.subjects.length; i++) {
+
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
+
     }
 
     this.cameraControls.update(delta);
@@ -161,12 +163,12 @@ class SceneManager {
         }
       }
     } else {
-      // console.log("called else");
+       //console.log("called else");
       this.resetIntersectedColor(this.intersected);
       this.intersected = null;
     }
     // look for tree
-    // const intersects2 =
+   // const intersects2 =
     //    this.raycaster.intersectObject(this.scene.tree, true);
     /*
     if (intersects2.length > 0) {
@@ -186,14 +188,16 @@ class SceneManager {
         }
       }
     } else {
-      console.log("called else");
+      //console.log("called else");
       this.resetIntersectedColor(this.intersected);
       this.intersected = null;
     }
     */
   }
 
+
   resetIntersectedColor (intersected) {
+
     const selectableKey = "userData.selectable";
     if (intersected && getValue(selectableKey, intersected)) {
       const color = getValue("material.color", intersected);
@@ -210,33 +214,26 @@ class SceneManager {
   }
 
   async createSceneSubjects () {
-    const grassField = await ModelFactory.makeSceneObject({
-      type: "grassField",
-      config: { onLoad: this.onLoad }
-    });
-
+    const grassField = await new GrassField(
+      this.scene,
+      { count: 500 },
+      this.onLoad
+    );
     this.subjects = [
-      ModelFactory.makeSceneObject({ type: "ambientLight" }),
-      ModelFactory.makeSceneObject({ type: "directionalLight" }),
-      ModelFactory.makeSceneObject({ type: "spotLight" }),
-      ModelFactory.makeSceneObject({
-        type: "ground",
-        config: { size: this.groundSize, color: "#996600" }
-      }),
+      new AmbientLight(this.scene),
+      new DirectionalLight(this.scene),
+      new SpotLight(this.scene),
+      new Ground(this.scene, { size: this.groundSize, color: "#996600" }),
       grassField
     ];
-
-    this.subjects.forEach(subject => {
-      this.scene.add(subject.model);
-    });
   }
 
   addObject (sceneObject) {
     this.subjects.push(sceneObject);
-    this.scene.add(sceneObject.model);
   }
 
   removeObject (idx, sceneObject) {
+    // console.log("removeObject: sceneObject: " + idx);
     this.subjects.splice(idx, 1);
     this.scene.remove(sceneObject);
   }
@@ -262,7 +259,8 @@ class SceneManager {
     this.scene.remove(mostRecentModel);
   }
 
-  removeAllModelsByType (type) {
+  removeAllModelsByType ( type ) {
+    //console.log("RemoveAll: here " + type);
     const modelsToRemove = this.subjects
       .filter(subject => {
         if (subject.model) {
@@ -283,7 +281,6 @@ class SceneManager {
 
   onTransporterReady () {
     const capi = getCapiInstance();
-    console.log("test");
     const [hawks, hares, cedars, bushes] = capi.getValues({
       keys: [
         "redtailHawkCount",
@@ -324,13 +321,29 @@ class SceneManager {
       })
     });
 
+    capi.addListenerFor({
+      key: "inputTable",
+      callback: capi => {
+        let values = capi
+          .get("inputTable")
+          .map(value => Number(JSON.parse(value)[0]));
+        console.log(values);
+        const typeKeys = Object.keys(modelMap);
+        values.forEach((value, i) => {
+          this.removeAllModelsByType({ type: typeKeys[i] });
+          for (let j = 0; j < value; j++) {
+            this.addObject(new modelMap[typeKeys[i]](this.scene));
+          }
+        });
+      }
+    });
+
     new PreLoadModels({ hawks, hares, cedars, bushes });
   }
 
   addObjects ({ type, count }) {
     for (let i = 0; i < count; i++) {
-      const model = ModelFactory.makeSceneObject({ type });
-      this.addObject(model);
+      this.addObject(new modelMap[type](this.scene));
     }
   }
 
@@ -362,12 +375,13 @@ class SceneManager {
 
     const model = intersects[0] || {};
     const isSelectable = !!getValue("object.userData.selectable", model);
-    if (intersects.length > 1 && model.object.name !== "LowPolyGrass") {
+    if(intersects.length > 1 && model.object.name !== "LowPolyGrass"){
       getPopUpInfo().popUpInfo("tree", event);
     }
     if (isSelectable) {
       this.toggleSelected(model.object);
       const popUpInfo = getPopUpInfo();
+      console.log("mode is " + model.object.name);
       popUpInfo.popUpInfo(model.object.name, event);
     }
   }
@@ -413,6 +427,7 @@ class SceneManager {
   }
 
   setFlyControlCamera () {
+    // position and point the camera to the center of the scene
     this.camera.position.x = 100;
     this.camera.position.y = 100;
     this.camera.position.z = 300;
@@ -453,6 +468,11 @@ class SceneManager {
     });
     this.renderer.setPixelRatio(1);
     this.renderer.setSize(width, height);
+
+    //this.renderer.setClearColor(0x000000, 1.0);
+    //this.renderer.setSize(window.innerWidth, window.innerHeight);
+   // this.renderer.shadowMap.enabled = true;
+    //this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
   }
 }
 
