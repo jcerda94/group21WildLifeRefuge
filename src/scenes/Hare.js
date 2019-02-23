@@ -36,7 +36,7 @@ function Hare () {
     },
     name: NAME
   };
-  var myName = "hare_" + hareCount;
+//  var myName = "hare_" + hareCount;
   //console.log("subscribe to hawkObserver for " + myName);
 
   getHawkObserver().subscribe(position => {
