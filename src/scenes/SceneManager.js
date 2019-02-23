@@ -180,6 +180,7 @@ class SceneManager {
         type: "ground",
         config: { size: this.groundSize, color: "#996600" }
       }),
+      ModelFactory.makeSceneObject({ type: "collisionSphere" }),
       grassField
     ];
 

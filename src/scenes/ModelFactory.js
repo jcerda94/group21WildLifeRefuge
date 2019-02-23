@@ -8,6 +8,7 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import SpotLight from "./SpotLight";
+import CollisionSphereModel from "./CollisionSphere";
 
 const Hawk = () => {
   const { model, created, update } = HawkModel();
@@ -89,6 +90,11 @@ const Spot = () => {
     update
   };
 };
+const CollisionSphere = () => {
+  const { model, update, created } = CollisionSphereModel();
+
+  return { model, update, created };
+};
 
 const MODEL_TYPES = {
   Hawk: {
@@ -130,6 +136,10 @@ const MODEL_TYPES = {
   Spot: {
     type: "spotLight",
     model: Spot
+  },
+  CollisionSphere: {
+    type: "collisionSphere",
+    model: CollisionSphere
   }
 };
 
@@ -155,6 +165,8 @@ class modelFactory {
         return MODEL_TYPES.Spot.model();
       case MODEL_TYPES.Directional.type:
         return MODEL_TYPES.Directional.model();
+      case MODEL_TYPES.CollisionSphere.type:
+        return MODEL_TYPES.CollisionSphere.model();
       default:
         return MODEL_TYPES.Cube.model(config);
     }
