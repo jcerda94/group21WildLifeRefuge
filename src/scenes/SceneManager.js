@@ -241,7 +241,6 @@ class SceneManager {
 
   onTransporterReady () {
     const capi = getCapiInstance();
-    console.log("test");
     const [hawks, hares, cedars, bushes] = capi.getValues({
       keys: [
         "redtailHawkCount",
