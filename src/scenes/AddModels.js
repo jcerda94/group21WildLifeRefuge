@@ -16,16 +16,10 @@ function AddModels (model) {
       return;
     case "hare":
       SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
-      return;
+
     default:
       break;
   }
-
-  function update () {}
-
-  return {
-    update
-  };
 }
 
 export default AddModels;

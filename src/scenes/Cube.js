@@ -26,9 +26,7 @@ function Cube (config) {
   cube.name = NAME;
   cube.type = TYPE;
 
-  function update (elapsedTime) {
-    cube.position.setY(cube.position.y + 0.05);
-  }
+  function update (elapsedTime) {}
 
   return {
     update,

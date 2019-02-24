@@ -10,32 +10,35 @@ import DirectionalLight from "./DirectionalLight";
 import SpotLight from "./SpotLight";
 import CollisionSphereModel from "./CollisionSphere";
 
-const Hawk = () => {
-  const { model, created, update } = HawkModel();
+const Hawk = config => {
+  const { model, created, update } = HawkModel(config);
+  if (config && config.useCollision) {
+    console.log("using collision");
+  }
   return {
     model,
     created,
     update
   };
 };
-const Hare = () => {
-  const { model, created, update } = HareModel();
+const Hare = config => {
+  const { model, created, update } = HareModel(config);
   return {
     model,
     created,
     update
   };
 };
-const Bush = () => {
-  const { model, created, update } = BushModel();
+const Bush = config => {
+  const { model, created, update } = BushModel(config);
   return {
     model,
     created,
     update
   };
 };
-const Tree = () => {
-  const { model, created } = TreeModel();
+const Tree = config => {
+  const { model, created } = TreeModel(config);
   return {
     update: () => {},
     model,
@@ -66,24 +69,24 @@ const Grass = async config => {
     update
   };
 };
-const Ambient = () => {
-  const { light, update } = AmbientLight();
+const Ambient = config => {
+  const { light, update } = AmbientLight(config);
   return {
     model: light,
     created: new Date(),
     update
   };
 };
-const Directional = () => {
-  const { light, update } = DirectionalLight();
+const Directional = config => {
+  const { light, update } = DirectionalLight(config);
   return {
     model: light,
     created: new Date(),
     update
   };
 };
-const Spot = () => {
-  const { light, update } = SpotLight();
+const Spot = config => {
+  const { light, update } = SpotLight(config);
   return {
     model: light,
     created: new Date(),
@@ -151,23 +154,23 @@ class modelFactory {
     const { type, config } = options;
     switch (type) {
       case MODEL_TYPES.Hawk.type:
-        return MODEL_TYPES.Hawk.model();
+        return MODEL_TYPES.Hawk.model(config);
       case MODEL_TYPES.Hare.type:
-        return MODEL_TYPES.Hare.model();
+        return MODEL_TYPES.Hare.model(config);
       case MODEL_TYPES.Bush.type:
-        return MODEL_TYPES.Bush.model();
+        return MODEL_TYPES.Bush.model(config);
       case MODEL_TYPES.Tree.type:
-        return MODEL_TYPES.Tree.model();
+        return MODEL_TYPES.Tree.model(config);
       case MODEL_TYPES.Grass.type:
         return MODEL_TYPES.Grass.model(config);
       case MODEL_TYPES.Ground.type:
         return MODEL_TYPES.Ground.model(config);
       case MODEL_TYPES.Ambient.type:
-        return MODEL_TYPES.Ambient.model();
+        return MODEL_TYPES.Ambient.model(config);
       case MODEL_TYPES.Spot.type:
-        return MODEL_TYPES.Spot.model();
+        return MODEL_TYPES.Spot.model(config);
       case MODEL_TYPES.Directional.type:
-        return MODEL_TYPES.Directional.model();
+        return MODEL_TYPES.Directional.model(config);
       case MODEL_TYPES.CollisionSphere.type:
         return MODEL_TYPES.CollisionSphere.model(config);
       default:

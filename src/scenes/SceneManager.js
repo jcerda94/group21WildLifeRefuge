@@ -113,6 +113,7 @@ class SceneManager {
   update () {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
+    console.log(this.subjects.length);
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
     }
@@ -180,24 +181,15 @@ class SceneManager {
         type: "ground",
         config: { size: this.groundSize, color: "#996600" }
       }),
-      ModelFactory.makeSceneObject({
-        type: "collisionSphere",
-        config: {
-          targets: ["Cube"],
-          handleCollision: () => console.log("collision")
-        }
-      }),
-      ModelFactory.makeSceneObject({
-        type: "cube",
-        config: {
-          position: {
-            x: 0,
-            y: 5,
-            z: 350
-          }
-        }
-      }),
-      grassField
+      // ModelFactory.makeSceneObject({
+      //   type: "collisionSphere",
+      //   config: {
+      //     targets: ["Cube"],
+      //     handleCollision: () => console.log("collision")
+      //   }
+      // }),
+      grassField,
+      ...this.subjects
     ];
 
     this.subjects.forEach(subject => {
@@ -208,6 +200,16 @@ class SceneManager {
   addObject (sceneObject) {
     this.subjects.push(sceneObject);
     this.scene.add(sceneObject.model);
+  }
+
+  addObjects ({ type, count }) {
+    for (let i = 0; i < count; i++) {
+      this.addObject(
+        ModelFactory.makeSceneObject({
+          type
+        })
+      );
+    }
   }
 
   getSceneObjectsOf ({ types }) {
@@ -268,6 +270,7 @@ class SceneManager {
         "sageBushCount"
       ]
     });
+    PreLoadModels({ hawks, hares, cedars, bushes });
     capi.addListenerFor({
       key: "redtailHawkCount",
       callback: this.handleModelCountChange({
@@ -299,15 +302,6 @@ class SceneManager {
         key: "sageBushCount"
       })
     });
-
-    new PreLoadModels({ hawks, hares, cedars, bushes });
-  }
-
-  addObjects ({ type, count }) {
-    for (let i = 0; i < count; i++) {
-      const model = ModelFactory.makeSceneObject({ type });
-      this.addObject(model);
-    }
   }
 
   handleModelCountChange = ({ type, key }) => capiModel => {
