@@ -8,7 +8,7 @@ export const NAME = "hare";
 export const TYPE = "Hare";
 
 function Hare (scene, hareCount) {
-  const size = 3;
+  //const size = 3;
   const color = "#db7093";
 
   // create a sphere
@@ -37,7 +37,7 @@ function Hare (scene, hareCount) {
     },
     name: NAME
   };
-  var myName = "hare_" + hareCount;
+  //var myName = "hare_" + hareCount;
   //console.log("subscribe to hawkObserver for " + myName);
 
   getHawkObserver().subscribe((position) => {
