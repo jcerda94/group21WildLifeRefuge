@@ -1,10 +1,11 @@
-
+var count = 0;
 class EventObserver {
   constructor() {
     this.observers = [];
   }
-
+ 
   subscribe(fn) {
+    console.log("Subscribe count = " + count++);
     this.observers.push(fn);
   }
 
