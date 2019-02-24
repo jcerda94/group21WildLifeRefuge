@@ -18,6 +18,7 @@ export const NAME = "redtailHawk";
 export const TYPE = "Hawk";
 
 var TWEEN = require("@tweenjs/tween.js");
+let collidableMeshList = [];
 
 function Hawk () {
   let collide = true;
@@ -103,7 +104,7 @@ function Hawk () {
           hareMesh.position.y = hawk.position.y - 4;
           cube.position.y = hawk.position.y;
          // let aHare = SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
-
+            hawk.add(hareMesh);
           if(detectCollision()){
           hawk.add(hareMesh);
             //console.log("Colliding " + hawk.position.y);
@@ -119,6 +120,13 @@ function Hawk () {
   tween2.chain(tween1);
 
   //detect collision
+    // collision detection:
+    //   determines if any of the rays from the cube's origin to each vertex
+    //		intersects any face of a mesh in the array of target meshes
+    //   for increased collision accuracy, add more vertices to the cube;
+    //		for example, new THREE.CubeGeometry( 64, 64, 64, 8, 8, 8, wireMaterial )
+    //   HOWEVER: when the origin of the ray is within the target mesh, collisions do not occur
+    let originPoint = cube.position.clone();
   function detectCollision() {
       for (let vertexIndex = 0; vertexIndex < cube.geometry.vertices.length; vertexIndex++)
       {
