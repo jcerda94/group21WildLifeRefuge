@@ -1,12 +1,14 @@
+
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
-import { getHawkObserver } from "./observer.js";
+import { getHawkObserver } from "./observer.js"; 
 const THREE = require("three");
 
 export const NAME = "hare";
 export const TYPE = "Hare";
 
-function Hare () {
+function Hare (scene, hareCount) {
+  const size = 3;
   const color = "#db7093";
 
   // create a sphere
@@ -35,16 +37,19 @@ function Hare () {
     },
     name: NAME
   };
+  var myName = "hare_" + hareCount;
+  //console.log("subscribe to hawkObserver for " + myName);
 
-  getHawkObserver().subscribe(position => {
-    // console.log("hawkObserver method called for hare: ");
-    // checkForHare(position);
+  getHawkObserver().subscribe((position) => {
+    //console.log("hawkObserver method called for " + myName);
+    //checkForHare(position);
   });
 
-  //scene.add(hareMesh);
+  scene.add(hareMesh);
   hareMesh.type = TYPE;
-  function update () {
-    // console.log("hare update");
+  function update () 
+  {
+    //console.log("hare update");
   }
 
   return {
