@@ -180,7 +180,13 @@ class SceneManager {
         type: "ground",
         config: { size: this.groundSize, color: "#996600" }
       }),
-      ModelFactory.makeSceneObject({ type: "collisionSphere" }),
+      ModelFactory.makeSceneObject({
+        type: "collisionSphere",
+        config: {
+          targets: ["Cube"],
+          handleCollision: () => console.log("collision")
+        }
+      }),
       ModelFactory.makeSceneObject({
         type: "cube",
         config: {
@@ -204,12 +210,11 @@ class SceneManager {
     this.scene.add(sceneObject.model);
   }
 
-  getSceneObjectsOf ({ type }) {
-    return this.scene.children.filter(child => child.type === type);
+  getSceneObjectsOf ({ types }) {
+    return this.scene.children.filter(child => types.includes(child.type));
   }
 
-  removeObject (idx, sceneObject) {
-    this.subjects.splice(idx, 1);
+  removeObject (sceneObject) {
     this.scene.remove(sceneObject);
   }
 

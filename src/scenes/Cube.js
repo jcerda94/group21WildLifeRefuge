@@ -11,6 +11,7 @@ function Cube (config) {
 
   const geometry = new THREE.CubeGeometry(size, size * 3, size);
   const material = new THREE.MeshBasicMaterial({ color });
+  material.side = THREE.DoubleSide;
   const cube = new THREE.Mesh(geometry, material);
   cube.position.set(position.x, position.y, position.z);
   cube.userData = {
@@ -25,7 +26,9 @@ function Cube (config) {
   cube.name = NAME;
   cube.type = TYPE;
 
-  function update () {}
+  function update (elapsedTime) {
+    cube.position.setY(cube.position.y + 0.05);
+  }
 
   return {
     update,

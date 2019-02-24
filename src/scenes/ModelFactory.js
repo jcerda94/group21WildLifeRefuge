@@ -90,8 +90,11 @@ const Spot = () => {
     update
   };
 };
-const CollisionSphere = () => {
-  const { model, update, created } = CollisionSphereModel();
+const CollisionSphere = ({ targets, handleCollision }) => {
+  const { model, update, created } = CollisionSphereModel({
+    targets,
+    handleCollision
+  });
 
   return { model, update, created };
 };
@@ -166,7 +169,7 @@ class modelFactory {
       case MODEL_TYPES.Directional.type:
         return MODEL_TYPES.Directional.model();
       case MODEL_TYPES.CollisionSphere.type:
-        return MODEL_TYPES.CollisionSphere.model();
+        return MODEL_TYPES.CollisionSphere.model(config);
       default:
         return MODEL_TYPES.Cube.model(config);
     }
