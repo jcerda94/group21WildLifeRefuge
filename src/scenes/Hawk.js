@@ -64,7 +64,7 @@ function Hawk(scene) {
       //console.log("Hawk:checkForHare:  length : " + getSceneManager().subjects.length );
       if (getSceneManager().subjects.length > 4) {
 
-        if (getSceneManager().subjects[i].model.name == "hare") {
+        if (getSceneManager().subjects[i].model.name === "hare") {
           //console.log(" Found a hare: " + position.x + ":" + position.y + ":" + position.z);
           //JWC  tween3 = new TWEEN.Tween(cube.position)
           tween3 = new TWEEN.Tween(position)
@@ -93,7 +93,7 @@ function Hawk(scene) {
     // for now just scale back the number of times the position is reported to the other animals.
     
 
-    if(count % 30 == 0)
+    if(count % 30 === 0)
       getHawkObserver().broadcast(cube.position);
     TWEEN.update();
   }
