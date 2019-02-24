@@ -15,6 +15,7 @@ function Hare (scene, hareCount) {
   let tween3 = {};
   let tween4 = {};
   let grassPositon = {};
+  let distanceFromHawk = 0.00;
   // create a sphere
   var sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
   var sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
@@ -55,17 +56,29 @@ function Hare (scene, hareCount) {
   function createTween() {
 
      tween1 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 }, 10000/10);
+        .to({ x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 }, 10000);
 
      tween2 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 10, y: 0, z: hareMesh.position.z + 15 }, 10000/10);
+        .to({ x: hareMesh.position.x + 10, y: 0, z: hareMesh.position.z + 15 }, 10000);
 
      tween3 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 25, y: 10, z: hareMesh.position.z + 25 }, 10000/10)
+        .to({ x: hareMesh.position.x + 25, y: 10, z: hareMesh.position.z + 25 }, 10000)
         .start();
     tween4 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 35, y: 0, z: hareMesh.position.z + 35 }, 10000/10);
+        .to({ x: hareMesh.position.x + 35, y: 0, z: hareMesh.position.z + 35 }, 10000);
 
+  }
+  function checkForHawks() {
+    //console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
+    for (let i = 4; i < getSceneManager().subjects.length; i++){
+      if (getSceneManager().subjects[i].model.name === "redtailHawk"){
+        console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[i].model.name);
+        console.log("Hare has found a hawk");
+      }
+    }
+
+
+    return distanceFromHawk;
   }
   function escapeFormHawk() {
     
@@ -78,7 +91,8 @@ function Hare (scene, hareCount) {
 
   }
   createTween();
-
+  checkForHawks();
+  console.log(" check for distance from a hawk");
 
   tween1.chain(tween2);
   tween2.chain(tween3);
@@ -87,6 +101,7 @@ function Hare (scene, hareCount) {
 
   function update () 
   {
+    checkForHawks();
     //console.log("hare update");
     TWEEN.update();
   }
