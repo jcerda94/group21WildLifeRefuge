@@ -6,11 +6,15 @@ const THREE = require("three");
 
 export const NAME = "hare";
 export const TYPE = "Hare";
-
+let TWEEN = require("@tweenjs/tween.js");
 function Hare (scene, hareCount) {
   //const size = 3;
   const color = "#db7093";
-
+  let tween1 ={};
+  let tween2 ={};
+  let tween3 = {};
+  let tween4 = {};
+  let grassPositon = {};
   // create a sphere
   var sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
   var sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
@@ -45,11 +49,46 @@ function Hare (scene, hareCount) {
     //checkForHare(position);
   });
 
-  scene.add(hareMesh);
+  //scene.add(hareMesh);
   hareMesh.type = TYPE;
+
+  function createTween() {
+
+     tween1 = new TWEEN.Tween(hareMesh.position)
+        .to({ x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 }, 10000/10);
+
+     tween2 = new TWEEN.Tween(hareMesh.position)
+        .to({ x: hareMesh.position.x + 10, y: 0, z: hareMesh.position.z + 15 }, 10000/10);
+
+     tween3 = new TWEEN.Tween(hareMesh.position)
+        .to({ x: hareMesh.position.x + 25, y: 10, z: hareMesh.position.z + 25 }, 10000/10)
+        .start();
+    tween4 = new TWEEN.Tween(hareMesh.position)
+        .to({ x: hareMesh.position.x + 35, y: 0, z: hareMesh.position.z + 35 }, 10000/10);
+
+  }
+  function escapeFormHawk() {
+    
+  }
+  //looking for closest grass potion
+  function getGrassPosition() {
+    const grassPosition ={};
+
+    return grassPosition;
+
+  }
+  createTween();
+
+
+  tween1.chain(tween2);
+  tween2.chain(tween3);
+  tween3.chain(tween4);
+  tween4.chain(tween1);
+
   function update () 
   {
     //console.log("hare update");
+    TWEEN.update();
   }
 
   return {

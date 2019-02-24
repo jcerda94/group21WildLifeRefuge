@@ -7,7 +7,7 @@ const THREE = require("three");
 export const NAME = "redtailHawk";
 export const TYPE = "Hawk";
 
-var TWEEN = require("@tweenjs/tween.js");
+let TWEEN = require("@tweenjs/tween.js");
 
 function Hawk(scene) {
 
@@ -40,7 +40,7 @@ function Hawk(scene) {
   cube.name = NAME;
 
   cube.type = TYPE;
-  scene.add(cube);
+  //scene.add(cube);
   const tween1 = new TWEEN.Tween(cube.position)
     .to({ x: 500, y: 100, z: -100 }, 10000);
 
