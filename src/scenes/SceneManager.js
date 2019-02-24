@@ -181,6 +181,16 @@ class SceneManager {
         config: { size: this.groundSize, color: "#996600" }
       }),
       ModelFactory.makeSceneObject({ type: "collisionSphere" }),
+      ModelFactory.makeSceneObject({
+        type: "cube",
+        config: {
+          position: {
+            x: 0,
+            y: 5,
+            z: 350
+          }
+        }
+      }),
       grassField
     ];
 
@@ -192,6 +202,10 @@ class SceneManager {
   addObject (sceneObject) {
     this.subjects.push(sceneObject);
     this.scene.add(sceneObject.model);
+  }
+
+  getSceneObjectsOf ({ type }) {
+    return this.scene.children.filter(child => child.type === type);
   }
 
   removeObject (idx, sceneObject) {

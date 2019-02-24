@@ -1,15 +1,9 @@
+import { getSceneManager } from "./SceneManager";
 const THREE = require("three");
 
 export const NAME = "collision-sphere";
 export const TYPE = "CollisionSphere";
-function drawLine (pointA, pointB) {
-  const material = new THREE.LineBasicMaterial({ color: "#0000ff" });
-  const geometry = new THREE.Geometry();
-  geometry.vertices.push(pointA);
-  geometry.vertices.push(pointB);
 
-  return new THREE.Line(geometry, material);
-}
 function CollisionSphere (targets) {
   if (!targets) targets = [];
   const color = "#00FF00";
@@ -23,34 +17,21 @@ function CollisionSphere (targets) {
   sphere.type = TYPE;
   const raycaster = new THREE.Raycaster();
 
-  sphere.position.set(0, size * 3, 350);
-  console.log(geometry.vertices);
-  let origin = null;
+  sphere.position.set(0, 30, 350);
   let collisions = [];
-  geometry.computeBoundingSphere();
-  const vec = geometry.vertices[0];
-  const center = geometry.boundingSphere.center;
-
-  let prev = drawLine(vec, center);
-
-  sphere.add(prev);
-
-  let i = 0;
+  const SceneManager = getSceneManager();
+  let sceneObjects = null;
   function update () {
-    sphere.remove(prev);
-    i = (i + 1) % geometry.vertices.length;
+    geometry.computeBoundingSphere();
+    const origin = geometry.boundingSphere.center.clone();
+    sphere.localToWorld(origin);
+    sceneObjects = SceneManager.getSceneObjectsOf({ type: "Cube" });
 
-    prev = drawLine(geometry.vertices[i], center);
-    sphere.add(prev);
-    // geometry.computeBoundingSphere();
-    // origin = geometry.boundingSphere.center.clone();
-    // sphere.localToWorld(origin);
-    // let direction = null;
-    // for (let i = 0; i < geometry.vertices.length; i++) {
-    //   direction = origin.distanceTo(geometry.vertices[i]);
-    //   raycaster.set(origin, direction);
-    // }
-    // collisions = [];
+    for (let i = 0; i < geometry.vertices.length; i++) {
+      raycaster.set(origin, geometry.vertices[i].normalize());
+      collisions = [];
+      raycaster.intersectObjects(sceneObjects, true, collisions);
+    }
   }
 
   return {

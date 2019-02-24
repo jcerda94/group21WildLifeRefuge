@@ -1,8 +1,8 @@
 const THREE = require("three");
 
-export const NAME = "grass";
-export const TYPE = "Grass";
-async function Cube (config) {
+export const NAME = "cube";
+export const TYPE = "Cube";
+function Cube (config) {
   const {
     color = "#0080FF",
     size = 3,
