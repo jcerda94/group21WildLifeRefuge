@@ -1,0 +1,10 @@
+Hawk Hunting Conditions:
+
+Current attack on Hare results:
+
+    1. get to eat one hare at a period of time ( Group agreement on time range)
+    2. Attack can be succeed if hare is far enough from a bush or a tree (Range TBD)
+    3. If hare is close to a bush or a tree, hawks gave up attack, continue to fly around.
+
+
+Speed:

@@ -1,3 +1,12 @@
+/*
+
+
+   Update: 2/23/2019 by: Thongphanh Duangboudda
+   contents: add collision detection
+   Reference URL: https://github.com/stemkoski/stemkoski.github.com/blob/master/Three.js/Collision-Detection.html
+ */
+
+
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
@@ -42,7 +51,7 @@ function Hawk () {
   hareMesh.position.y = hawk.position.y - 4;
   cube.position.y = hawk.position.y;
   hawk.add(cube);
-  hawk.add(hareMesh);
+ // hawk.add(hareMesh);
   hawk.userData = {
     selectable: true,
     color: {
@@ -95,8 +104,8 @@ function Hawk () {
           cube.position.y = hawk.position.y;
          // let aHare = SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
 
-          if(collide){
-          //  hawk.add(hareMesh);
+          if(detectCollision()){
+          hawk.add(hareMesh);
             //console.log("Colliding " + hawk.position.y);
 
             //collide = false;
@@ -108,6 +117,23 @@ function Hawk () {
   }
   tween1.chain(tween2);
   tween2.chain(tween1);
+
+  //detect collision
+  function detectCollision() {
+      for (let vertexIndex = 0; vertexIndex < cube.geometry.vertices.length; vertexIndex++)
+      {
+          let localVertex = cube.geometry.vertices[vertexIndex].clone();
+          let globalVertex = localVertex.applyMatrix4( cube.matrix );
+          let directionVector = globalVertex.sub( cube.position );
+
+          let ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+          let collisionResults = ray.intersectObjects( collidableMeshList );
+          if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )
+              return true;
+      }
+
+      return false;
+  }
 
   function update () {
     // console.log("hawk updated");
