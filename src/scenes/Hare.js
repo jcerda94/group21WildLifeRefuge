@@ -56,16 +56,16 @@ function Hare (scene, hareCount) {
   function createTween() {
 
      tween1 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 }, 10000);
+        .to({ x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 }, 10000/10);
 
      tween2 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 10, y: 0, z: hareMesh.position.z + 15 }, 10000);
+        .to({ x: hareMesh.position.x + 10, y: 0, z: hareMesh.position.z + 15 }, 10000/10);
 
      tween3 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 25, y: 10, z: hareMesh.position.z + 25 }, 10000)
+        .to({ x: hareMesh.position.x + 25, y: 10, z: hareMesh.position.z + 25 }, 10000/10)
         .start();
     tween4 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 35, y: 0, z: hareMesh.position.z + 35 }, 10000);
+        .to({ x: hareMesh.position.x + 35, y: 0, z: hareMesh.position.z + 35 }, 10000/10);
 
   }
   function checkForHawks() {
