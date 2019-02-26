@@ -7,6 +7,7 @@ const THREE = require("three");
 export const NAME = "redtailHawk";
 export const TYPE = "Hawk";
 
+var numberHawks = 0;
 let TWEEN = require("@tweenjs/tween.js");
 
 function Hawk(scene) {
@@ -38,8 +39,9 @@ function Hawk(scene) {
     name: NAME
   };
   cube.name = NAME;
-
   cube.type = TYPE;
+
+  var myHawkID = numberHawks++;
   //scene.add(cube);
   const tween1 = new TWEEN.Tween(cube.position)
     .to({ x: 500, y: 100, z: -100 }, 10000/3);
@@ -84,7 +86,10 @@ function Hawk(scene) {
   var count=1;
   function update() {
     count++;
-    //console.log("hawk updated: " + count++); 
+    console.log("hawk update: hawk__" + myHawkID + "  position: " 
+      + cube.position.x.toFixed(2) + ":" 
+      + cube.position.y.toFixed(2) + ":" 
+      + cube.position.z.toFixed(2) );
     
     // The updates happen very often for small position changes 
     // This made the hawk behave erratically. 

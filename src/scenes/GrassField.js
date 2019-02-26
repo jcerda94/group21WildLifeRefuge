@@ -5,6 +5,7 @@ const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
 export const TYPE = "Grass";
+//const grasses = new THREE.Object3D();
 
 async function GrassField (config) {
   const loadingManager = new THREE.LoadingManager();
@@ -15,6 +16,7 @@ async function GrassField (config) {
   const { count = 500 } = config;
 
   const grasses = new THREE.Object3D();
+
   const originalGrass = await new Promise((resolve, reject) => {
     loader.load(
       "models/grass.gltf",
@@ -23,6 +25,7 @@ async function GrassField (config) {
       reject
     );
   });
+
 
   const bounds = getSceneManager().groundSize;
   bounds.x *= 0.95;
@@ -51,6 +54,8 @@ async function GrassField (config) {
     grassMesh.color.set(grass.children[0].children[0].userData.color.original);
     grass.children[0].children[0].material = grassMesh.clone();
     grasses.add(grass);
+    console.log("grasses.length: " + grasses.length);
+    
   }
 
   grasses.type = TYPE;
@@ -63,5 +68,8 @@ async function GrassField (config) {
     created: new Date()
   };
 }
+//export const myGrasses = grasses;// = new THREE.Object3D();
+//export var myGrasses = function() { return grasses; };
+
 
 export default GrassField;

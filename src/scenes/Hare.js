@@ -2,11 +2,14 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js"; 
+//import { myGrasses } from "./GrassField.js"; 
 const THREE = require("three");
 
 export const NAME = "hare";
 export const TYPE = "Hare";
 let TWEEN = require("@tweenjs/tween.js");
+var numberOfHares = 0;
+
 function Hare (scene, hareCount) {
   //const size = 3;
   const color = "#db7093";
@@ -53,6 +56,8 @@ function Hare (scene, hareCount) {
   //scene.add(hareMesh);
   hareMesh.type = TYPE;
 
+  var myHareID;
+
   function createTween() {
 
      tween1 = new TWEEN.Tween(hareMesh.position)
@@ -72,8 +77,8 @@ function Hare (scene, hareCount) {
     //console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
     for (let i = 4; i < getSceneManager().subjects.length; i++){
       if (getSceneManager().subjects[i].model.name === "redtailHawk"){
-        console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[i].model.name);
-        console.log("Hare has found a hawk");
+        //console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[i].model.name);
+        //console.log("Hare has found a hawk");
       }
     }
 
@@ -92,7 +97,10 @@ function Hare (scene, hareCount) {
   }
   createTween();
   checkForHawks();
-  console.log(" check for distance from a hawk");
+  
+  myHareID = numberOfHares++;
+
+  console.log("hare created: hare__" + myHareID);
 
   tween1.chain(tween2);
   tween2.chain(tween3);
@@ -102,8 +110,23 @@ function Hare (scene, hareCount) {
   function update () 
   {
     checkForHawks();
-    //console.log("hare update");
-    TWEEN.update();
+    //if(myHareID === 1)
+      //console.log("hare update: hare__" + myHareID + "  position: " 
+      //+ hareMesh.position.x.toFixed(2) + ":" 
+      //+ hareMesh.position.y.toFixed(2) + ":" 
+      //+ hareMesh.position.z.toFixed(2) );
+      //console.log("find grass: " + new myGrasses());
+      //for (let i = 4; i < getSceneManager().subjects.length; i++){
+      //    console.log("scene name:  -->"  + getSceneManager().subjects[i].model.name);
+      //    if (getSceneManager().subjects[i].model.name === "grass"){
+          //console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[i].model.name);
+          //console.log("Hare has found a hawk");
+      //    console.log("Found grass!");
+      //
+      //  }
+      //}
+  
+      TWEEN.update();
   }
 
   return {
