@@ -11,15 +11,12 @@ import SpotLight from "./SpotLight";
 import CollisionSphereModel from "./CollisionSphere";
 
 const Hawk = config => {
-  const { model, created, update } = HawkModel(config);
   if (config && config.useCollision) {
-    console.log("using collision");
+    const hawk = HawkModel(config);
+    return CollisionSphereModel(hawk)(config.collision);
+  } else {
+    return HawkModel(config);
   }
-  return {
-    model,
-    created,
-    update
-  };
 };
 const Hare = config => {
   const { model, created, update } = HareModel(config);

@@ -6,17 +6,13 @@ export const NAME = "collision-sphere";
 export const TYPE = "CollisionSphere";
 
 function CollisionSphere (parent) {
-  return function ({ targets, handleCollision }) {
+  return function ({ targets }) {
     if (!targets) targets = [];
-    const color = "#00FF00";
-    const size = 10;
     const geometry = new THREE.SphereGeometry(1, 6, 6);
 
     const material = new THREE.MeshBasicMaterial({
-      color,
       wireframe: true,
-      transparent: true,
-      opacity: 0
+      transparent: true
     });
     const sphere = new THREE.Mesh(geometry, material);
 
@@ -25,11 +21,12 @@ function CollisionSphere (parent) {
     const raycaster = new THREE.Raycaster();
     raycaster.far = 10;
 
-    sphere.position.set(0, 30, 350);
+    parent.model.add(sphere);
     let collisions = [];
     const SceneManager = getSceneManager();
     let sceneObjects = null;
-    function update () {
+    const update = () => {
+      parent.update();
       geometry.computeBoundingSphere();
       const origin = geometry.boundingSphere.center.clone();
       sphere.localToWorld(origin);
@@ -41,16 +38,16 @@ function CollisionSphere (parent) {
         raycaster.intersectObjects(sceneObjects, true, collisions);
         if (!didCollide && collisions.length > 0) didCollide = true;
       }
-      if (didCollide) {
-        handleCollision && handleCollision(uniqBy(collisions, "object"));
+      if (didCollide && parent.handleCollision) {
+        parent.handleCollision(uniqBy(collisions, "object"));
       }
       collisions = [];
-    }
+    };
 
     return {
       update,
-      model: sphere,
-      created: new Date()
+      model: parent.model,
+      created: parent.created
     };
   };
 }

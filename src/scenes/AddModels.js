@@ -1,15 +1,25 @@
 import { getSceneManager } from "./SceneManager";
 import ModelFactory from "./ModelFactory";
 
-function AddModels (model) {
+function AddModels (type) {
   const SceneManager = getSceneManager();
 
-  switch (String(model)) {
+  switch (type) {
     case "tree":
       SceneManager.addObject(ModelFactory.makeSceneObject({ type: "tree" }));
       return;
     case "hawk":
-      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hawk" }));
+      const hawk = ModelFactory.makeSceneObject({
+        type,
+        config: {
+          useCollision: true,
+          collision: {
+            targets: ["Hare"]
+          }
+        }
+      });
+
+      SceneManager.addObject(hawk);
       return;
     case "bush":
       SceneManager.addObject(ModelFactory.makeSceneObject({ type: "bush" }));

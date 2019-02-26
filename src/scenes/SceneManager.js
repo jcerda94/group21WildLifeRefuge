@@ -113,7 +113,6 @@ class SceneManager {
   update () {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
-    console.log(this.subjects.length);
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update && this.subjects[i].update(elapsedTime);
     }
@@ -181,13 +180,6 @@ class SceneManager {
         type: "ground",
         config: { size: this.groundSize, color: "#996600" }
       }),
-      // ModelFactory.makeSceneObject({
-      //   type: "collisionSphere",
-      //   config: {
-      //     targets: ["Cube"],
-      //     handleCollision: () => console.log("collision")
-      //   }
-      // }),
       grassField,
       ...this.subjects
     ];
@@ -218,6 +210,9 @@ class SceneManager {
   }
 
   removeObject (sceneObject) {
+    this.subjects = this.subjects.filter(
+      subject => subject.model.uuid !== sceneObject.uuid
+    );
     this.scene.remove(sceneObject);
   }
 

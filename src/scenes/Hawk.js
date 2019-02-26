@@ -8,7 +8,7 @@ export const TYPE = "Hawk";
 
 var TWEEN = require("@tweenjs/tween.js");
 
-function Hawk () {
+function Hawk (config) {
   const size = 3;
   const color = "#db7093";
 
@@ -80,17 +80,25 @@ function Hawk () {
   tween2.chain(tween1);
 
   function update () {
-    // console.log("hawk updated");
     // get the position and then it should call the observers
     checkForHare();
     getHawkObserver().broadcast(cube.position);
     TWEEN.update();
   }
 
+  function handleCollision (targets) {
+    for (let i = 0; i < targets.length; i++) {
+      if (targets[i].object.type === "Hare") {
+        SceneManager.removeObject(targets[i].object);
+      }
+    }
+  }
+
   return {
     update,
     model: cube,
-    created: new Date()
+    created: new Date(),
+    handleCollision
   };
 }
 

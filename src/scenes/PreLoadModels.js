@@ -6,7 +6,12 @@ function PreLoadModels ({ hawks, hares, cedars, bushes }) {
   SceneManager.addObjects({
     type: "hawk",
     count: hawks,
-    config: { useCollision: true }
+    config: {
+      useCollision: true,
+      collision: {
+        targets: ["Hare"]
+      }
+    }
   });
   SceneManager.addObjects({ type: "tree", count: cedars });
   SceneManager.addObjects({
