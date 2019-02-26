@@ -202,11 +202,12 @@ class SceneManager {
     this.scene.add(sceneObject.model);
   }
 
-  addObjects ({ type, count }) {
+  addObjects ({ type, config, count }) {
     for (let i = 0; i < count; i++) {
       this.addObject(
         ModelFactory.makeSceneObject({
-          type
+          type,
+          config
         })
       );
     }
