@@ -7,7 +7,7 @@ function AddModels (type) {
   switch (type) {
     case "tree":
       SceneManager.addObject(ModelFactory.makeSceneObject({ type: "tree" }));
-      return;
+      break;
     case "hawk":
       const hawk = ModelFactory.makeSceneObject({
         type,
@@ -23,12 +23,9 @@ function AddModels (type) {
       return;
     case "bush":
       SceneManager.addObject(ModelFactory.makeSceneObject({ type: "bush" }));
-      return;
+      break;
     case "hare":
       SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
-
-    default:
-      break;
   }
 }
 

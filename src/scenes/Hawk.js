@@ -38,37 +38,41 @@ function Hawk (config) {
   cube.name = NAME;
 
   cube.type = TYPE;
+
   const tween1 = new TWEEN.Tween(cube.position).to(
     { x: 500, y: 100, z: -100 },
-    10000 / 3
+    10000
   );
 
-  const tween2 = new TWEEN.Tween(cube.position)
-    .to({ x: -500, y: 100, z: 100 }, 10000 / 3)
-    .start();
+  const tween2 = new TWEEN.Tween(cube.position).to(
+    { x: -500, y: 100, z: 100 },
+    10000
+  );
 
-  var tween3 = {};
+  var tween3 = new TWEEN.Tween(cube.position)
+    .to({ x: -100, y: 0, z: -100 }, 10000)
+    .start();
 
   // hawk must track it's position and look for hares nearby as it flys
   getHawkObserver().subscribe(position => {
     // console.log("hawkObserver method called for Hawk: ");
-    // checkForHare(position);
+    checkForHare(position);
   });
 
-  function checkForHare () {
+  function checkForHare (position) {
     for (let i = 4; i < getSceneManager().subjects.length; i++) {
       // console.log("Hawk:checkForHare:  length : " + getSceneManager().subjects.length );
       if (getSceneManager().subjects.length > 4) {
         if (getSceneManager().subjects[i].model.name === "hare") {
           // console.log(" Found a hare: " + position.x + ":" + position.y + ":" + position.z);
           // JWC  tween3 = new TWEEN.Tween(cube.position)
-          tween3 = new TWEEN.Tween(cube.position).to(
+          tween3 = new TWEEN.Tween(position).to(
             {
               x: getSceneManager().subjects[i].model.position.x,
               y: getSceneManager().subjects[i].model.position.y,
               z: getSceneManager().subjects[i].model.position.z
             },
-            10000 / 4
+            10000
           );
           tween2.chain(tween3);
           tween3.chain(tween1);
@@ -77,12 +81,20 @@ function Hawk (config) {
     }
   }
   tween1.chain(tween2);
-  tween2.chain(tween1);
-
+  tween2.chain(tween3);
+  tween3.chain(tween1);
+  var count = 1;
   function update () {
-    // get the position and then it should call the observers
-    checkForHare();
-    getHawkObserver().broadcast(cube.position);
+    count++;
+    // console.log("hawk updated: " + count++);
+
+    // The updates happen very often for small position changes
+    // This made the hawk behave erratically.
+    // The observers probably don't care if the hawk moves a small distance
+    // May want to make this delta-position based.
+    // for now just scale back the number of times the position is reported to the other animals.
+
+    if (count % 30 === 0) getHawkObserver().broadcast(cube.position);
     TWEEN.update();
   }
 
@@ -101,5 +113,4 @@ function Hawk (config) {
     handleCollision
   };
 }
-
 export default Hawk;
