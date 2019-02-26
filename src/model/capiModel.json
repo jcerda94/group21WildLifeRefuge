@@ -3,13 +3,13 @@
   "studentMode": true,
   "authorMode": false,
   "reviewMode": false,
-  "redtailHawkCount": 0,
+  "redtailHawkCount": 1,
   "redtailHawkSelected": 0,
-  "snowshoeHareCount": 0,
+  "snowshoeHareCount": 2,
   "showshoeHareSelected": 0,
   "sageBushCount": 0,
   "sageBushSelected": 0,
-  "westernCedarCount": 0,
+  "westernCedarCount": 15,
   "westernCedarSelected": 0,
   "inputTable": []
 }

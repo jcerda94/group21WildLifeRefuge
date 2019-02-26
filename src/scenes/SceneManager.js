@@ -180,7 +180,8 @@ class SceneManager {
         type: "ground",
         config: { size: this.groundSize, color: "#996600" }
       }),
-      grassField
+      grassField,
+      ...this.subjects
     ];
 
     this.subjects.forEach(subject => {
@@ -193,8 +194,25 @@ class SceneManager {
     this.scene.add(sceneObject.model);
   }
 
-  removeObject (idx, sceneObject) {
-    this.subjects.splice(idx, 1);
+  addObjects ({ type, config, count }) {
+    for (let i = 0; i < count; i++) {
+      this.addObject(
+        ModelFactory.makeSceneObject({
+          type,
+          config
+        })
+      );
+    }
+  }
+
+  getSceneObjectsOf ({ types }) {
+    return this.scene.children.filter(child => types.includes(child.type));
+  }
+
+  removeObject (sceneObject) {
+    this.subjects = this.subjects.filter(
+      subject => subject.model.uuid !== sceneObject.uuid
+    );
     this.scene.remove(sceneObject);
   }
 
@@ -240,7 +258,6 @@ class SceneManager {
 
   onTransporterReady () {
     const capi = getCapiInstance();
-    console.log("test");
     const [hawks, hares, cedars, bushes] = capi.getValues({
       keys: [
         "redtailHawkCount",
@@ -249,6 +266,7 @@ class SceneManager {
         "sageBushCount"
       ]
     });
+    PreLoadModels({ hawks, hares, cedars, bushes });
     capi.addListenerFor({
       key: "redtailHawkCount",
       callback: this.handleModelCountChange({
@@ -280,15 +298,6 @@ class SceneManager {
         key: "sageBushCount"
       })
     });
-
-    new PreLoadModels({ hawks, hares, cedars, bushes });
-  }
-
-  addObjects ({ type, count }) {
-    for (let i = 0; i < count; i++) {
-      const model = ModelFactory.makeSceneObject({ type });
-      this.addObject(model);
-    }
   }
 
   handleModelCountChange = ({ type, key }) => capiModel => {

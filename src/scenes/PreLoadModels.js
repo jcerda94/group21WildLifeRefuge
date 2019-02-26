@@ -3,24 +3,23 @@ import ModelFactory from "./ModelFactory";
 
 function PreLoadModels ({ hawks, hares, cedars, bushes }) {
   const SceneManager = getSceneManager();
-  for (let i = 0; i < cedars; i++) {
-    SceneManager.addObject(ModelFactory.makeSceneObject({ type: "tree" }));
-  }
-  for (let i = 0; i < bushes; i++) {
-    SceneManager.addObject(ModelFactory.makeSceneObject({ type: "bush" }));
-  }
-  for (let i = 0; i < hawks; i++) {
-    SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hawk" }));
-  }
-  for (let i = 0; i < hares; i++) {
-    SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
-  }
-
-  function update () {}
-
-  return {
-    update
-  };
+  SceneManager.addObjects({
+    type: "hawk",
+    count: hawks,
+    config: {
+      useCollision: true,
+      collision: {
+        targets: ["Hare"]
+      }
+    }
+  });
+  SceneManager.addObjects({ type: "tree", count: cedars });
+  SceneManager.addObjects({
+    type: "hare",
+    count: hares,
+    config: { useCollision: true }
+  });
+  SceneManager.addObjects({ type: "bush", count: bushes });
 }
 
 export default PreLoadModels;
