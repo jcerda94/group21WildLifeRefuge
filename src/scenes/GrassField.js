@@ -54,7 +54,9 @@ async function GrassField (config) {
   }
 
   grasses.type = TYPE;
+  grasses.name = "grass";
 
+  console.log("grassField Length  " + grasses.children.length);
   function update () {}
 
   return {
