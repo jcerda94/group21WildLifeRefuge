@@ -55,16 +55,16 @@ function Hawk (config) {
 
   const tween1 = new TWEEN.Tween(hawk.position).to(
     { x: 500, y: 100, z: -100 },
-    10000/3
+    10000
   );
 
   const tween2 = new TWEEN.Tween(hawk.position).to(
     { x: -500, y: 100, z: 100 },
-    10000/3
+    10000
   );
 
   var tween3 = new TWEEN.Tween(hawk.position)
-    .to({ x: -100, y: 50, z: -100 }, 10000/3)
+    .to({ x: -100, y: 50, z: -100 }, 10000)
     .start();
 
   // hawk must track it's position and look for hares nearby as it flys
@@ -87,7 +87,7 @@ function Hawk (config) {
                   y: getSceneManager().subjects[i].model.position.y,
                   z: getSceneManager().subjects[i].model.position.z
                 },
-                10000/3
+                10000
             );
 
             tween2.chain(tween3);
