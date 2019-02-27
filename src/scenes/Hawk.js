@@ -33,13 +33,15 @@ function Hawk (config) {
   const z = random(-heightBound, heightBound);
   const position = { x, y, z };
 
-  let hawk = new THREE.Object3D();
+  var hawk = new THREE.Group();
+  hawk.receiveShadow =false;
   hawk.castShadow = false;
-  hawk.position.set(position.x, position.y, position.z);
-  hareMesh.position.y = hawk.position.y - 4;
+ // hawk.visible = false;
+  //hawk.position.set(position.x, position.y, position.z);
+  hareMesh.position.y = hawk.position.y - 5;
   cube.position.y = hawk.position.y;
   hawk.add(cube);
- // hawk.add(hareMesh);
+  //hawk.add(hareMesh);
   hawk.userData = {
     selectable: true,
     color: {
@@ -50,7 +52,6 @@ function Hawk (config) {
     name: NAME
   };
   hawk.name = NAME;
-
   hawk.type = TYPE;
 
   const tween1 = new TWEEN.Tween(hawk.position).to(
@@ -91,16 +92,16 @@ function Hawk (config) {
 
             tween2.chain(tween3);
             tween3.chain(tween1);
-            hareMesh.position.y = hawk.position.y - 4;
-            cube.position.y = hawk.position.y;
+            //hareMesh.position.y = hawk.position.y - 5;
+            //cube.position.y = hawk.position.y;
 
           }
 
         }
       }
     }else {
-      hareMesh.position.y = hawk.position.y - 4;
-      cube.position.y = hawk.position.y;
+      //hareMesh.position.y = hawk.position.y - 4;
+      //cube.position.y = hawk.position.y;
     }
 
   }
@@ -118,8 +119,9 @@ function Hawk (config) {
     // May want to make this delta-position based.
     // for now just scale back the number of times the position is reported to the other animals.
     if (count % 30 === 0) getHawkObserver().broadcast();
-    TWEEN.update();
+
     checkForHare();
+    TWEEN.update();
   }
 
   function handleCollision (targets) {
