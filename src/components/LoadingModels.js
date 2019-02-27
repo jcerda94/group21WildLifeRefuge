@@ -92,10 +92,7 @@ class LoadingModels extends Component{
     }
 
     reLoad(){
-
-
-
-
+        
     }
     render(){
         console.log("Called Render");
@@ -113,10 +110,7 @@ class LoadingModels extends Component{
             );
         }
 
-
-
     }
-
 
 }
 export const getLoadingModels = (container) => {

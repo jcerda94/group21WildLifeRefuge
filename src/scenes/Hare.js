@@ -2,7 +2,9 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js"; 
-//import { myGrasses } from "./GrassField.js"; 
+import { myGrasses } from "./GrassField.js";
+import {findRemoveIfNear} from "./GrassField";
+import {distance} from "./GrassField";
 const THREE = require("three");
 
 export const NAME = "hare";
@@ -110,12 +112,14 @@ function Hare (scene, hareCount) {
   function update () 
   {
     checkForHawks();
+    var deltaDistance = 1000;
+    findRemoveIfNear(hareMesh.position, deltaDistance);
     //if(myHareID === 1)
       //console.log("hare update: hare__" + myHareID + "  position: " 
       //+ hareMesh.position.x.toFixed(2) + ":" 
       //+ hareMesh.position.y.toFixed(2) + ":" 
       //+ hareMesh.position.z.toFixed(2) );
-      //console.log("find grass: " + new myGrasses());
+     // console.log("find grass: " + JSON.stringify(new myGrasses(), null, 4));
       //for (let i = 4; i < getSceneManager().subjects.length; i++){
       //    console.log("scene name:  -->"  + getSceneManager().subjects[i].model.name);
       //    if (getSceneManager().subjects[i].model.name === "grass"){
