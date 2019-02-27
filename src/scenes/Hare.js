@@ -109,28 +109,17 @@ function Hare (scene, hareCount) {
   tween3.chain(tween4);
   tween4.chain(tween1);
 
+  //var doOnce = true;
   function update () 
   {
     checkForHawks();
     var deltaDistance = 1000;
-    findRemoveIfNear(hareMesh.position, deltaDistance);
-    //if(myHareID === 1)
-      //console.log("hare update: hare__" + myHareID + "  position: " 
-      //+ hareMesh.position.x.toFixed(2) + ":" 
-      //+ hareMesh.position.y.toFixed(2) + ":" 
-      //+ hareMesh.position.z.toFixed(2) );
-     // console.log("find grass: " + JSON.stringify(new myGrasses(), null, 4));
-      //for (let i = 4; i < getSceneManager().subjects.length; i++){
-      //    console.log("scene name:  -->"  + getSceneManager().subjects[i].model.name);
-      //    if (getSceneManager().subjects[i].model.name === "grass"){
-          //console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[i].model.name);
-          //console.log("Hare has found a hawk");
-      //    console.log("Found grass!");
-      //
-      //  }
-      //}
-  
-      TWEEN.update();
+    //hareMesh.position.x = 500;
+    //hareMesh.position.z = 500;// fix the hare position for testing
+    //if(doOnce)
+      findRemoveIfNear(hareMesh.position, deltaDistance);
+    //  doOnce = false;
+    TWEEN.update();
   }
 
   return {

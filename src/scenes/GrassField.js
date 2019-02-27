@@ -15,7 +15,7 @@ async function GrassField (config) {
 
   const loader = new THREE.GLTFLoader(loadingManager);
 
-  const { count = 500 } = config;
+  const { count = 5000 } = config;
 
   //const grasses = new THREE.Object3D();
 
@@ -74,7 +74,6 @@ async function GrassField (config) {
     // Can then search this list to find the grass closest, or the right kind of grass, and move to it and eat it.
     // Then, since the grass object is on the list, we should be able to call grasses.remove(eaten_grass)
 
-    //grasses.remove(grass);
     getGrassLinkedList().Append(new Node(grass));
   }
 
@@ -88,50 +87,53 @@ async function GrassField (config) {
     created: new Date()
   };
 }
-
+var inPos;
+var theRange;
 export var myGrasses = function() { return grasses; };
 export var findRemoveIfNear = function (animalPos, range) {
-  var inPos    = JSON.parse(JSON.stringify(animalPos, null, 4)); // this seems to clean up the arguments for easier use
-  var theRange = JSON.parse(JSON.stringify(range, null, 4));
-  //console.log("find grass within: " + theRange + "  to  " + inPos.x.toFixed(0) + ":" 
-  //                                                        + inPos.y.toFixed(0) + ":" 
-  //                                                        + inPos.z.toFixed(0) );
+  inPos    = JSON.parse(JSON.stringify(animalPos, null, 4)); // this seems to clean up the arguments for easier use
+  theRange = JSON.parse(JSON.stringify(range, null, 4));
 
   var ll = getGrassLinkedList();
-  //console.log("list of grass length: " +  ll.length); 
   var node = ll.First();
-  var shortestDist = 1000000;
+  var shortestDist = 1000000.1;
   var shortestDist_node;
+  var shortestDist_node_i = 0;
   for(var idx=0; idx<ll.length; idx++)
   {
-    //console.log("the list of grass: " +  node.data.position.x); 
-    //console.log("animalPos: " + animalPos.x.toFixed() + "   node.data.position: " + node.data.position.x.toFixed());
     var distance = getDistance(animalPos, node.data.position);
-    if(shortestDist > distance.toFixed())
+    if(isGreaterThan(shortestDist.toFixed(), distance.toFixed()))
     {
-      shortestDist = distance.toFixed();
+      shortestDist = distance;
       shortestDist_node = node;
-      //console.log("new shortestDist: " + shortestDist);
+      shortestDist_node_i = idx;
+      //console.log("[" + idx + "] ------ grass at " + shortestDist_node.data.position.x.toFixed() 
+      //           + "   new shortestDist: " + shortestDist.toFixed());
     }
-    //console.log("distance: " + distance);
     var next_node = ll.Next(node);
-    //if(node.data.position.x === animalPos)
     node = next_node;
-    //console.log("new count of grass list: " +  ll.length); 
   }
   
-  console.log("======================: " + shortestDist  + "   range: " + range);
-
   if(shortestDist < range)
   {
-    console.log("remove grass at " + shortestDist_node.data.position.x.toFixed());
+    console.log("remove grass[" + shortestDist_node_i + "] at " + shortestDist_node.data.position.x.toFixed()
+                  + "        within: " + theRange + "  to  " 
+                  + inPos.x.toFixed(0) + ":" 
+                  + inPos.y.toFixed(0) + ":" 
+                  + inPos.z.toFixed(0) );
     //node.data.position.x + ":" + node.data.position.y + ":"+ node.data.position.z); 
-    //console.log("remove grass: " + JSON.stringify(node.data, null, 4)); 
     grasses.remove(shortestDist_node.data); 
     ll.Remove(shortestDist_node); 
-    console.log("new count of grass list: " +  ll.length); 
+    //console.log("new count of grass list: " +  ll.length); 
   }
 };
+
+function isGreaterThan(n1, n2)
+{
+  // comparing numbers in js is near impossible so we do this, which seems to work
+  return parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10)
+         > parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10);
+}
 
 function calcDelta(n1, n2)
 {
@@ -146,11 +148,7 @@ export function getDistance(pos1, pos2)
   var deltaX = calcDelta(pos1.x, pos2.x);
   var deltaY = calcDelta(pos1.y, pos2.y);
   var deltaZ = calcDelta(pos1.z, pos2.z);
-  //console.log("delta1: " + pos1.x.toFixed() + ":" + pos1.y.toFixed() + ":" + pos1.z.toFixed());
-  //console.log("delta2: " + pos2.x.toFixed() + ":" + pos2.y.toFixed() + ":" + pos2.z.toFixed());
-  //console.log("delta: " + deltaX + ":" + deltaY + ":" + deltaZ);
   var dist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaZ , 2));
-  //console.log("dist: " + dist);
   return (dist);
 };
 export default GrassField;
