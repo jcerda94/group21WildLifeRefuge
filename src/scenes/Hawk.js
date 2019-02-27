@@ -35,7 +35,7 @@ function Hawk (config) {
 
   let hawk = new THREE.Object3D();
   hawk.castShadow = false;
-  hawk.position.set(position.x, position.y, position.z);
+  //hawk.position.set(position.x, position.y, position.z);
   hareMesh.position.y = hawk.position.y - 4;
   cube.position.y = hawk.position.y;
   hawk.add(cube);
@@ -70,7 +70,7 @@ function Hawk (config) {
   // hawk must track it's position and look for hares nearby as it flys
   getHawkObserver().subscribe(position => {
     // console.log("hawkObserver method called for Hawk: ");
-    checkForHare();
+
   });
 
   function checkForHare () {
@@ -92,15 +92,13 @@ function Hawk (config) {
 
             tween2.chain(tween3);
             tween3.chain(tween1);
-            hareMesh.position.y = hawk.position.y - 4;
-            cube.position.y = hawk.position.y;
 
           }
         }
       }
     }else {
-      hareMesh.position.y = hawk.position.y - 4;
-      cube.position.y = hawk.position.y;
+      //hareMesh.position.y = hawk.position.y - 4;
+      //cube.position.y = hawk.position.y;
     }
 
   }
@@ -120,6 +118,7 @@ function Hawk (config) {
 
     if (count % 30 === 0) getHawkObserver().broadcast();
     TWEEN.update();
+    checkForHare();
   }
 
   function handleCollision (targets) {
