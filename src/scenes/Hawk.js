@@ -56,17 +56,16 @@ function Hawk (config) {
   // hawk must track it's position and look for hares nearby as it flys
   getHawkObserver().subscribe(position => {
     // console.log("hawkObserver method called for Hawk: ");
-    checkForHare(position);
+    //checkForHare(position);
   });
 
-  function checkForHare (position) {
+  function checkForHare () {
     for (let i = 4; i < getSceneManager().subjects.length; i++) {
-      // console.log("Hawk:checkForHare:  length : " + getSceneManager().subjects.length );
       if (getSceneManager().subjects.length > 4) {
         if (getSceneManager().subjects[i].model.name === "hare") {
           // console.log(" Found a hare: " + position.x + ":" + position.y + ":" + position.z);
           // JWC  tween3 = new TWEEN.Tween(cube.position)
-          tween3 = new TWEEN.Tween(position).to(
+          tween3 = new TWEEN.Tween(cube.position).to(
             {
               x: getSceneManager().subjects[i].model.position.x,
               y: getSceneManager().subjects[i].model.position.y,
@@ -95,7 +94,9 @@ function Hawk (config) {
     // for now just scale back the number of times the position is reported to the other animals.
 
     if (count % 30 === 0) getHawkObserver().broadcast(cube.position);
+
     TWEEN.update();
+    checkForHare();
   }
 
   function handleCollision (targets) {

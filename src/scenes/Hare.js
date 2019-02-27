@@ -15,6 +15,7 @@ function Hare (scene, hareCount) {
   let tween3 = {};
   let tween4 = {};
   let grassPositon = {};
+  //let nearestGrassPositon = {};
   let distanceFromHawk = 0.00;
   // create a sphere
   var sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
@@ -32,6 +33,7 @@ function Hare (scene, hareCount) {
   const position = { x, y, z };
 
   hareMesh.position.set(position.x, position.y, position.z);
+  //hareMesh = new THREE.Vector3(position.x,y,z);
   hareMesh.castShadow = true;
   hareMesh.userData = {
     selectable: true,
@@ -56,16 +58,16 @@ function Hare (scene, hareCount) {
   function createTween() {
 
     tween1 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 }, 10000/10);
+        .to({ x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 }, 10000);
 
     tween2 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 10, y: 0, z: hareMesh.position.z + 15 }, 10000/10);
+        .to({ x: hareMesh.position.x + 10, y: 0, z: hareMesh.position.z + 15 }, 10000);
 
     tween3 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 25, y: 10, z: hareMesh.position.z + 25 }, 10000/10)
+        .to({ x: hareMesh.position.x + 25, y: 10, z: hareMesh.position.z + 25 }, 10000)
         .start();
     tween4 = new TWEEN.Tween(hareMesh.position)
-        .to({ x: hareMesh.position.x + 35, y: 0, z: hareMesh.position.z + 35 }, 10000/10);
+        .to({ x: hareMesh.position.x + 35, y: 0, z: hareMesh.position.z + 35 }, 10000);
 
   }
 
@@ -74,8 +76,7 @@ function Hare (scene, hareCount) {
     //console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
     for (let i = 4; i < getSceneManager().subjects.length; i++){
       if (getSceneManager().subjects[i].model.name === "redtailHawk"){
-        //console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[i].model.name);
-       // console.log("Hare has found a hawk");
+
       }
     }
 
@@ -85,30 +86,40 @@ function Hare (scene, hareCount) {
   function escapeFormHawk() {
 
   }
+  function nearestGrassPosition(grasses) {
+
+    for(let i = 0 ; i < grasses.children.length; i++){
+
+    }
+
+  }
   //looking for closest grass potion
   function getGrassPosition() {
   //getSceneManager().getSceneObjectsOf ({hareMesh});
     const grassPosition ={};
     for (let i = 0; i < getSceneManager().subjects.length; i++) {
-     //console.log("Check for grass: " + getSceneManager().scene.children.type);
-     console.log("Check for grass: " + getSceneManager().subjects[i].model.type);
-      if (getSceneManager().subjects.length > 4) {
-        if (getSceneManager().subjects[i].model.name === "hare") {
-        // console.log("Check for grass: Found hare" + getSceneManager().subjects.length );
-          // console.log(" Found a hare: " + position.x + ":" + position.y + ":" + position.z);
-          // JWC  tween3 = new TWEEN.Tween(cube.position)
-          tween3 = new TWEEN.Tween(hareMesh.position).to(
-              {
-                x: getSceneManager().subjects[i].model.position.x,
-                y: getSceneManager().subjects[i].model.position.y,
-                z: getSceneManager().subjects[i].model.position.z
-              },
-              10000
-          );
-          tween2.chain(tween3);
-          tween3.chain(tween1);
+      if(getSceneManager().subjects[i].model.type === "Grass"){
+        if (getSceneManager().subjects.length > 4) {
+          if (getSceneManager().subjects[i].model.type === "Grass") {
+            tween3 = new TWEEN.Tween(hareMesh.position).to(
+                {
+                  x: getSceneManager().subjects[i].model.position.x,
+                  y: getSceneManager().subjects[i].model.position.y,
+                  z: getSceneManager().subjects[i].model.position.z
+                },
+                10000
+            );
+            tween2.chain(tween3);
+            tween3.chain(tween1);
+          }
         }
+        //const nearestGrassObject = nearestGrassPosition(getSceneManager().subjects[i].model);
+
+
       }
+     // console.log("Hawk:checkForHare:  length : " + getSceneManager().subjects[4].model.type);
+
+
     }
 
     return grassPosition;
@@ -116,7 +127,7 @@ function Hare (scene, hareCount) {
   }
   createTween();
   checkForHawks();
-  getGrassPosition();
+  //getGrassPosition();
   //console.log(" check for distance from a hawk");
 
   tween1.chain(tween2);
@@ -127,6 +138,7 @@ function Hare (scene, hareCount) {
   function update ()
   {
     checkForHawks();
+    getGrassPosition();
     //console.log("hare update");
     TWEEN.update();
   }
