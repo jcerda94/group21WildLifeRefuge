@@ -7,6 +7,10 @@ RUN npm --quiet install
 COPY img ./img
 COPY public ./public
 COPY src ./src
+COPY sslcerts ./sslcerts
+COPY index.js ./
 
-ENTRYPOINT [ "npm" ]
-CMD [ "start" ]
+RUN npm run build
+
+ENTRYPOINT [ "node" ]
+CMD [ "index.js" ]
