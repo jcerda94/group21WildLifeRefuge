@@ -1,59 +1,32 @@
 import { getSceneManager } from "./SceneManager";
-import Cube from "./Cube";
-import { random } from "../utils/helpers";
-import Hawk from "./Hawk";
-import Tree from "./Tree";
-import Hare from "./Hare";
-import Bush from "./Bush";
+import ModelFactory from "./ModelFactory";
 
-var hareCount = 0;
-function AddModels (model) {
-
-  let color = null;
+function AddModels (type) {
   const SceneManager = getSceneManager();
 
-  switch (model){
+  switch (type) {
     case "tree":
-      SceneManager.addObject(new Tree(SceneManager.scene));
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "tree" }));
       break;
     case "hawk":
-      SceneManager.addObject(new Hawk(SceneManager.scene));
-      break;
+      const hawk = ModelFactory.makeSceneObject({
+        type,
+        config: {
+          useCollision: true,
+          collision: {
+            targets: ["Hare"]
+          }
+        }
+      });
+
+      SceneManager.addObject(hawk);
+      return;
     case "bush":
-      SceneManager.addObject(new Bush(SceneManager.scene));
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "bush" }));
       break;
     case "hare":
-      SceneManager.addObject(new Hare(SceneManager.scene, hareCount++));
-      break;
-    case "grass":
-      const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
-      const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
-
-      const x = random(-widthBound, widthBound);
-      const y = 1.5;
-      const z = random(-heightBound, heightBound);
-      const position = { x, y, z };
-
-      const cubeConfig = {
-        size: 3,
-        position,
-        color
-      };
-
-      SceneManager.addObject(new Cube(SceneManager.scene, cubeConfig));
-      break;
-    default:
-      // grass isn't handled
-      //      console.log("AddModels:  Unknown model: " + (String)(model1));
-      break;
+      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
   }
-
-
-  function update () {}
-
-  return {
-    update
-  };
 }
 
 export default AddModels;

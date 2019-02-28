@@ -1,8 +1,8 @@
 const THREE = require("three");
 
-export const NAME = "grass";
-export const TYPE = "Grass";
-async function Cube (config) {
+export const NAME = "cube";
+export const TYPE = "Cube";
+function Cube (config) {
   const {
     color = "#0080FF",
     size = 3,
@@ -11,6 +11,7 @@ async function Cube (config) {
 
   const geometry = new THREE.CubeGeometry(size, size * 3, size);
   const material = new THREE.MeshBasicMaterial({ color });
+  material.side = THREE.DoubleSide;
   const cube = new THREE.Mesh(geometry, material);
   cube.position.set(position.x, position.y, position.z);
   cube.userData = {
@@ -25,7 +26,7 @@ async function Cube (config) {
   cube.name = NAME;
   cube.type = TYPE;
 
-  function update () {}
+  function update (elapsedTime) {}
 
   return {
     update,
