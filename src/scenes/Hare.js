@@ -1,5 +1,5 @@
 
-import { random } from "../utils/helpers";
+import {getValue, random} from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import FindDistance from "../utils/Findistance";
@@ -52,7 +52,6 @@ function Hare (scene, hareCount) {
   });
 
   hareMesh.type = TYPE;
-
   function createTween() {
 
     tween1 = new TWEEN.Tween(hareMesh.position)
@@ -68,13 +67,15 @@ function Hare (scene, hareCount) {
         .to({ x: hareMesh.position.x + 35, y: 0, z: hareMesh.position.z + 35 }, 10000);
 
   }
-
-
   function checkForHawks() {
     //console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
+    let numberOfhawks = 0;
     for (let i = 4; i < getSceneManager().subjects.length; i++){
       if (getSceneManager().subjects[i].model.name === "redtailHawk"){
+        numberOfhawks = numberOfhawks +1;
+
       }
+      //console.log("There are " + numberOfhawks + " hawk(s) in the simulation");
     }
 
     return distanceFromHawk;
@@ -89,7 +90,7 @@ function Hare (scene, hareCount) {
   let position = 0;
     for(let i = 0 ; i < grasses.children.length; i++){
       nearestPosition2 = FindDistance(hareMesh, grasses.children[i]);
-      if(nearestPosition2 < nearestPosition){
+      if(nearestPosition2 < nearestPosition && (grasses.children[i].children[0].children[0].userData.eatable) == true){
       nearestPosition = nearestPosition2;
       position = i;
       }
@@ -111,6 +112,18 @@ function Hare (scene, hareCount) {
                 },
                 10000
             );
+
+            if(FindDistance(hareMesh, getSceneManager().subjects[i].model.children[grassPosition]) < .1){
+              console.log("eat that grass");
+              getSceneManager().subjects[i].model.children[grassPosition].children[0].children[0].userData.eatable = false;
+              const color = getValue("material.color", getSceneManager()
+                  .subjects[i].model.children[grassPosition].children[0].children[0]);
+              const selectedColor = getValue("userData.color.selected",getSceneManager()
+                  .subjects[i].model.children[grassPosition].children[0].children[0]);
+              const name = getValue("userData.name", getSceneManager().
+                  subjects[i].model.children[grassPosition].children[0].children[0]);
+              color.set && color.set(selectedColor);
+            }
             tween2.chain(tween3);
             tween3.chain(tween1);
       }
@@ -119,8 +132,8 @@ function Hare (scene, hareCount) {
   createTween();
   tween1.chain(tween2);
   tween2.chain(tween3);
-  tween3.chain(tween4);
-  tween4.chain(tween1);
+  tween3.chain(tween1);
+  //tween4.chain(tween1);
 
   function update ()
   {
