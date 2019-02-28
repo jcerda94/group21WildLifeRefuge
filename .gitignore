@@ -4,9 +4,11 @@
 .idea/misc.xml
 .idea/modules.xml
 .idea/vcs.xml
+.idea/
 *.cmd
 node_modules/**
 package-lock.json
 src/.DS_Store
 .vscode/
 package-lock.json
+build/
