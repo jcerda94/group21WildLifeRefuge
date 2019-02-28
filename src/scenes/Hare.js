@@ -2,6 +2,7 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
+import FindDistance from "../utils/Findistance";
 const THREE = require("three");
 
 export const NAME = "hare";
@@ -46,13 +47,10 @@ function Hare (scene, hareCount) {
   };
   //var myName = "hare_" + hareCount;
   //console.log("subscribe to hawkObserver for " + myName);
-
   getHawkObserver().subscribe((position) => {
-    //console.log("hawkObserver method called for " + myName);
-    //checkForHare(position);
+
   });
 
-  //scene.add(hareMesh);
   hareMesh.type = TYPE;
 
   function createTween() {
@@ -76,60 +74,49 @@ function Hare (scene, hareCount) {
     //console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
     for (let i = 4; i < getSceneManager().subjects.length; i++){
       if (getSceneManager().subjects[i].model.name === "redtailHawk"){
-
       }
     }
-
 
     return distanceFromHawk;
   }
   function escapeFormHawk() {
-
+   //TODO: chasing scene between hawks and hare
   }
   function nearestGrassPosition(grasses) {
-
+ // console.log("I found grass objects " +grasses.children.length);
+  let nearestPosition = 1000;
+  let nearestPosition2 = 0.0;
+  let position = 0;
     for(let i = 0 ; i < grasses.children.length; i++){
-
+      nearestPosition2 = FindDistance(hareMesh, grasses.children[i]);
+      if(nearestPosition2 < nearestPosition){
+      nearestPosition = nearestPosition2;
+      position = i;
+      }
     }
-
+   // console.log("Nearest Position : " + nearestPosition);
+    return position;
   }
   //looking for closest grass potion
   function getGrassPosition() {
-  //getSceneManager().getSceneObjectsOf ({hareMesh});
-    const grassPosition ={};
+    let grassPosition = 0;
     for (let i = 0; i < getSceneManager().subjects.length; i++) {
       if(getSceneManager().subjects[i].model.type === "Grass"){
-        if (getSceneManager().subjects.length > 4) {
-          if (getSceneManager().subjects[i].model.type === "Grass") {
+        grassPosition = nearestGrassPosition(getSceneManager().subjects[i].model);
             tween3 = new TWEEN.Tween(hareMesh.position).to(
                 {
-                  x: getSceneManager().subjects[i].model.position.x,
-                  y: getSceneManager().subjects[i].model.position.y,
-                  z: getSceneManager().subjects[i].model.position.z
+                  x: getSceneManager().subjects[i].model.children[grassPosition].position.x,
+                  y: getSceneManager().subjects[i].model.children[grassPosition].position.y,
+                  z: getSceneManager().subjects[i].model.children[grassPosition].position.z,
                 },
                 10000
             );
             tween2.chain(tween3);
             tween3.chain(tween1);
-          }
-        }
-        //const nearestGrassObject = nearestGrassPosition(getSceneManager().subjects[i].model);
-
-
       }
-     // console.log("Hawk:checkForHare:  length : " + getSceneManager().subjects[4].model.type);
-
-
     }
-
-    return grassPosition;
-
   }
   createTween();
-  checkForHawks();
-  //getGrassPosition();
-  //console.log(" check for distance from a hawk");
-
   tween1.chain(tween2);
   tween2.chain(tween3);
   tween3.chain(tween4);
@@ -139,12 +126,12 @@ function Hare (scene, hareCount) {
   {
     checkForHawks();
     getGrassPosition();
-    //console.log("hare update");
     TWEEN.update();
   }
   function handleCollision (targets) {
     for (let i = 0; i < targets.length; i++) {
-      if (targets[i].object.type === "Hare") {
+      if (targets[i].object.type === "Grass") {
+        console.log("Collision occur between grass and hare");
         SceneManager.removeObject(targets[i].object);
       }
     }
@@ -154,7 +141,8 @@ function Hare (scene, hareCount) {
   return {
     update,
     model: hareMesh,
-    created: new Date()
+    created: new Date(),
+    handleCollision
   };
 }
 
