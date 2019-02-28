@@ -82,7 +82,7 @@ if (typeof Object.assign != 'function') {
 // TODO: Maybe use this to generate the ground plane? Or have the ground plane model be generated and then sampled?
 class EnvironmentManager {
 
-
+    textureCanvas = null;
     localEnv = null;
     defaultEnvironmentObject = {
       water: 1.0
@@ -92,12 +92,21 @@ class EnvironmentManager {
         const sceneManger = getSceneManager();
 
         //Added 1 to array size to handle odd ground sizes (1222 x 899) and objects at the absolute edge of the ground
-        const groundX = Math.trunc(sceneManger.groundSize['x']/10) + 1;
-        const groundY = Math.trunc(sceneManger.groundSize['y']/10) + 1;
+        const groundX = Math.trunc(sceneManger.groundSize.x/10) + 1;
+        const groundY = Math.trunc(sceneManger.groundSize.y/10) + 1;
 
         //Initializes an array shaped like our ground object, and fills it with a set of default environment conditions
         //TODO: Add dynamically generated environments (non-uniform starting conditions, maybe toy environment 'painter')
         this.localEnv = [...Array(groundX)].map(x=>Array(groundY).fill(Object.assign({}, this.defaultEnvironmentObject)));
+        console.log(this.localEnv);
+
+        // Creates a THREE Texture using an HTML Canvas element
+        var drawingCanvas = document.getElementById( 'drawing-canvas' );
+        var drawingContext = drawingCanvas.getContext( '2d' );
+        drawingContext.fillStyle = '#996600';
+        drawingContext.fillRect( 0, 0, sceneManger.groundSize.x, sceneManger.groundSize.y);
+        this.textureCanvas = drawingCanvas;
+
     }
 
     getEnvByXYPos(x, y){
@@ -113,4 +122,9 @@ export const getEnvironmentManager = () => {
     return EnvironmentManager.instance || null;
 };
 
-export default EnvironmentManager;
+export default function (container) {
+    if (!EnvironmentManager.instance) {
+        EnvironmentManager.instance = new EnvironmentManager(container);
+    }
+    return EnvironmentManager.instance;
+}
