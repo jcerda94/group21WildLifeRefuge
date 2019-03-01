@@ -1,4 +1,4 @@
-import ground from '../assets/groundTexture.jpg'
+import {getEnvironmentManager} from "./EnvironmentManager";
 const THREE = require("three");
 
 export const TYPE = "Ground";
@@ -8,6 +8,9 @@ function Ground (config) {
   const depth = 15;
   const geometry = new THREE.BoxBufferGeometry(size.x, depth, size.y);
 
+  const env = getEnvironmentManager();
+  const textureCanvas = env.textureCanvas;
+
   const material = [
     new THREE.MeshLambertMaterial({
       color
@@ -16,7 +19,7 @@ function Ground (config) {
         color
       }),
     new THREE.MeshLambertMaterial({
-      map: new THREE.TextureLoader().load(ground)
+      map: new THREE.CanvasTexture( textureCanvas )
     }),
     new THREE.MeshLambertMaterial({
       color
@@ -28,8 +31,6 @@ function Ground (config) {
       color
     })
   ];
-
-
 
   geometry.computeFaceNormals();
   geometry.normalsNeedUpdate = true;

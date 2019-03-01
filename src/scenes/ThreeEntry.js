@@ -1,4 +1,5 @@
 import SceneManager from "./SceneManager";
+import EnvironmentManager from "./EnvironmentManager";
 
 function createCanvas (document, containerElement) {
   const canvas = document.createElement("canvas");
@@ -10,6 +11,7 @@ class ThreeEntry {
   constructor (container) {
     this.canvas = createCanvas(document, container);
     this.sceneManager = SceneManager(this.canvas);
+    this.environmentManager = EnvironmentManager();
     this.frames = 0;
     this.fpsCounter = setInterval(() => {
       console.log(this.frames);
