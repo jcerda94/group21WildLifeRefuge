@@ -105,7 +105,9 @@ class EnvironmentManager {
         var drawingContext = drawingCanvas.getContext( '2d' );
         drawingContext.fillStyle = '#996600';
         drawingContext.fillRect( 0, 0, sceneManger.groundSize.x, sceneManger.groundSize.y);
+
         this.textureCanvas = drawingCanvas;
+        this.drawingContext = drawingContext;
 
     }
 
@@ -114,6 +116,22 @@ class EnvironmentManager {
         const envArrY = Math.trunc(y/10);
 
         return this.local_env[envArrX][envArrY];
+    }
+
+    drawOnCanvas(x, y) {
+        const sceneManager = getSceneManager();
+
+        const xPos = x + (sceneManager.groundSize.x / 2);
+        const yPos = y + (sceneManager.groundSize.y / 2);
+
+
+        this.drawingContext.fillStyle = '#5b7aff';
+
+        this.drawingContext.fillRect(xPos-5, yPos-5, 10, 10 );
+        if (sceneManager.ready){
+            sceneManager.scene.children[3].material[2].map.needsUpdate = true;
+        }
+
     }
 
 }

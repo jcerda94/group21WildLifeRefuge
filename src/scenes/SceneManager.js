@@ -27,12 +27,11 @@ class SceneManager {
   intersected = null
   defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
-  dataTexture = null
-  clock = new THREE.Clock();
   last = 0
-  data = null
+  ready = false
 
   constructor (canvas) {
+
     this.setCanvas(canvas);
     this.initializeLoadingScreen();
     this.initializeScene();
@@ -40,12 +39,6 @@ class SceneManager {
     this.initializeCamera();
 
     this.createSceneSubjects();
-
-    var width = 100;
-    var height = 10;
-
-    this.data = new Uint8Array( width * height * 3 );
-    this.dataTexture = new THREE.DataTexture( this.data, width, height, THREE.RGBFormat);
   }
 
   initializeLoadingScreen () {
@@ -136,27 +129,6 @@ class SceneManager {
     this.renderer.render(this.scene, this.camera);
     this.checkIntersects();
 
-
-    let position = new THREE.Vector2();
-
-    if ( elapsedTime - this.last > 0.1 ) {
-      this.last = elapsedTime;
-      position.x = THREE.Math.randInt( 0, this.groundSize.x - (this.groundSize.x/100) );
-      position.y = THREE.Math.randInt( 0, this.groundSize.y - (this.groundSize.y/100) );
-      // generate new color data
-      this.updateDataTexture(position);
-    }
-
-  }
-
-  updateDataTexture(position) {
-    var drawingCanvas = document.getElementById( 'drawing-canvas' );
-    var drawingContext = drawingCanvas.getContext( '2d' );
-    drawingContext.fillStyle = '#5b7aff';
-
-    drawingContext.fillRect( position.x, position.y, 10, 10 );
-    this.scene.children[3].material[2].map.needsUpdate = true;
-
   }
 
   checkIntersects = () => {
@@ -205,6 +177,8 @@ class SceneManager {
       config: { onLoad: this.onLoad }
     });
 
+    console.log(this.groundSize);
+
     this.subjects = [
       ModelFactory.makeSceneObject({ type: "ambientLight" }),
       ModelFactory.makeSceneObject({ type: "directionalLight" }),
@@ -220,6 +194,8 @@ class SceneManager {
     this.subjects.forEach(subject => {
       this.scene.add(subject.model);
     });
+
+    this.ready = true;
   }
 
   addObject (sceneObject) {
