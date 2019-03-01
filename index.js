@@ -12,7 +12,7 @@ app.use('/static', express.static('./build/static'))
 app.use('/models', express.static('./build/models'))
 app.use('/assets', express.static('./build/assets'))
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, './build/index.html')))
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, './build/index.html')))
 
 const httpsServer = https.createServer(credentials, app);
 
