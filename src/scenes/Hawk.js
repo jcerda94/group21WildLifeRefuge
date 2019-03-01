@@ -30,6 +30,16 @@ function Hawk(scene) {
 
   cube.position.set(position.x, position.y, position.z);
   cube.userData = {
+/*=======
+  var hawk = new THREE.Group();
+  hawk.receiveShadow =false;
+  hawk.castShadow = false;
+  hareMesh.position.y = hawk.position.y - 5;
+  cube.position.y = hawk.position.y;
+  hawk.add(cube);
+  //hawk.add(hareMesh);
+  hawk.userData = {
+  */
     selectable: true,
     color: {
       original: color,
@@ -45,6 +55,8 @@ function Hawk(scene) {
   //scene.add(cube);
   const tween1 = new TWEEN.Tween(cube.position)
     .to({ x: 500, y: 100, z: -100 }, 10000/3);
+//  hawk.name = NAME;
+  //hawk.type = TYPE;
 
 
   const tween2 = new TWEEN.Tween(cube.position)
@@ -76,7 +88,29 @@ function Hawk(scene) {
             }, 10000);
           tween2.chain(tween3);
           tween3.chain(tween1);
-        }
+/*
+   function checkForHare () {
+    if(!ate){
+      for (let i = 4; i < getSceneManager().subjects.length; i++) {
+        // console.log("Hawk:checkForHare:  length : " + getSceneManager().subjects.length );
+        if (getSceneManager().subjects.length > 4) {
+          if (getSceneManager().subjects[i].model.name === "hare") {
+            // console.log(" Found a hare: " + position.x + ":" + position.y + ":" + position.z);
+            // JWC  tween3 = new TWEEN.Tween(cube.position)
+            tween3 = new TWEEN.Tween(hawk.position).to(
+                {
+                  x: getSceneManager().subjects[i].model.position.x,
+                  y: getSceneManager().subjects[i].model.position.y,
+                  z: getSceneManager().subjects[i].model.position.z
+                },
+                10000
+            );
+
+            tween2.chain(tween3);
+            tween3.chain(tween1);
+
+          }
+*/      }
       }
     }
   }
@@ -96,11 +130,16 @@ function Hawk(scene) {
     // The observers probably don't care if the hawk moves a small distance
     // May want to make this delta-position based.
     // for now just scale back the number of times the position is reported to the other animals.
-    
 
     if(count % 30 === 0)
       getHawkObserver().broadcast(cube.position);
+=======
+/*
+  if (count % 30 === 0) getHawkObserver().broadcast();
+
     checkForHare();
+    TWEEN.update();
+*/  checkForHare();
     TWEEN.update();
   }
 

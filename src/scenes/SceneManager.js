@@ -74,14 +74,15 @@ class SceneManager {
   }
 
   toggleSelected (model) {
+    //console.log("Clicked on grass");
     const modelIndex = this.selected.findIndex(
       selectedModel => model === selectedModel
     );
 
     if (modelIndex >= 0) {
+      console.log("Clicked on grass");
       const modelToRemove = this.selected[modelIndex];
       const originalColor = getValue("userData.color.original", modelToRemove);
-
       const color = getValue("material.color", modelToRemove);
       color.set && color.set(originalColor);
       if (getValue("userData.name") === hawkName) {
