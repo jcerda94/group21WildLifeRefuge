@@ -1,0 +1,16 @@
+version: '3'
+services:
+  client:
+    container_name: wildlife-refuge
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3000:3000
+      - 9229:9229
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./public:/usr/src/app/public
+      - ./img:/usr/src/app/img
