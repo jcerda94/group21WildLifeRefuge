@@ -33,13 +33,13 @@ function Hawk (config) {
   const z = random(-heightBound, heightBound);
   const position = { x, y, z };
 
-  var hawk = new THREE.Group();
-  hawk.receiveShadow =false;
+  let hawk = new THREE.Object3D();
   hawk.castShadow = false;
-  hareMesh.position.y = hawk.position.y - 5;
+  //hawk.position.set(position.x, position.y, position.z);
+  hareMesh.position.y = hawk.position.y - 4;
   cube.position.y = hawk.position.y;
   hawk.add(cube);
-  //hawk.add(hareMesh);
+ // hawk.add(hareMesh);
   hawk.userData = {
     selectable: true,
     color: {
@@ -50,6 +50,7 @@ function Hawk (config) {
     name: NAME
   };
   hawk.name = NAME;
+
   hawk.type = TYPE;
 
   const tween1 = new TWEEN.Tween(hawk.position).to(
@@ -71,6 +72,7 @@ function Hawk (config) {
     // console.log("hawkObserver method called for Hawk: ");
 
   });
+
   function checkForHare () {
     if(!ate){
       for (let i = 4; i < getSceneManager().subjects.length; i++) {
@@ -113,9 +115,8 @@ function Hawk (config) {
     // The observers probably don't care if the hawk moves a small distance
     // May want to make this delta-position based.
     // for now just scale back the number of times the position is reported to the other animals.
-    if (count % 30 === 0) getHawkObserver().broadcast();
 
-    checkForHare();
+    if (count % 30 === 0) getHawkObserver().broadcast();
     TWEEN.update();
     checkForHare();
   }
