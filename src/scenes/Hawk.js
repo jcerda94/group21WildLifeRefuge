@@ -1,4 +1,3 @@
-import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 const THREE = require("three");
@@ -19,27 +18,19 @@ function Hawk (config) {
   const hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
   hareMesh.name = "attachedHare";
 
-
   const geometry = new THREE.CubeGeometry(size, size * 5, size);
   const material = new THREE.MeshBasicMaterial({ color });
   const cube = new THREE.Mesh(geometry, material);
 
   const SceneManager = getSceneManager();
-  const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
-  const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
-
-  const x = random(-widthBound, widthBound);
-  const y = 100;
-  const z = random(-heightBound, heightBound);
-  const position = { x, y, z };
 
   var hawk = new THREE.Group();
-  hawk.receiveShadow =false;
+  hawk.receiveShadow = false;
   hawk.castShadow = false;
   hareMesh.position.y = hawk.position.y - 5;
   cube.position.y = hawk.position.y;
   hawk.add(cube);
-  //hawk.add(hareMesh);
+  // hawk.add(hareMesh);
   hawk.userData = {
     selectable: true,
     color: {
@@ -69,36 +60,34 @@ function Hawk (config) {
   // hawk must track it's position and look for hares nearby as it flys
   getHawkObserver().subscribe(position => {
     // console.log("hawkObserver method called for Hawk: ");
-
   });
   function checkForHare () {
-    if(!ate){
-      for (let i = 4; i < getSceneManager().subjects.length; i++) {
-        // console.log("Hawk:checkForHare:  length : " + getSceneManager().subjects.length );
-        if (getSceneManager().subjects.length > 4) {
-          if (getSceneManager().subjects[i].model.name === "hare") {
+    if (!ate) {
+      const subjects = getSceneManager().subjects;
+      for (let i = 4; i < subjects.length; i++) {
+        // console.log("Hawk:checkForHare:  length : " + subjects.length );
+        if (subjects.length > 4) {
+          if (subjects[i].model.name === "hare") {
             // console.log(" Found a hare: " + position.x + ":" + position.y + ":" + position.z);
             // JWC  tween3 = new TWEEN.Tween(cube.position)
             tween3 = new TWEEN.Tween(hawk.position).to(
-                {
-                  x: getSceneManager().subjects[i].model.position.x,
-                  y: getSceneManager().subjects[i].model.position.y,
-                  z: getSceneManager().subjects[i].model.position.z
-                },
-                10000
+              {
+                x: subjects[i].model.position.x,
+                y: subjects[i].model.position.y,
+                z: subjects[i].model.position.z
+              },
+              10000
             );
 
             tween2.chain(tween3);
             tween3.chain(tween1);
-
           }
         }
       }
-    }else {
-      //hareMesh.position.y = hawk.position.y - 4;
-      //cube.position.y = hawk.position.y;
+    } else {
+      // hareMesh.position.y = hawk.position.y - 4;
+      // cube.position.y = hawk.position.y;
     }
-
   }
   tween1.chain(tween2);
   tween2.chain(tween3);
@@ -123,7 +112,7 @@ function Hawk (config) {
   function handleCollision (targets) {
     for (let i = 0; i < targets.length; i++) {
       if (targets[i].object.type === "Hare") {
-        //added a hare when collision occur
+        // added a hare when collision occur
         hawk.add(hareMesh);
         ate = true;
         SceneManager.removeObject(targets[i].object);

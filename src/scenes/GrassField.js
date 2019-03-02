@@ -5,7 +5,7 @@ const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
 export const TYPE = "Grass";
-//var grassMesh;
+// var grassMesh;
 async function GrassField (config) {
   const loadingManager = new THREE.LoadingManager();
   loadingManager.onLoad = config.onLoad || (() => null);
@@ -50,18 +50,13 @@ async function GrassField (config) {
     grass.rotation.y = rotation;
     const grassMesh = grass.children[0].children[0].material;
     grassMesh.color.set(grass.children[0].children[0].userData.color.original);
-    grass.children[0].children[0].material = grassMesh.clone();//grass.children[0].children[0].userData.original; //"#3baa5d";//grassMesh.clone();
+    grass.children[0].children[0].material = grassMesh.clone(); // grass.children[0].children[0].userData.original; //"#3baa5d";//grassMesh.clone();
     grasses.add(grass);
   }
 
   grasses.type = TYPE;
   grasses.name = "grass";
-  function resetCorlor() {
-    //grassMesh.color.set(grass.children[0].children[0].userData.color.origin);
 
-  }
-
-  //console.log("grassField has   " + grasses.children.length + " children");
   function update () {}
 
   return {

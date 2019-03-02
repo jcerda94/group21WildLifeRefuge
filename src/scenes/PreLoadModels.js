@@ -1,5 +1,4 @@
 import { getSceneManager } from "./SceneManager";
-import ModelFactory from "./ModelFactory";
 
 function PreLoadModels ({ hawks, hares, cedars, bushes }) {
   const SceneManager = getSceneManager();
