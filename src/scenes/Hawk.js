@@ -1,5 +1,6 @@
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
+import { random } from "../utils/helpers";
 const THREE = require("three");
 
 export const NAME = "redtailHawk";
@@ -22,8 +23,6 @@ function Hawk (config) {
   const material = new THREE.MeshBasicMaterial({ color });
   const cube = new THREE.Mesh(geometry, material);
 
-  const SceneManager = getSceneManager();
-
   var hawk = new THREE.Group();
   hawk.receiveShadow = false;
   hawk.castShadow = false;
@@ -43,18 +42,34 @@ function Hawk (config) {
   hawk.name = NAME;
   hawk.type = TYPE;
 
+  const SceneManager = getSceneManager();
+
+  const randomX = () => {
+    const groundX = SceneManager.groundSize.x / 2;
+    return random(-groundX, groundX);
+  };
+
+  const randomZ = () => {
+    const groundZ = SceneManager.groundSize.y / 2;
+    return random(-groundZ, groundZ);
+  };
+
+  hawk.position.x = randomX();
+  hawk.position.z = randomZ();
+  hawk.position.y = 100;
+
   const tween1 = new TWEEN.Tween(hawk.position).to(
-    { x: 500, y: 100, z: -100 },
+    { x: randomX(), y: 100, z: randomZ() },
     10000
   );
 
   const tween2 = new TWEEN.Tween(hawk.position).to(
-    { x: -500, y: 100, z: 100 },
+    { x: randomX(), y: 100, z: randomZ() },
     10000
   );
 
   var tween3 = new TWEEN.Tween(hawk.position)
-    .to({ x: -100, y: 50, z: -100 }, 10000)
+    .to({ x: randomX(), y: 50, z: randomZ() }, 10000)
     .start();
 
   // hawk must track it's position and look for hares nearby as it flys
