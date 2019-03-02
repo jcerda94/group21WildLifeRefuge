@@ -24,9 +24,10 @@ async function GrassField (config) {
     );
   });
 
-  const bounds = getSceneManager().groundSize;
-  bounds.x *= 0.95;
-  bounds.y *= 0.95;
+  const SceneManager = getSceneManager();
+  const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
+  const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
+
   for (let i = 0; i < count; i++) {
     const grass = originalGrass.clone();
     grass.children[0].children[0].userData = {
@@ -40,8 +41,8 @@ async function GrassField (config) {
     };
     const size = random(1, 2);
 
-    const x = random(-bounds.x / 2, bounds.x / 2);
-    const z = random(-bounds.y / 2, bounds.y / 2);
+    const x = random(-widthBound, widthBound);
+    const z = random(-heightBound, heightBound);
 
     const rotation = random(-Math.PI / 2, Math.PI / 2);
 
