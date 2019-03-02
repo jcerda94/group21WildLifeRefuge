@@ -133,7 +133,6 @@ function Hawk(scene) {
 
     if(count % 30 === 0)
       getHawkObserver().broadcast(cube.position);
-=======
 /*
   if (count % 30 === 0) getHawkObserver().broadcast();
 
