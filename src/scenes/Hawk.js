@@ -108,8 +108,45 @@ function Hawk (config) {
   tween2.chain(tween3);
   tween3.chain(tween1);
   var count = 1;
-  function update () {
+
+  const hunger = 0;
+
+  function get2DPosition () {
+    SceneManager.camera.updateProjectionMatrix();
+    const vector = hawk.position.clone().project(SceneManager.camera);
+    vector.x = ((vector.x + 1) / 2) * SceneManager.screenDimensions.width - 14;
+    vector.y = (-(vector.y - 1) / 2) * SceneManager.screenDimensions.height;
+    return vector;
+  }
+
+  function addLabel () {
+    const hungerValue = document.createElement("div");
+    hungerValue.style.position = "absolute";
+    hungerValue.style.width = "60px";
+
+    hungerValue.style.backgroundColor = "#30303080";
+    hungerValue.style.color = "#FFFFFF";
+    hungerValue.innerHTML = `Hunger\n${hunger}`;
+
+    const pos = get2DPosition();
+    hungerValue.style.top = pos.y + "px";
+    hungerValue.style.left = pos.x + "px";
+    document.body.appendChild(hungerValue);
+    function updatePosition (x, y) {
+      hungerValue.style.top = `${y}px`;
+      hungerValue.style.left = `${x}px`;
+    }
+    return {
+      updatePosition
+    };
+  }
+
+  const hungerValue = addLabel();
+
+  function update (elapsedTime) {
     count++;
+    const position = get2DPosition();
+    hungerValue.updatePosition(position.x, position.y);
     // console.log("hawk updated: " + count++);
 
     // The updates happen very often for small position changes
