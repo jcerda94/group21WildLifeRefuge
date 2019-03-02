@@ -1,4 +1,5 @@
 import TreeModel from "./Tree";
+//import GrassModel from "./Grass";
 import HawkModel from "./Hawk";
 import HareModel from "./Hare";
 import BushModel from "./Bush";
@@ -8,34 +9,33 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import SpotLight from "./SpotLight";
-import CollisionSphereModel from "./CollisionSphere";
 
-const Hawk = config => {
-  if (config && config.useCollision) {
-    const hawk = HawkModel(config);
-    return CollisionSphereModel(hawk)(config.collision);
-  } else {
-    return HawkModel(config);
-  }
-};
-const Hare = config => {
-  const { model, created, update } = HareModel(config);
+const Hawk = () => {
+  const { model, created, update } = HawkModel();
   return {
     model,
     created,
     update
   };
 };
-const Bush = config => {
-  const { model, created, update } = BushModel(config);
+const Hare = () => {
+  const { model, created, update } = HareModel();
   return {
     model,
     created,
     update
   };
 };
-const Tree = config => {
-  const { model, created } = TreeModel(config);
+const Bush = () => {
+  const { model, created, update } = BushModel();
+  return {
+    model,
+    created,
+    update
+  };
+};
+const Tree = () => {
+  const { model, created } = TreeModel();
   return {
     update: () => {},
     model,
@@ -66,37 +66,29 @@ const Grass = async config => {
     update
   };
 };
-const Ambient = config => {
-  const { light, update } = AmbientLight(config);
+const Ambient = () => {
+  const { light, update } = AmbientLight();
   return {
     model: light,
     created: new Date(),
     update
   };
 };
-const Directional = config => {
-  const { light, update } = DirectionalLight(config);
+const Directional = () => {
+  const { light, update } = DirectionalLight();
   return {
     model: light,
     created: new Date(),
     update
   };
 };
-const Spot = config => {
-  const { light, update } = SpotLight(config);
+const Spot = () => {
+  const { light, update } = SpotLight();
   return {
     model: light,
     created: new Date(),
     update
   };
-};
-const CollisionSphere = ({ targets, handleCollision }) => {
-  const { model, update, created } = CollisionSphereModel({
-    targets,
-    handleCollision
-  });
-
-  return { model, update, created };
 };
 
 const MODEL_TYPES = {
@@ -139,10 +131,6 @@ const MODEL_TYPES = {
   Spot: {
     type: "spotLight",
     model: Spot
-  },
-  CollisionSphere: {
-    type: "collisionSphere",
-    model: CollisionSphere
   }
 };
 
@@ -151,25 +139,23 @@ class modelFactory {
     const { type, config } = options;
     switch (type) {
       case MODEL_TYPES.Hawk.type:
-        return MODEL_TYPES.Hawk.model(config);
+        return MODEL_TYPES.Hawk.model();
       case MODEL_TYPES.Hare.type:
-        return MODEL_TYPES.Hare.model(config);
+        return MODEL_TYPES.Hare.model();
       case MODEL_TYPES.Bush.type:
-        return MODEL_TYPES.Bush.model(config);
+        return MODEL_TYPES.Bush.model();
       case MODEL_TYPES.Tree.type:
-        return MODEL_TYPES.Tree.model(config);
-      case MODEL_TYPES.Grass.type:
+        return MODEL_TYPES.Tree.model();
+        case MODEL_TYPES.Grass.type: 
         return MODEL_TYPES.Grass.model(config);
       case MODEL_TYPES.Ground.type:
         return MODEL_TYPES.Ground.model(config);
       case MODEL_TYPES.Ambient.type:
-        return MODEL_TYPES.Ambient.model(config);
+        return MODEL_TYPES.Ambient.model();
       case MODEL_TYPES.Spot.type:
-        return MODEL_TYPES.Spot.model(config);
+        return MODEL_TYPES.Spot.model();
       case MODEL_TYPES.Directional.type:
-        return MODEL_TYPES.Directional.model(config);
-      case MODEL_TYPES.CollisionSphere.type:
-        return MODEL_TYPES.CollisionSphere.model(config);
+        return MODEL_TYPES.Directional.model();
       default:
         return MODEL_TYPES.Cube.model(config);
     }
