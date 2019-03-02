@@ -120,10 +120,10 @@ function Hawk(scene) {
   var count=1;
   function update() {
     count++;
-    console.log("hawk update: hawk__" + myHawkID + "  position: " 
-      + cube.position.x.toFixed(2) + ":" 
-      + cube.position.y.toFixed(2) + ":" 
-      + cube.position.z.toFixed(2) );
+    //console.log("hawk update: hawk__" + myHawkID + "  position: " 
+    //  + cube.position.x.toFixed(2) + ":" 
+    //  + cube.position.y.toFixed(2) + ":" 
+    //  + cube.position.z.toFixed(2) );
     
     // The updates happen very often for small position changes 
     // This made the hawk behave erratically. 

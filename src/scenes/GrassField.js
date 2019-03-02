@@ -34,7 +34,7 @@ async function GrassField (config) {
 
 
   for (let i = 0; i < count; i++) {
-  //for (let i = 0; i < 5; i++) { // testing
+  //for (let i = 0; i < 15; i++) { // testing
   
   
     const grass = originalGrass.clone();
@@ -58,7 +58,7 @@ async function GrassField (config) {
     
     
     grass.position.set(x, 0, z);
-    //grass.position.set(30*i, 0, 0); // testing
+    //grass.position.set(3*i, 0, 0); // testing
 
     grass.rotation.y = rotation;
     const grassMesh = grass.children[0].children[0].material;
@@ -122,8 +122,13 @@ export var findRemoveIfNear = function (animalPos, range) {
   
   if(shortestDist < range)
   {
-    console.log("remove grass[" + shortestDist_node_i + "] at " + shortestDist_node.data.position.x.toFixed()
-                  + "        within: " + theRange + "  to  " 
+    console.log("remove [" + shortestDist_node_i + "] at "
+                  + shortestDist_node.data.position.x.toFixed() + ":" 
+                  + shortestDist_node.data.position.y.toFixed() + ":" 
+                  + shortestDist_node.data.position.z.toFixed() 
+                  //+ "        within: " + theRange + "  to  " 
+                  + "    dist: " + shortestDist.toFixed()
+                  + "    animal Pos: "
                   + inPos.x.toFixed(0) + ":" 
                   + inPos.y.toFixed(0) + ":" 
                   + inPos.z.toFixed(0) );
@@ -136,25 +141,33 @@ export var findRemoveIfNear = function (animalPos, range) {
 
 function isGreaterThan(n1, n2)
 {
-  // comparing numbers in js is near impossible so we do this, which seems to work
+  // handling numbers in js is near impossible so we do this, which is ugly but seems to work
   return parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10)
-         > parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10);
+       > parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10);
 }
 
 function calcDelta(n1, n2)
 {
-  if(n1 < 0 && n2 < 0) 
-    return Math.abs(Math.abs(n1) - Math.abs(n2)).toFixed();
+  // handling numbers in js is near impossible so we do this, which is ugly but seems to work
+  if(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10) < 0 
+  && parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10) < 0) 
+    return Math.abs(Math.abs(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10))
+                  - Math.abs(parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10))).toFixed();
   else 
-    return Math.abs(Math.abs(n1) + Math.abs(n2)).toFixed();
+    return Math.abs(Math.abs(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10)) 
+                  + Math.abs(parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10))).toFixed();
 }
 export function getDistance(pos1, pos2)
 {
-  // abs( -10 + 2 ) = 12
-  var deltaX = calcDelta(pos1.x, pos2.x);
-  var deltaY = calcDelta(pos1.y, pos2.y);
-  var deltaZ = calcDelta(pos1.z, pos2.z);
-  var dist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaZ , 2));
+  // handling numbers in js is near impossible so we do this, which is ugly but seems to work
+  var deltaX = parseInt(JSON.parse(JSON.stringify(pos1.x, null, 4)), 10)
+             - parseInt(JSON.parse(JSON.stringify(pos2.x, null, 4)), 10); 
+  var deltaY = parseInt(JSON.parse(JSON.stringify(pos1.y, null, 4)), 10)
+             - parseInt(JSON.parse(JSON.stringify(pos2.y, null, 4)), 10); 
+  var deltaZ = parseInt(JSON.parse(JSON.stringify(pos1.z, null, 4)), 10)
+             - parseInt(JSON.parse(JSON.stringify(pos2.z, null, 4)), 10); 
+  //var dist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaZ , 2));
+  var dist = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY) + (deltaZ*deltaZ));
   return (dist);
 };
 export default GrassField;

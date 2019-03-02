@@ -1,5 +1,5 @@
 import TreeModel from "./Tree";
-import GrassModel from "./Grass";
+//import GrassModel from "./Grass";
 import HawkModel from "./Hawk";
 import HareModel from "./Hare";
 import BushModel from "./Bush";
@@ -36,14 +36,6 @@ const Bush = () => {
 };
 const Tree = () => {
   const { model, created } = TreeModel();
-  return {
-    update: () => {},
-    model,
-    created
-  };
-};
-const myGrass = () => {
-  const { model, created } = GrassModel();
   return {
     update: () => {},
     model,
@@ -128,10 +120,6 @@ const MODEL_TYPES = {
     type: "grassField",
     model: Grass
   },
-  myGrass: {
-    type: "grass",
-    model: myGrass
-  },
   Ambient: {
     type: "ambientLight",
     model: Ambient
@@ -158,8 +146,6 @@ class modelFactory {
         return MODEL_TYPES.Bush.model();
       case MODEL_TYPES.Tree.type:
         return MODEL_TYPES.Tree.model();
-        case MODEL_TYPES.myGrass.type: 
-        return MODEL_TYPES.myGrass.model();
         case MODEL_TYPES.Grass.type: 
         return MODEL_TYPES.Grass.model(config);
       case MODEL_TYPES.Ground.type:
