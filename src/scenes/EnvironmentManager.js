@@ -118,12 +118,32 @@ class EnvironmentManager {
         return this.local_env[envArrX][envArrY];
     }
 
-    drawOnCanvas(x, y) {
-        const sceneManager = getSceneManager();
+    static canvasXYToGroundXY(sceneMan, x, y){
+        const sceneManager = sceneMan;
+
+        const xPos = x - (sceneManager.groundSize.x / 2);
+        const yPos = y - (sceneManager.groundSize.y / 2);
+
+        return {x: xPos, y: yPos}
+    }
+
+    static groundXYToCanvasXY(sceneMan, x, y){
+        const sceneManager = sceneMan;
 
         const xPos = x + (sceneManager.groundSize.x / 2);
         const yPos = y + (sceneManager.groundSize.y / 2);
 
+        return {x: xPos, y: yPos}
+
+    }
+
+    drawOnCanvas(x, y) {
+        const sceneManager = getSceneManager();
+
+        const canvasPos = EnvironmentManager.groundXYToCanvasXY(sceneManager, x, y);
+
+        const xPos = canvasPos.x;
+        const yPos = canvasPos.y;
 
         this.drawingContext.fillStyle = '#5b7aff';
 
