@@ -79,21 +79,21 @@ if (typeof Object.assign != 'function') {
     });
 }
 
-// TODO: Maybe use this to generate the ground plane? Or have the ground plane model be generated and then sampled?
 class EnvironmentManager {
 
     textureCanvas = null;
+    sceneManager = null;
     localEnv = null;
     defaultEnvironmentObject = {
       water: 1.0
     };
 
     constructor(){
-        const sceneManger = getSceneManager();
+        this.sceneManager = getSceneManager();
 
         //Added 1 to array size to handle odd ground sizes (1222 x 899) and objects at the absolute edge of the ground
-        const groundX = Math.trunc(sceneManger.groundSize.x/10) + 1;
-        const groundY = Math.trunc(sceneManger.groundSize.y/10) + 1;
+        const groundX = Math.trunc(this.sceneManager.groundSize.x/10) + 1;
+        const groundY = Math.trunc(this.sceneManager.groundSize.y/10) + 1;
 
         //Initializes an array shaped like our ground object, and fills it with a set of default environment conditions
         //TODO: Add dynamically generated environments (non-uniform starting conditions, maybe toy environment 'painter')
@@ -104,7 +104,7 @@ class EnvironmentManager {
         var drawingCanvas = document.getElementById( 'drawing-canvas' );
         var drawingContext = drawingCanvas.getContext( '2d' );
         drawingContext.fillStyle = '#996600';
-        drawingContext.fillRect( 0, 0, sceneManger.groundSize.x, sceneManger.groundSize.y);
+        drawingContext.fillRect( 0, 0, this.sceneManager.groundSize.x, this.sceneManager.groundSize.y);
 
         this.textureCanvas = drawingCanvas;
         this.drawingContext = drawingContext;
@@ -112,44 +112,47 @@ class EnvironmentManager {
     }
 
     getEnvByXYPos(x, y){
-        const envArrX = Math.trunc(x/10);
-        const envArrY = Math.trunc(y/10);
 
-        return this.local_env[envArrX][envArrY];
+        const pos = this.groundXYToCanvasXY(x, y);
+
+        const envArrX = Math.trunc(pos.x/10);
+        const envArrY = Math.trunc(pos.y/10);
+
+        console.log(envArrX + " " + envArrY);
+
+        return this.localEnv[envArrX][envArrY];
+
     }
 
-    static canvasXYToGroundXY(sceneMan, x, y){
-        const sceneManager = sceneMan;
+    canvasXYToGroundXY(x, y){
 
-        const xPos = x - (sceneManager.groundSize.x / 2);
-        const yPos = y - (sceneManager.groundSize.y / 2);
+        const xPos = x - (this.sceneManager.groundSize.x / 2);
+        const yPos = y - (this.sceneManager.groundSize.y / 2);
 
         return {x: xPos, y: yPos}
     }
 
-    static groundXYToCanvasXY(sceneMan, x, y){
-        const sceneManager = sceneMan;
+    groundXYToCanvasXY(x, y){
 
-        const xPos = x + (sceneManager.groundSize.x / 2);
-        const yPos = y + (sceneManager.groundSize.y / 2);
+        const xPos = x + (this.sceneManager.groundSize.x / 2);
+        const yPos = y + (this.sceneManager.groundSize.y / 2);
 
         return {x: xPos, y: yPos}
 
     }
 
-    drawOnCanvas(x, y) {
-        const sceneManager = getSceneManager();
+    drawOnCanvas(x, y, color = '#5b7aff') {
 
-        const canvasPos = EnvironmentManager.groundXYToCanvasXY(sceneManager, x, y);
+        const canvasPos = this.groundXYToCanvasXY(x, y);
 
         const xPos = canvasPos.x;
         const yPos = canvasPos.y;
 
-        this.drawingContext.fillStyle = '#5b7aff';
+        this.drawingContext.fillStyle = color;
 
         this.drawingContext.fillRect(xPos-5, yPos-5, 10, 10 );
-        if (sceneManager.ready){
-            sceneManager.scene.children[3].material[2].map.needsUpdate = true;
+        if (this.sceneManager.ready){
+            this.sceneManager.scene.children[3].material[2].map.needsUpdate = true;
         }
 
     }

@@ -7,6 +7,7 @@
 
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
+import {getEnvironmentManager} from "./EnvironmentManager";
 const THREE = require("three");
 
 export const NAME = "tree";
@@ -68,6 +69,12 @@ function Tree () {
   tree.name = NAME;
 
   tree.type = "Tree";
+
+  let env = getEnvironmentManager();
+  env.drawOnCanvas(position.x, position.z);
+  env.getEnvByXYPos(position.x, position.z).water -= 0.1;
+
+  console.log(env.localEnv);
 
   return {
     model: tree,
