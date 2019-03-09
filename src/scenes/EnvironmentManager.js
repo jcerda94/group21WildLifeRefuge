@@ -84,6 +84,8 @@ class EnvironmentManager {
     textureCanvas = null;
     sceneManager = null;
     localEnv = null;
+
+    //CAUTION! Object will only be shallow copied
     defaultEnvironmentObject = {
       water: 1.0
     };
@@ -96,8 +98,12 @@ class EnvironmentManager {
         const groundY = Math.trunc(this.sceneManager.groundSize.y/10) + 1;
 
         //Initializes an array shaped like our ground object, and fills it with a set of default environment conditions
+        // CAUTION! Only does a shallow copy of the defaultEnvironment object
         //TODO: Add dynamically generated environments (non-uniform starting conditions, maybe toy environment 'painter')
-        this.localEnv = [...Array(groundX)].map(x=>Array(groundY).fill(Object.assign({}, this.defaultEnvironmentObject)));
+        this.localEnv = [...Array(groundX)].map(
+            ()=>Array(groundY).fill().map(
+                () => Object.assign({}, this.defaultEnvironmentObject)
+            ));
         console.log(this.localEnv);
 
         // Creates a THREE Texture using an HTML Canvas element

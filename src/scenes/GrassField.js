@@ -1,5 +1,6 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
+import {getEnvironmentManager} from "./EnvironmentManager";
 
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
@@ -25,6 +26,7 @@ async function GrassField (config) {
   });
 
   const SceneManager = getSceneManager();
+  const env = getEnvironmentManager();
   const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
   const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
 
@@ -53,7 +55,11 @@ async function GrassField (config) {
     grassMesh.color.set(grass.children[0].children[0].userData.color.original);
     grass.children[0].children[0].material = grassMesh.clone();//grass.children[0].children[0].userData.original; //"#3baa5d";//grassMesh.clone();
     grasses.add(grass);
+
+    env.getEnvByXYPos(x, z).water -= 0.025;
   }
+
+  console.log(env.localEnv);
 
   grasses.type = TYPE;
   grasses.name = "grass";
