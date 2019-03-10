@@ -2,6 +2,7 @@
   "toggleContext": true,
   "studentMode": true,
   "authorMode": false,
+  "hawkLabel": false,
   "reviewMode": false,
   "redtailHawkCount": 15,
   "redtailHawkSelected": 0,

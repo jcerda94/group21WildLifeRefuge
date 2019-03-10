@@ -13,7 +13,7 @@ class ThreeEntry {
     this.frames = 0;
     this.fpsCounter = setInterval(() => {
       console.log(this.frames);
-      this.resizeCanvas()
+      this.resizeCanvas();
       this.frames = 0;
     }, 1000);
     this.bindEventListeners();

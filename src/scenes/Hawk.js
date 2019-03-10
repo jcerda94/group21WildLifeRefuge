@@ -1,6 +1,7 @@
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { random } from "../utils/helpers";
+import { hunger, label } from "../utils/behavior";
 const THREE = require("three");
 
 export const NAME = "redtailHawk";
@@ -10,6 +11,7 @@ var TWEEN = require("@tweenjs/tween.js");
 
 function Hawk (config) {
   let ate = false;
+  const maxHunger = 10;
   const size = 3;
   const color = "#db7093";
 
@@ -109,7 +111,7 @@ function Hawk (config) {
   tween3.chain(tween1);
   var count = 1;
 
-  const hunger = 0;
+  const hawkHunger = hunger({ maxHunger: 20, minHunger: 1 });
 
   function get2DPosition () {
     SceneManager.camera.updateProjectionMatrix();
@@ -119,35 +121,17 @@ function Hawk (config) {
     return vector;
   }
 
-  function addLabel () {
-    const hungerValue = document.createElement("div");
-    hungerValue.style.position = "absolute";
-    hungerValue.style.width = "60px";
+  const hungerValue = label({
+    text: "Hunger\n",
+    initialValue: hawkHunger.get().toFixed(1),
+    ...get2DPosition()
+  });
 
-    hungerValue.style.backgroundColor = "#30303080";
-    hungerValue.style.color = "#FFFFFF";
-    hungerValue.innerHTML = `Hunger\n${hunger}`;
-
-    const pos = get2DPosition();
-    hungerValue.style.top = pos.y + "px";
-    hungerValue.style.left = pos.x + "px";
-    document.body.appendChild(hungerValue);
-    function updatePosition (x, y) {
-      hungerValue.style.top = `${y}px`;
-      hungerValue.style.left = `${x}px`;
-    }
-    return {
-      updatePosition
-    };
-  }
-
-  const hungerValue = addLabel();
-
-  function update (elapsedTime) {
+  function update (elapsedTime, simulationTime) {
     count++;
     const position = get2DPosition();
-    hungerValue.updatePosition(position.x, position.y);
-    // console.log("hawk updated: " + count++);
+    hawkHunger.update(simulationTime);
+    hungerValue.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
     // The updates happen very often for small position changes
     // This made the hawk behave erratically.

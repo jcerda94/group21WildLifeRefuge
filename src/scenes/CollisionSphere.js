@@ -25,8 +25,8 @@ function CollisionSphere (parent) {
     let collisions = [];
     const SceneManager = getSceneManager();
     let sceneObjects = null;
-    const update = () => {
-      parent.update();
+    const update = (elapsedTime, simulationTime) => {
+      parent.update(elapsedTime, simulationTime);
       geometry.computeBoundingSphere();
       const origin = geometry.boundingSphere.center.clone();
       sphere.localToWorld(origin);
