@@ -59,8 +59,6 @@ async function GrassField (config) {
     env.getEnvByXYPos(x, z).water -= 0.025;
   }
 
-  console.log(env.localEnv);
-
   grasses.type = TYPE;
   grasses.name = "grass";
   function resetCorlor() {

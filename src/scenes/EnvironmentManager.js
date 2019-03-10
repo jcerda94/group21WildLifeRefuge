@@ -147,6 +147,27 @@ class EnvironmentManager {
 
     }
 
+    pprintEnvStateToConsole() {
+
+        let output = '';
+        let cssStyling = [];
+
+        for (var i = 0; i < this.localEnv.length; i++){
+            for (var j = 0; j < this.localEnv[0].length; j++){
+                output += '%c▒';
+
+                let colorLightness = 100 - (50 * this.localEnv[i][j].water);
+                let cssString = 'color:hsl(204, 100%, ' + colorLightness + '%)';
+                cssStyling.push(cssString);
+            }
+            output += '\n';
+        }
+
+
+
+
+    }
+
     drawOnCanvas(x, y, color = '#5b7aff') {
 
         const canvasPos = this.groundXYToCanvasXY(x, y);
