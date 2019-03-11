@@ -7,6 +7,7 @@ import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
 import { getPopUpInfo } from "../components/PopUpInfo";
 import ModelFactory from "./ModelFactory";
+import {getEnvironmentManager} from "./EnvironmentManager";
 
 class SceneManager {
   groundSize = {
@@ -196,6 +197,8 @@ class SceneManager {
     });
 
     this.ready = true;
+
+    await getEnvironmentManager().prettyPrintEnvStateToConsole();
   }
 
   addObject (sceneObject) {

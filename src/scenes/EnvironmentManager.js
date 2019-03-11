@@ -124,8 +124,6 @@ class EnvironmentManager {
         const envArrX = Math.trunc(pos.x/10);
         const envArrY = Math.trunc(pos.y/10);
 
-        console.log(envArrX + " " + envArrY);
-
         return this.localEnv[envArrX][envArrY];
 
     }
@@ -147,25 +145,27 @@ class EnvironmentManager {
 
     }
 
-    pprintEnvStateToConsole() {
+
+
+    prettyPrintEnvStateToConsole() {
 
         let output = '';
         let cssStyling = [];
 
         for (var i = 0; i < this.localEnv.length; i++){
             for (var j = 0; j < this.localEnv[0].length; j++){
-                output += '%c▒';
+                output += '%c█';
 
-                let colorLightness = 100 - (50 * this.localEnv[i][j].water);
+                let colorLightness = 100 - (50 * this.localEnv[j][i].water);
                 let cssString = 'color:hsl(204, 100%, ' + colorLightness + '%)';
                 cssStyling.push(cssString);
             }
             output += '\n';
         }
 
-
-
-
+        console.clear();
+        console.warn("CAUTION: USE SPARINGLY, THIS CLEARS THE CONSOLE AND PUTS A SIGNIFICANT BURDEN ON THE CONSOLE WINDOW");
+        console.log(output, ...cssStyling);
     }
 
     drawOnCanvas(x, y, color = '#5b7aff') {

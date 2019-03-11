@@ -71,10 +71,8 @@ function Tree () {
   tree.type = "Tree";
 
   let env = getEnvironmentManager();
-  env.drawOnCanvas(position.x, position.z);
-  env.getEnvByXYPos(position.x, position.z).water -= 0.1;
-
-  console.log(env.localEnv);
+  //Temp Value for testing
+  env.getEnvByXYPos(position.x, position.z).water -= 0.5;
 
   return {
     model: tree,

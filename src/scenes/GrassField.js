@@ -56,7 +56,8 @@ async function GrassField (config) {
     grass.children[0].children[0].material = grassMesh.clone();//grass.children[0].children[0].userData.original; //"#3baa5d";//grassMesh.clone();
     grasses.add(grass);
 
-    env.getEnvByXYPos(x, z).water -= 0.025;
+    //Temp Value for testing
+    env.getEnvByXYPos(x, z).water -= 0.25;
   }
 
   grasses.type = TYPE;
