@@ -36,7 +36,7 @@ export const label = ({ text, initialValue, x, y }) => {
 
   label.style.backgroundColor = "#30303080";
   label.style.borderRadius = "0.25em";
-  label.style.display = "flex";
+  label.style.display = "none";
   label.style.alignItems = "center";
   label.style.justifyContent = "center";
   label.style.color = "#FFFFFF";

@@ -127,6 +127,11 @@ function Hawk (config) {
     ...get2DPosition()
   });
 
+  function setLabelTo ({ visible }) {
+    if (visible) hungerValue.showLabel();
+    else hungerValue.hideLabel();
+  }
+
   function update (elapsedTime, simulationTime) {
     count++;
     const position = get2DPosition();
@@ -158,6 +163,7 @@ function Hawk (config) {
 
   return {
     update,
+    setLabelTo,
     model: hawk,
     created: new Date(),
     handleCollision

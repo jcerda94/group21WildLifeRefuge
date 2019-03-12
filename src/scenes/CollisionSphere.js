@@ -46,8 +46,7 @@ function CollisionSphere (parent) {
 
     return {
       update,
-      model: parent.model,
-      created: parent.created
+      ...parent
     };
   };
 }

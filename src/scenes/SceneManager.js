@@ -274,13 +274,26 @@ class SceneManager {
     modelsToRemove.forEach(model => this.scene.remove(model));
   }
 
+  toggleLabelFor = ({ type }) => capiModel => {
+    this.subjects.forEach(subject => {
+      if (subject.model && subject.model.type === type) {
+        subject.setLabelTo &&
+          subject.setLabelTo({
+            visible: capiModel.get("hawkLabel")
+          });
+      }
+    });
+  }
+
   onTransporterReady () {
     const capi = getCapiInstance();
     const hawkLabel = capi.getValue({ key: "hawkLabel" });
+    this.toggleLabelFor({ type: "Hawk" })(capi.getCapiModel());
     capi.addListenerFor({
       key: "hawkLabel",
-      callback: this.toggleLabelFor({ type: "hawk" })
+      callback: this.toggleLabelFor({ type: "Hawk" })
     });
+
     const [hawks, hares, cedars, bushes] = capi.getValues({
       keys: [
         "redtailHawkCount",
