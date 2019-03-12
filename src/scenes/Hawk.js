@@ -7,7 +7,8 @@ const THREE = require("three");
 export const NAME = "redtailHawk";
 export const TYPE = "Hawk";
 
-var TWEEN = require("@tweenjs/tween.js");
+var numberHawks = 0;
+let TWEEN = require("@tweenjs/tween.js");
 
 function Hawk (config) {
   let ate = false;
@@ -23,15 +24,10 @@ function Hawk (config) {
 
   const geometry = new THREE.CubeGeometry(size, size * 5, size);
   const material = new THREE.MeshBasicMaterial({ color });
-  const cube = new THREE.Mesh(geometry, material);
+  const hawk = new THREE.Mesh(geometry, material);
 
-  var hawk = new THREE.Group();
-  hawk.receiveShadow = false;
-  hawk.castShadow = false;
-  hareMesh.position.y = hawk.position.y - 5;
-  cube.position.y = hawk.position.y;
-  hawk.add(cube);
-  // hawk.add(hareMesh);
+  const SceneManager = getSceneManager();
+
   hawk.userData = {
     selectable: true,
     color: {
@@ -43,8 +39,6 @@ function Hawk (config) {
   };
   hawk.name = NAME;
   hawk.type = TYPE;
-
-  const SceneManager = getSceneManager();
 
   const randomX = () => {
     const groundX = SceneManager.groundSize.x / 2;
@@ -78,6 +72,9 @@ function Hawk (config) {
   getHawkObserver().subscribe(position => {
     // console.log("hawkObserver method called for Hawk: ");
   });
+
+  var myHawkID = numberHawks++;
+
   function checkForHare () {
     if (!ate) {
       const subjects = getSceneManager().subjects;
@@ -89,21 +86,17 @@ function Hawk (config) {
             // JWC  tween3 = new TWEEN.Tween(cube.position)
             tween3 = new TWEEN.Tween(hawk.position).to(
               {
-                x: subjects[i].model.position.x,
-                y: subjects[i].model.position.y,
-                z: subjects[i].model.position.z
+                x: getSceneManager().subjects[i].model.position.x,
+                y: getSceneManager().subjects[i].model.position.y,
+                z: getSceneManager().subjects[i].model.position.z
               },
               10000
             );
-
             tween2.chain(tween3);
             tween3.chain(tween1);
           }
         }
       }
-    } else {
-      // hareMesh.position.y = hawk.position.y - 4;
-      // cube.position.y = hawk.position.y;
     }
   }
   tween1.chain(tween2);
@@ -111,7 +104,7 @@ function Hawk (config) {
   tween3.chain(tween1);
   var count = 1;
 
-  const hawkHunger = hunger({ maxHunger: 20, minHunger: 1 });
+  const hawkHunger = hunger({ maxHunger, minHunger: 1 });
 
   function get2DPosition () {
     SceneManager.camera.updateProjectionMatrix();
@@ -143,11 +136,10 @@ function Hawk (config) {
     // The observers probably don't care if the hawk moves a small distance
     // May want to make this delta-position based.
     // for now just scale back the number of times the position is reported to the other animals.
-    if (count % 30 === 0) getHawkObserver().broadcast();
 
+    if (count % 30 === 0) getHawkObserver().broadcast(hawk.position);
     checkForHare();
     TWEEN.update();
-    checkForHare();
   }
 
   function handleCollision (targets) {

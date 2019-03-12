@@ -57,7 +57,7 @@ class LoadingModels extends Component{
         const grasses = new THREE.Object3D();
         const originalGrass = await new Promise((resolve, reject) => {
             loader.load(
-                "models/grass.gltf",
+                "models/grass.gltf", 
                 grass => resolve(grass.scene || null),
                 undefined,
                 reject
@@ -92,10 +92,7 @@ class LoadingModels extends Component{
     }
 
     reLoad(){
-
-
-
-
+        
     }
     render(){
         console.log("Called Render");
@@ -113,10 +110,7 @@ class LoadingModels extends Component{
             );
         }
 
-
-
     }
-
 
 }
 export const getLoadingModels = (container) => {

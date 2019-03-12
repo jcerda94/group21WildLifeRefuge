@@ -287,7 +287,6 @@ class SceneManager {
 
   onTransporterReady () {
     const capi = getCapiInstance();
-    const hawkLabel = capi.getValue({ key: "hawkLabel" });
     this.toggleLabelFor({ type: "Hawk" })(capi.getCapiModel());
     capi.addListenerFor({
       key: "hawkLabel",
