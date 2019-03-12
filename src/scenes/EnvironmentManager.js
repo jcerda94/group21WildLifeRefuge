@@ -84,6 +84,7 @@ class EnvironmentManager {
     textureCanvas = null;
     sceneManager = null;
     localEnv = null;
+    trackedObjects = [];
 
     //CAUTION! Object will only be shallow copied
     defaultEnvironmentObject = {
@@ -146,7 +147,6 @@ class EnvironmentManager {
     }
 
 
-
     prettyPrintEnvStateToConsole() {
 
         let output = '';
@@ -183,6 +183,30 @@ class EnvironmentManager {
         }
 
     }
+
+    registerTrackedObject(object) {
+
+        let envTile = this.getEnvByXYPos(object.position.x, object.position.z);
+
+        switch (object.type) {
+            case "Tree":
+                envTile.water -= 0.5;
+                break;
+            case "Grass":
+                envTile.water -= 0.25;
+                break;
+            default:
+                console.warn("Object type: " + object.type + " not currently supported by EnvironmentManger")
+        }
+
+        this.trackedObjects.push(object);
+    }
+
+    updateEnvironment() {
+
+    }
+
+
 
 }
 

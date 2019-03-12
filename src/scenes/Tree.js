@@ -71,8 +71,7 @@ function Tree () {
   tree.type = "Tree";
 
   let env = getEnvironmentManager();
-  //Temp Value for testing
-  env.getEnvByXYPos(position.x, position.z).water -= 0.5;
+  env.registerTrackedObject(tree);
 
   return {
     model: tree,
