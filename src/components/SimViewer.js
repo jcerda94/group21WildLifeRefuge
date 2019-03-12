@@ -14,10 +14,9 @@ const CanvasContainer = styled.div`
 
 const styles = theme => ({
   fab: {
-    margin: theme.spacing.unit,
-  },
+    margin: theme.spacing.unit
+  }
 });
-
 
 class SimViewer extends Component {
   canvasContainer = React.createRef()
@@ -35,22 +34,21 @@ class SimViewer extends Component {
     Transporter.notifyOnReady();
   }
 
-
   onClick = () => {
     this.sceneManager.resetCamera();
   }
 
   render () {
-    return <CanvasContainer ref={this.canvasContainer}>
-      <AddMenu/>
-
-    </CanvasContainer>
-    ;
+    return (
+      <CanvasContainer ref={this.canvasContainer}>
+        <AddMenu />
+      </CanvasContainer>
+    );
   }
 }
 
 SimViewer.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(SimViewer);

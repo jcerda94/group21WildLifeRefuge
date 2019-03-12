@@ -15,9 +15,9 @@ function PreLoadModels ({ hawks, hares, cedars, bushes }) {
   for (let i = 0; i < hares; i++) {
     SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
   }
-  //for (let i = 0; i < 20; i++) {
+  // for (let i = 0; i < 20; i++) {
   //  SceneManager.addObject(ModelFactory.makeSceneObject({ type: "grass" }));
-  //}
+  // }
 
   function update () {}
 
