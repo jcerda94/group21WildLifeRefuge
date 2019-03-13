@@ -253,11 +253,21 @@ class EnvironmentManager {
                 let x = lowWater[i].x + offset[0];
                 let y = lowWater[i].y + offset[1];
 
-                if (((-1 < x && x < xBnd) && (-1 < y && y < yBnd))
-                    && this.localEnv[x][y].water >= 0.5){
-                    lowWater[i].env.water += 0.05;
-                    this.localEnv[x][y].water -= 0.05;
+                let neighborsWithWater = [];
+
+                if (((-1 < x && x < xBnd) && (-1 < y && y < yBnd)) && this.localEnv[x][y].water >= 0.05){
+                    neighborsWithWater.push(this.localEnv[x][y]);
                 }
+
+                if (neighborsWithWater.length > 0) {
+                    let waterBalanced = 0.05 / neighborsWithWater.length;
+                    for (var j = 0; j < neighborsWithWater.length; j++) {
+                        neighborsWithWater[j].water -= waterBalanced;
+                    }
+
+                    lowWater[i].water += 0.05;
+                }
+
             })
         }
 
