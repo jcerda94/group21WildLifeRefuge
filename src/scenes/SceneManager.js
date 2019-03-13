@@ -28,7 +28,6 @@ class SceneManager {
   intersected = null
   defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
-  last = 0
   ready = false
 
   constructor (canvas) {
@@ -178,8 +177,6 @@ class SceneManager {
       config: { onLoad: this.onLoad }
     });
 
-    console.log(this.groundSize);
-
     this.subjects = [
       ModelFactory.makeSceneObject({ type: "ambientLight" }),
       ModelFactory.makeSceneObject({ type: "directionalLight" }),
@@ -196,6 +193,7 @@ class SceneManager {
       this.scene.add(subject.model);
     });
 
+    //Notifies EnvironmentManager that the ground can be drawn on
     this.ready = true;
 
     await getEnvironmentManager().prettyPrintEnvStateToConsole();

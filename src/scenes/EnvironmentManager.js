@@ -171,7 +171,9 @@ class EnvironmentManager {
 
     drawOnCanvas(x, y, color = '#5b7aff', convertXY = true) {
 
-
+        // If no value is passed for convertXY this assumes that you are giving it ground XY coordinates
+        // that are centered on the object. This converts the xy to canvas coordinates and shifts the drawn
+        // square so it will end up centered on the object
         let canvasPos = {x: x, y: y};
         if (convertXY){
             x -= 5;
@@ -193,37 +195,84 @@ class EnvironmentManager {
 
     registerTrackedObject(object) {
 
-        let envTile = this.getEnvByXYPos(object.position.x, object.position.z);
-
+        //Temp values for testing
+        //TODO: Update with preloaded values from CAPI
         switch (object.type) {
             case "Tree":
-                envTile.water -= 0.5;
+                object.water = 0.25;
                 break;
             case "Grass":
-                envTile.water -= 0.25;
+                object.water = 0.1;
                 break;
             default:
                 console.warn("Object type: " + object.type + " not currently supported by EnvironmentManger")
         }
 
+        //TODO: Break out into separate function
+        let envTile = this.getEnvByXYPos(object.position.x, object.position.z);
+        envTile.water -= object.water;
+
         this.trackedObjects.push(object);
     }
 
-    toggleEnvironmentViewOnCanvas() {
 
-        for (var i = 0; i < this.localEnv.length; i++){
-            for (var j = 0; j < this.localEnv[0].length; j++){
+    *localEnvGenerator () {
+        for (var i = 0; i < this.localEnv.length; i++) {
+            for (var j = 0; j < this.localEnv[0].length; j++) {
+                yield {env: this.localEnv[j][i], x: j, y: i};
+            }
+        }
+    }
 
+    async toggleEnvironmentViewOnCanvas() {
+
+        for (var i = 0; i < this.localEnv.length; i++) {
+            for (var j = 0; j < this.localEnv[0].length; j++) {
                 let colorLightness = 100 - (50 * this.localEnv[j][i].water);
                 let titleColor = 'hsl(204, 100%, ' + colorLightness + '%)';
 
-                this.drawOnCanvas(j*10, i*10, titleColor, false);
+                this.drawOnCanvas(j * 10, i * 10, titleColor, false);
             }
         }
 
     }
 
-    updateEnvironment() {
+    async balanceWaterTable() {
+
+        const adjacencyMatrix = [[1,1], [0,1], [1,0], [-1,0], [0, -1], [-1,-1], [1,-1], [-1, 1]];
+
+        const envGen = this.localEnvGenerator();
+        let lowWater = [...envGen].filter(val => val.env.water < 0.5);
+
+        const yBnd = this.localEnv.length;
+        const xBnd = this.localEnv[0].length;
+
+
+        for (var i = 0; i < lowWater.length; i++) {
+            adjacencyMatrix.forEach((offset) => {
+                let x = lowWater[i].x + offset[0];
+                let y = lowWater[i].y + offset[1];
+
+                if (((-1 < x && x < xBnd) && (-1 < y && y < yBnd))
+                    && this.localEnv[x][y].water >= 0.5){
+                    lowWater[i].env.water += 0.05;
+                    this.localEnv[x][y].water -= 0.05;
+                }
+            })
+        }
+
+    }
+
+    update() {
+
+        for (var i = 0; i < this.trackedObjects.length; i++) {
+            let envTile = this.getEnvByXYPos(this.trackedObjects[i].position.x, this.trackedObjects[i].position.z);
+            envTile.water -= this.trackedObjects[i].water;
+        }
+
+        this.balanceWaterTable();
+
+        this.toggleEnvironmentViewOnCanvas();
 
     }
 
