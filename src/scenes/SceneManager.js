@@ -28,6 +28,17 @@ class SceneManager {
   defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
 
+  isPaused = false
+  simulationElapsedTime = 0
+  currentTimeScale = "hours"
+  timeScale = {
+    minutes: 60,
+    hours: 60 * 60,
+    days: 24 * 60 * 60,
+    months: 30 * 24 * 60 * 60,
+    years: 365 * 24 * 60 * 60
+  }
+
   constructor (canvas) {
     this.setCanvas(canvas);
     this.initializeLoadingScreen();
@@ -74,7 +85,7 @@ class SceneManager {
   }
 
   toggleSelected (model) {
-    //console.log("Clicked on grass");
+    // console.log("Clicked on grass");
     const modelIndex = this.selected.findIndex(
       selectedModel => model === selectedModel
     );
@@ -114,8 +125,14 @@ class SceneManager {
   update () {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
+    const simTimeScale = this.timeScale[this.currentTimeScale] || 1;
+    if (!this.isPaused) {
+      this.simulationElapsedTime += delta * simTimeScale;
+    }
+
     for (let i = 0; i < this.subjects.length; i++) {
-      this.subjects[i].update && this.subjects[i].update(elapsedTime);
+      this.subjects[i].update &&
+        this.subjects[i].update(elapsedTime, this.simulationElapsedTime);
     }
 
     this.cameraControls.update(delta);
@@ -257,8 +274,25 @@ class SceneManager {
     modelsToRemove.forEach(model => this.scene.remove(model));
   }
 
+  toggleLabelFor = ({ type }) => capiModel => {
+    this.subjects.forEach(subject => {
+      if (subject.model && subject.model.type === type) {
+        subject.setLabelTo &&
+          subject.setLabelTo({
+            visible: capiModel.get("hawkLabel")
+          });
+      }
+    });
+  }
+
   onTransporterReady () {
     const capi = getCapiInstance();
+    this.toggleLabelFor({ type: "Hawk" })(capi.getCapiModel());
+    capi.addListenerFor({
+      key: "hawkLabel",
+      callback: this.toggleLabelFor({ type: "Hawk" })
+    });
+
     const [hawks, hares, cedars, bushes] = capi.getValues({
       keys: [
         "redtailHawkCount",

@@ -20,12 +20,14 @@ function AddModels (type) {
       });
 
       SceneManager.addObject(hawk);
-      return;
+      break;
     case "bush":
       SceneManager.addObject(ModelFactory.makeSceneObject({ type: "bush" }));
       break;
     case "hare":
       SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
+      break;
+    default:
   }
 }
 
