@@ -166,18 +166,25 @@ class EnvironmentManager {
         console.clear();
         console.warn("CAUTION: USE SPARINGLY, THIS CLEARS THE CONSOLE AND PUTS A SIGNIFICANT BURDEN ON THE CONSOLE WINDOW");
         console.log(output, ...cssStyling);
+
     }
 
-    drawOnCanvas(x, y, color = '#5b7aff') {
+    drawOnCanvas(x, y, color = '#5b7aff', convertXY = true) {
 
-        const canvasPos = this.groundXYToCanvasXY(x, y);
+
+        let canvasPos = {x: x, y: y};
+        if (convertXY){
+            x -= 5;
+            y -= 5;
+            canvasPos = this.groundXYToCanvasXY(x, y);
+        }
 
         const xPos = canvasPos.x;
         const yPos = canvasPos.y;
 
         this.drawingContext.fillStyle = color;
 
-        this.drawingContext.fillRect(xPos-5, yPos-5, 10, 10 );
+        this.drawingContext.fillRect(xPos, yPos, 10, 10 );
         if (this.sceneManager.ready){
             this.sceneManager.scene.children[3].material[2].map.needsUpdate = true;
         }
@@ -200,6 +207,20 @@ class EnvironmentManager {
         }
 
         this.trackedObjects.push(object);
+    }
+
+    toggleEnvironmentViewOnCanvas() {
+
+        for (var i = 0; i < this.localEnv.length; i++){
+            for (var j = 0; j < this.localEnv[0].length; j++){
+
+                let colorLightness = 100 - (50 * this.localEnv[j][i].water);
+                let titleColor = 'hsl(204, 100%, ' + colorLightness + '%)';
+
+                this.drawOnCanvas(j*10, i*10, titleColor, false);
+            }
+        }
+
     }
 
     updateEnvironment() {
