@@ -12,7 +12,11 @@ let TWEEN = require("@tweenjs/tween.js");
 
 function Hawk (config) {
   let ate = false;
+  let isEating = false;
+  let deathDelta = 0;
+  const deathTimer = 60 * 60 * 24; // Eat within a day at max hunger or die
   const maxHunger = 10;
+  const minHunger = 1;
   const size = 3;
   const color = "#db7093";
 
@@ -104,7 +108,11 @@ function Hawk (config) {
   tween3.chain(tween1);
   var count = 1;
 
-  const hawkHunger = hunger({ maxHunger, minHunger: 1 });
+  const hawkHunger = hunger({
+    maxHunger,
+    minHunger,
+    hungerTickRate: random(0.00001, 0.0001)
+  });
 
   function get2DPosition () {
     SceneManager.camera.updateProjectionMatrix();
@@ -125,29 +133,42 @@ function Hawk (config) {
     else hungerValue.hideLabel();
   }
 
+  let lastSimTime = 0;
   function update (elapsedTime, simulationTime) {
     count++;
+    if (hawkHunger.get() >= maxHunger) {
+      deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
+    }
+    lastSimTime = simulationTime;
     const position = get2DPosition();
-    hawkHunger.update(simulationTime);
-    hungerValue.update(position.x, position.y, hawkHunger.get().toFixed(1));
+    hawkHunger.update(simulationTime, isEating);
+    hungerValue.update(position.x, position.y, deathDelta.toFixed(1));
 
-    // The updates happen very often for small position changes
-    // This made the hawk behave erratically.
-    // The observers probably don't care if the hawk moves a small distance
-    // May want to make this delta-position based.
-    // for now just scale back the number of times the position is reported to the other animals.
-
-    if (count % 30 === 0) getHawkObserver().broadcast(hawk.position);
-    checkForHare();
-    TWEEN.update();
+    if (hawkHunger.get() >= maxHunger * 0.75) {
+      // Go get a rabbit
+      checkForHare();
+    } else if (hawkHunger.get() <= minHunger) {
+      hawk.remove(hareMesh);
+    }
+    if (count % 30 === 0) {
+      // The updates happen very often for small position changes
+      // This made the hawk behave erratically.
+      // The observers probably don't care if the hawk moves a small distance
+      // May want to make this delta-position based.
+      // for now just scale back the number of times the position is reported to the other animals.
+      getHawkObserver().broadcast(hawk.position);
+    }
   }
+  TWEEN.update();
 
   function handleCollision (targets) {
+    console.log(targets);
     for (let i = 0; i < targets.length; i++) {
       if (targets[i].object.type === "Hare") {
         // added a hare when collision occur
         hawk.add(hareMesh);
         ate = true;
+        isEating = true;
         SceneManager.removeObject(targets[i].object);
       }
     }

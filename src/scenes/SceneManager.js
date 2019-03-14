@@ -27,7 +27,7 @@ class SceneManager {
   intersected = null
   defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
-
+  hawkLabelOn = false
   isPaused = false
   simulationElapsedTime = 0
   currentTimeScale = "hours"
@@ -274,12 +274,12 @@ class SceneManager {
     modelsToRemove.forEach(model => this.scene.remove(model));
   }
 
-  toggleLabelFor = ({ type }) => capiModel => {
+  toggleLabelFor = ({ type, labelName }) => capiModel => {
     this.subjects.forEach(subject => {
       if (subject.model && subject.model.type === type) {
         subject.setLabelTo &&
           subject.setLabelTo({
-            visible: capiModel.get("hawkLabel")
+            visible: capiModel.get(labelName)
           });
       }
     });
@@ -287,10 +287,9 @@ class SceneManager {
 
   onTransporterReady () {
     const capi = getCapiInstance();
-    this.toggleLabelFor({ type: "Hawk" })(capi.getCapiModel());
     capi.addListenerFor({
       key: "hawkLabel",
-      callback: this.toggleLabelFor({ type: "Hawk" })
+      callback: this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })
     });
 
     const [hawks, hares, cedars, bushes] = capi.getValues({
@@ -302,6 +301,9 @@ class SceneManager {
       ]
     });
     PreLoadModels({ hawks, hares, cedars, bushes });
+    this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })(
+      getCapiInstance().getCapiModel()
+    );
     capi.addListenerFor({
       key: "redtailHawkCount",
       callback: this.handleModelCountChange({

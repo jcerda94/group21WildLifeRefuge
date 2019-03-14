@@ -13,9 +13,16 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
   let currentHunger = parseInt((max - min) / 2);
   let lastUpdateTime = 0;
 
-  function update (elapsedTime) {
+  function update (elapsedTime, isEating) {
     const delta = elapsedTime - lastUpdateTime;
-    currentHunger += delta * tickRate;
+
+    if (isEating) {
+      currentHunger -= delta * tickRate * 4;
+    } else {
+      currentHunger += delta * tickRate;
+    }
+
+    if (currentHunger > max) currentHunger = max;
     lastUpdateTime = elapsedTime;
   }
 
