@@ -2,14 +2,15 @@
   "toggleContext": true,
   "studentMode": true,
   "authorMode": false,
+  "hawkLabel": true,
   "reviewMode": false,
-  "redtailHawkCount": 1,
+  "redtailHawkCount": 15,
   "redtailHawkSelected": 0,
-  "snowshoeHareCount": 2,
+  "snowshoeHareCount": 3,
   "showshoeHareSelected": 0,
   "sageBushCount": 0,
   "sageBushSelected": 0,
-  "westernCedarCount": 15,
+  "westernCedarCount": 0,
   "westernCedarSelected": 0,
   "inputTable": []
 }
