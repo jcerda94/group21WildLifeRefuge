@@ -68,7 +68,7 @@ function Tree () {
   };
   tree.name = NAME;
 
-  tree.type = "Tree";
+  tree.type = TYPE;
 
   return {
     model: tree,

@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import BalancePopulation from "./components/BalancePopulation/BalancePopulation";
 import ViewControl from "./components/ViewControl";
 import PopUpInfo from "./components/PopUpInfo";
+import DisplayTime from "./components/UI/DisplayTime";
 
 const Container = styled.div`
   display: flex;
@@ -43,6 +44,7 @@ class App extends Component {
                 <UIBar />
                 <StudentView />
                 <PopUpInfo />
+                <DisplayTime/>
 
                 <Drawer
                   Content={() => (
