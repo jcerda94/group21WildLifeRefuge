@@ -215,7 +215,9 @@ class EnvironmentManager {
         this.trackedObjects.push(object);
     }
 
-
+    //Creates a Generator iterator. This will iterate through the entire environment array with each call.
+    //Use: localEnvGenerator.next() returns an object similar to {value: nextVal, done: false}
+    //Google javascript generators to understand the functionality/uses better
     *localEnvGenerator () {
         for (var i = 0; i < this.localEnv.length; i++) {
             for (var j = 0; j < this.localEnv[0].length; j++) {
@@ -237,6 +239,7 @@ class EnvironmentManager {
 
     }
 
+    //TODO: Clarify code and add input parameters to support CAPI use
     async balanceWaterTable() {
 
         const adjacencyMatrix = [[1,1], [0,1], [1,0], [-1,0], [0, -1], [-1,-1], [1,-1], [-1, 1]];
@@ -273,6 +276,7 @@ class EnvironmentManager {
 
     }
 
+    //TODO: Update to support/enhance element behaviors
     update() {
 
         for (var i = 0; i < this.trackedObjects.length; i++) {
