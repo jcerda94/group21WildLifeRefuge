@@ -212,8 +212,6 @@ class SceneManager {
 
     //Notifies EnvironmentManager that the ground can be drawn on
     this.ready = true;
-
-    await getEnvironmentManager().prettyPrintEnvStateToConsole();
   }
 
   addObject (sceneObject) {
