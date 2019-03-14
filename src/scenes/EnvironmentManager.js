@@ -105,7 +105,6 @@ class EnvironmentManager {
             ()=>Array(groundY).fill().map(
                 () => Object.assign({}, this.defaultEnvironmentObject)
             ));
-        console.log(this.localEnv);
 
         // Creates a THREE Texture using an HTML Canvas element
         var drawingCanvas = document.getElementById( 'drawing-canvas' );
