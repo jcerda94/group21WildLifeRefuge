@@ -7,6 +7,7 @@ import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
 import { getPopUpInfo } from "../components/PopUpInfo";
 import ModelFactory from "./ModelFactory";
+import {getDisplayTime} from "../components/UI/DisplayTime";
 
 class SceneManager {
   groundSize = {
@@ -125,11 +126,13 @@ class SceneManager {
   update () {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
+
     const simTimeScale = this.timeScale[this.currentTimeScale] || 1;
     if (!this.isPaused) {
       this.simulationElapsedTime += delta * simTimeScale;
     }
-
+    console.log("this simulationtimeLapsed " + this.timeScale[this.currentTimeScale]  )
+    getDisplayTime().setSimulationTime(elapsedTime, this.simulationElapsedTime);
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update &&
         this.subjects[i].update(elapsedTime, this.simulationElapsedTime);

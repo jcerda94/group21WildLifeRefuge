@@ -45,7 +45,6 @@ class App extends Component {
                 <StudentView />
                 <PopUpInfo />
                 <DisplayTime/>
-
                 <Drawer
                   Content={() => (
                     <Fragment>

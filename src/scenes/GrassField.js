@@ -115,7 +115,7 @@ export var findRemoveIfNear = function (animalPos, range) {
   }
 
   if (shortestDist < range) {
-    console.log(
+    /*console.log(
       "remove [" +
         shortestDist_node_i +
         "] at " +
@@ -133,7 +133,7 @@ export var findRemoveIfNear = function (animalPos, range) {
         inPos.y.toFixed(0) +
         ":" +
         inPos.z.toFixed(0)
-    );
+    ); */
     // node.data.position.x + ":" + node.data.position.y + ":"+ node.data.position.z);
     grasses.remove(shortestDist_node.data);
     ll.Remove(shortestDist_node);
