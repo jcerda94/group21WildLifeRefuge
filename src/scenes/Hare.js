@@ -111,6 +111,8 @@ function Hare (scene, hareCount) {
   var doCnt = 5;
 
   function update () {
+
+
     checkForHawks();
     var deltaDistance = 500;
     // hareMesh.position.x = 500;

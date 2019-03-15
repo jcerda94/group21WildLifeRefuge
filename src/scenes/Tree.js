@@ -8,6 +8,7 @@
 
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
+import {getHawkObserver} from "./observer";
 const THREE = require("three");
 
 export const NAME = "tree";
@@ -18,7 +19,7 @@ function Tree () {
   var tiers = 6;
   var treeGeometry = new THREE.ConeGeometry(10, 10, sides, tiers);
   var treeMaterial = new THREE.MeshStandardMaterial({
-    color: 0x33ff33,
+    color: 0xFF7127,
     flatShading: true
   });
 
@@ -33,20 +34,26 @@ function Tree () {
   treeTop.receiveShadow = false;
   treeTop.position.y = 45;
   treeTop.rotation.y = Math.random() * Math.PI;
-  var treeTrunkGeometry = new THREE.CylinderGeometry(0.1, 2, 100);
-  var trunkMaterial = new THREE.MeshStandardMaterial({
+  let treeTrunkGeometry = new THREE.CylinderGeometry(0.1, 2, 100);
+  let trunkMaterial = new THREE.MeshStandardMaterial({
     color: 0x886633,
     flatShading: true
   });
-  var treeTrunk = new THREE.Mesh(treeTrunkGeometry, trunkMaterial);
-
+  let treeTrunk = new THREE.Mesh(treeTrunkGeometry, trunkMaterial);
+  let treeTrunk2 = new THREE.Mesh(treeTrunkGeometry, trunkMaterial);
+  treeTrunk2.position.y = 10;
   treeTrunk.position.y = 0.25;
-  var tree = new THREE.Object3D();
+  let tree = new THREE.Group();
+  //tree fall flat on the ground
+  tree.rotation.x = 90*Math.PI/180;
   tree.castShadow = true;
 
   tree.add(treeTrunk);
+  //tree.add(treeTrunk2);
+
   tree.add(treeTop1);
   tree.add(treeTop);
+
 
   const SceneManager = getSceneManager();
   const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
@@ -67,13 +74,18 @@ function Tree () {
     name: NAME
   };
   tree.name = NAME;
-
   tree.type = TYPE;
+ function update() {
+   con
+ }
 
   return {
+    update,
     model: tree,
     created: new Date()
   };
+
+
 }
 
 export default Tree;

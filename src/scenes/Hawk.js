@@ -79,7 +79,7 @@ function Hawk (config) {
     if (!ate) {
       const subjects = getSceneManager().subjects;
       for (let i = 4; i < subjects.length; i++) {
-        // console.log("Hawk:checkForHare:  length : " + subjects.length );
+        //console.log("Hawk:checkForHare:  length : " + subjects[i].model.name);
         if (subjects.length > 4) {
           if (subjects[i].model.name === "hare") {
             // console.log(" Found a hare: " + position.x + ":" + position.y + ":" + position.z);
@@ -126,6 +126,7 @@ function Hawk (config) {
   }
 
   function update (elapsedTime, simulationTime) {
+    //console.log("call hawk");
     count++;
     const position = get2DPosition();
     hawkHunger.update(simulationTime);
