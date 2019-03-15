@@ -90,8 +90,8 @@ export var myGrasses = function () {
   return grasses;
 };
 export var findRemoveIfNear = function (animalPos, range) {
-  inPos = JSON.parse(JSON.stringify(animalPos, null, 4)); // this seems to clean up the arguments for easier use
-  theRange = JSON.parse(JSON.stringify(range, null, 4));
+  inPos = animalPos;
+  theRange = range;
 
   var ll = getGrassLinkedList();
   var node = ll.First();
@@ -142,50 +142,18 @@ export var findRemoveIfNear = function (animalPos, range) {
 };
 
 function isGreaterThan (n1, n2) {
-  // handling numbers in js is near impossible so we do this, which is ugly but seems to work
-  //return parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10)
-  //     > parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10);
   return parseInt(n1)
        > parseInt(n2);
 }
-/*
-function calcDelta(n1, n2)
-{
-  // handling numbers in js is near impossible so we do this, which is ugly but seems to work
-  //if(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10) < 0 
-  //&& parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10) < 0) 
-    //return Math.abs(Math.abs(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10))
-      //            - Math.abs(parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10))).toFixed();
-  //else 
-  //return Math.abs(Math.abs(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10)) 
-    //            + Math.abs(parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10))).toFixed();
-  if(parseInt(n1) < 0 
-    && parseInt(n2) < 0) 
-      return Math.abs(Math.abs(parseInt(n1))
-                    - Math.abs(parseInt(n2))).toFixed();
-  else 
-    return Math.abs(Math.abs(parseInt(n1)) 
-                  + Math.abs(parseInt(n2))).toFixed();
-}
-*/
 export function getDistance(pos1, pos2)
 {
   var dist = 1.0;
-  // handling numbers in js is near impossible so we do this, which is ugly but seems to work
-  //var deltaX = parseInt(JSON.parse(JSON.stringify(pos1.x, null, 4)), 10)
-  //           - parseInt(JSON.parse(JSON.stringify(pos2.x, null, 4)), 10); 
-  //var deltaY = parseInt(JSON.parse(JSON.stringify(pos1.y, null, 4)), 10)
-  //           - parseInt(JSON.parse(JSON.stringify(pos2.y, null, 4)), 10); 
-  //var deltaZ = parseInt(JSON.parse(JSON.stringify(pos1.z, null, 4)), 10)
-  //           - parseInt(JSON.parse(JSON.stringify(pos2.z, null, 4)), 10); 
-
   var deltaX = parseInt(pos1.x)
              - parseInt(pos2.x); 
   var deltaY = parseInt(pos1.y)
              - parseInt(pos2.y); 
   var deltaZ = parseInt(pos1.z)
              - parseInt(pos2.z); 
-  //var dist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaZ , 2));
   dist = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY) + (deltaZ*deltaZ));
   return (dist);
 };

@@ -104,7 +104,7 @@ function Hawk (config) {
   tween3.chain(tween1);
   var count = 1;
 
-  const hawkHunger = hunger({ maxHunger, minHunger: 1 });
+  const hawkHunger = ({ maxHunger, minHunger: 1 });
 
   function get2DPosition () {
     SceneManager.camera.updateProjectionMatrix();

@@ -78,6 +78,7 @@ function Hare (scene, hareCount) {
       )
       .start();
   }
+  //TODO: when hare finds hawk hide under a bush
   function checkForHawks () {
     // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
     for (let i = 4; i < getSceneManager().subjects.length; i++) {
@@ -108,14 +109,20 @@ function Hare (scene, hareCount) {
   tween3.chain(tween1);
   // tween4.chain(tween1);
 
-  var doCnt = 5;
+  var eating_pace = 20;
+  var eating_paceCntr = eating_pace;
 
   function update () {
+
     checkForHawks();
-    var deltaDistance = 500;
-    // hareMesh.position.x = 500;
-    // hareMesh.position.z = 500;// fix the hare position for testing
-    findRemoveIfNear(hareMesh.position, deltaDistance);
+
+    //TODO: this should really be real-time-based, not loop based
+    //TODO: it should also be part of a behavior model so these can be tuned the behavior models here
+    if(eating_paceCntr-- == 0){
+      eating_paceCntr = eating_pace; 
+      var deltaDistance = 500;
+      findRemoveIfNear(hareMesh.position, deltaDistance);
+    }
     TWEEN.update();
   }
   function handleCollision (targets) {
