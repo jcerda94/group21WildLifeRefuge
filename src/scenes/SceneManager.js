@@ -131,7 +131,7 @@ class SceneManager {
     if (!this.isPaused) {
       this.simulationElapsedTime += delta * simTimeScale;
     }
-    console.log("this simulationtimeLapsed " + this.timeScale[this.currentTimeScale]  )
+
     getDisplayTime().setSimulationTime(elapsedTime, this.simulationElapsedTime);
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update &&
