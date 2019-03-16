@@ -264,7 +264,8 @@ class SceneManager {
   removeAllModelsByType (type) {
     const modelsToRemove = this.subjects
       .filter(subject => {
-        if (subject.model) {
+        if (subject.model && subject.model.type === type) {
+          subject.destroyLabel && subject.destroyLabel();
           return subject.model.type === type;
         }
         return false;

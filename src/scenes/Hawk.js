@@ -2,6 +2,7 @@ import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { random, randomInt } from "../utils/helpers";
 import { hunger, label } from "../utils/behavior";
+import { getCapiInstance } from "../utils/CAPI/capi";
 const THREE = require("three");
 
 export const NAME = "redtailHawk";
@@ -120,10 +121,16 @@ function Hawk (config) {
     initialValue: hawkHunger.get().toFixed(1),
     ...get2DPosition()
   });
+  const shouldShowLabel = getCapiInstance().getValue({ key: "hawkLabel" });
+  if (shouldShowLabel) hungerLabel.showLabel();
 
   function setLabelTo ({ visible }) {
     if (visible) hungerLabel.showLabel();
     else hungerLabel.hideLabel();
+  }
+
+  function destroyLabel () {
+    hungerLabel.destroy();
   }
 
   let lastSimTime = 0;
@@ -177,6 +184,7 @@ function Hawk (config) {
   return {
     update,
     setLabelTo,
+    destroyLabel,
     model: hawk,
     created: new Date(),
     handleCollision
