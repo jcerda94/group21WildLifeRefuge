@@ -27,10 +27,9 @@ async function GrassField (config) {
     );
   });
 
-  const SceneManager = getSceneManager();
-  const env = getEnvironmentManager();
-  const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
-  const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
+  const bounds = getSceneManager().groundSize;
+  bounds.x *= 0.95;
+  bounds.y *= 0.95;
 
   for (let i = 0; i < count; i++) {
     // for (let i = 0; i < 15; i++) { // testing
@@ -47,8 +46,8 @@ async function GrassField (config) {
     };
     const size = random(1, 2);
 
-    const x = random(-widthBound, widthBound);
-    const z = random(-heightBound, heightBound);
+    const x = random(-bounds.x / 2, bounds.x / 2);
+    const z = random(-bounds.y / 2, bounds.y / 2);
 
     const rotation = random(-Math.PI / 2, Math.PI / 2);
 
@@ -62,9 +61,6 @@ async function GrassField (config) {
     grassMesh.color.set(grass.children[0].children[0].userData.color.original);
     grass.children[0].children[0].material = grassMesh.clone();
     grasses.add(grass);
-
-    grass.type = "Grass";
-    env.registerTrackedObject(grass);
 
     // the grasses has both an add and remove that work.
     // the plan is to store the grass objects in a linked list since we can't seem to access 'grasses'

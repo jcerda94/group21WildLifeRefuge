@@ -1,4 +1,3 @@
-import {getEnvironmentManager} from "./EnvironmentManager";
 const THREE = require("three");
 
 export const TYPE = "Ground";
@@ -7,30 +6,9 @@ function Ground (config) {
   const { size = { x: 100, y: 100 }, color = "#996600" } = config;
   const depth = 15;
   const geometry = new THREE.BoxBufferGeometry(size.x, depth, size.y);
-
-  const env = getEnvironmentManager();
-  const textureCanvas = env.textureCanvas;
-
-  const material = [
-    new THREE.MeshLambertMaterial({
-      color
-    }),
-      new THREE.MeshLambertMaterial({
-        color
-      }),
-    new THREE.MeshLambertMaterial({
-      map: new THREE.CanvasTexture( textureCanvas )
-    }),
-    new THREE.MeshLambertMaterial({
-      color
-    }),
-    new THREE.MeshLambertMaterial({
-      color
-    }),
-    new THREE.MeshLambertMaterial({
-      color
-    })
-  ];
+  const material = new THREE.MeshLambertMaterial({
+    color
+  });
 
   geometry.computeFaceNormals();
   geometry.normalsNeedUpdate = true;

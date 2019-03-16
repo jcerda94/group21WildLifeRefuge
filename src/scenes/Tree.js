@@ -8,7 +8,6 @@
 
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
-import {getEnvironmentManager} from "./EnvironmentManager";
 const THREE = require("three");
 
 export const NAME = "tree";
@@ -70,9 +69,6 @@ function Tree () {
   tree.name = NAME;
 
   tree.type = "Tree";
-
-  let env = getEnvironmentManager();
-  env.registerTrackedObject(tree);
 
   return {
     model: tree,
