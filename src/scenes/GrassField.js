@@ -18,8 +18,6 @@ async function GrassField (config) {
 
   const { count = 5000 } = config;
 
-  // const grasses = new THREE.Object3D();
-
   const originalGrass = await new Promise((resolve, reject) => {
     loader.load(
       "models/grass.gltf",
@@ -73,6 +71,7 @@ async function GrassField (config) {
     // Then, since the grass object is on the list, we should be able to call grasses.remove(eaten_grass)
 
     //getGrassLinkedList().Append(new Node(grass));
+    //console.log(" grasses length: " + grasses.children.length); 
   }
 
   grasses.type = TYPE;
@@ -94,34 +93,22 @@ export var myGrasses = function () {
 export var findRemoveIfNear = function (animalPos, range) {
   inPos = animalPos;
   theRange = range;
-  const mySceneManager = getSceneManager();
 
-    //  console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
-    //for (let s_idx = 0; s_idx < mySceneManager.scene.length; s_idx++) {
-      //console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
-      for (let i = 0; i < mySceneManager.scene[0].children.length; i++) {
-          console.log("findRemoveIfNear:::    SceneManager.scene: " + mySceneManager.scene[4].children[i].name );
-      }
-    //}
-  
-  //var ll = getGrassLinkedList();
-  //var node = ll.First();
+  const my_grasses = myGrasses();
+  //console.log(" my_grasses length: " + my_grasses.children.length); // <<< defined
+  //console.log(" my_grasses count: " + my_grasses.children.count);   // <<< undefined
+
   var shortestDist = 1000000.1;
   var shortestDist_node;
   var shortestDist_node_i = 0;
-  const SceneManager = getSceneManager();
-  
-  //console.log("SceneManager: " + JSON.stringify(SceneManager) );
-  //console.log("SceneManager[4]: " + JSON.stringify(SceneManager[4]) );
-  //console.log("children: " + JSON.stringify(SceneManager[4].children) );
-  //for (var idx = 0; idx < ll.length; idx++) {
-  for(var idx=0; idx < SceneManager[4].children.count; idx++){
 
-    var node = SceneManager[4].children[idx];
-    var distance = getDistance(animalPos, node.data.position);
+  for(var idx=0; idx < my_grasses.children.length; idx++){
+
+    var node = my_grasses.children[idx];
+    var distance = getDistance(animalPos, node.position);
     if(isGreaterThan(shortestDist.toFixed(), distance.toFixed()))
-    //if(shortestDist.toFixed() > distance.toFixed())
-    //if(shortestDist > distance)
+    //if(shortestDist.toFixed() > distance.toFixed())  // <<< fails w/o error, just doesn't do compare, likely as toFixed returns string
+    //if(shortestDist > distance) // <<< fails w/o error, just doesn't do comparison correctly
     {
       shortestDist = distance;
       shortestDist_node = node;
@@ -129,8 +116,6 @@ export var findRemoveIfNear = function (animalPos, range) {
       // console.log("[" + idx + "] ------ grass at " + shortestDist_node.data.position.x.toFixed()
       //           + "   new shortestDist: " + shortestDist.toFixed());
     }
-    //var next_node = ll.Next(node);
-    //node = next_node;
   }
 
   if (shortestDist < range) {
@@ -138,11 +123,11 @@ export var findRemoveIfNear = function (animalPos, range) {
       "remove [" +
         shortestDist_node_i +
         "] at " +
-        shortestDist_node.data.position.x.toFixed() +
+        shortestDist_node.position.x.toFixed() +
         ":" +
-        shortestDist_node.data.position.y.toFixed() +
+        shortestDist_node.position.y.toFixed() +
         ":" +
-        shortestDist_node.data.position.z.toFixed() +
+        shortestDist_node.position.z.toFixed() +
         // + "        within: " + theRange + "  to  "
         "    dist: " +
         shortestDist.toFixed() +
@@ -153,9 +138,7 @@ export var findRemoveIfNear = function (animalPos, range) {
         ":" +
         inPos.z.toFixed(0)
     );
-    // node.data.position.x + ":" + node.data.position.y + ":"+ node.data.position.z);
-    grasses.remove(shortestDist_node.data);
-    //ll.Remove(shortestDist_node);
+    grasses.remove(shortestDist_node);
     // console.log("new count of grass list: " +  ll.length);
   }
 };
