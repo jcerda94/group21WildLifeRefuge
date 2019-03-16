@@ -1,9 +1,9 @@
 import { getValue, random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
-import { myGrasses } from "./GrassField.js";
+//import { myGrasses } from "./GrassField.js";
 import { findRemoveIfNear } from "./GrassField";
-import { distance } from "./GrassField";
+//import { distance } from "./GrassField";
 const THREE = require("three");
 
 export const NAME = "hare";
@@ -30,6 +30,47 @@ function Hare (scene, hareCount) {
   const SceneManager = getSceneManager();
   const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
   const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
+
+  //console.log("SceneManager: " + JSON.stringify(SceneManager) );
+  console.log("=======================================================: ");
+  //console.log("SceneManager[0]: " + JSON.stringify(SceneManager.subjects[0]) );
+  //console.log("SceneManager[1]: " + JSON.stringify(SceneManager.subjects[1]) );
+  //console.log("SceneManager[2]: " + JSON.stringify(SceneManager.subjects[2]) );
+  //console.log("SceneManager[3]: " + JSON.stringify(SceneManager.subjects[3]) );
+  //console.log("SceneManager[2]: " + JSON.stringify(SceneManager[2]) );
+  //console.log("children: " + JSON.stringify(SceneManager.children) );
+  //for (let i = 0; i < SceneManager.subjects.length; i++) {
+  //  console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
+  for (let s_idx = 0; s_idx < SceneManager.scene.length; s_idx++) {
+    //console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
+    for (let i = 0; i < SceneManager.scene[s_idx].children.length; i++) {
+        console.log("SceneManager.scene: " + SceneManager.scene[s_idx].children[i].name );
+    }
+  }
+  //console.log("SceneManager[4]: " + JSON.stringify(SceneManager.subjects[4].model.metadata) );
+  /*"": 
+    {"
+  SceneManager[3]: 
+  {"model": 
+    {"metadata":
+      { "version":4.5
+       ,"type":"Object"
+       ,"generator":"Object3D.toJSON"
+      }
+      ,"geometries":[{"uuid":"06C0B440-39DF-4B61-A0BF-29D1F8DB814C",
+      "type":"BoxGeometry","width":3,"height":15,"depth":3}]
+      ,"materials": [{"uuid":"3E2E70F4-7BE3-4EA6-93A5-DEF8683780EA",
+      "type":"MeshBasicMaterial","color":14381203,"depthFunc":3,"depthTest":true,"depthWrite":true}]
+      ,"object": {"uuid":"D088077A-4A72-4EB5-A60B-791C40090609","type":"Hawk","name":"redtailHawk"
+      ,"userData": {"selectable":true ,"color":{"original":"#db7093","highlight":"#f7ff6d","selected":"#808080"}
+      ,"name":"redtailHawk"
+    }
+    ,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
+    ,"geometry":"06C0B440-39DF-4B61-A0BF-29D1F8DB814C","material":"3E2E70F4-7BE3-4EA6-93A5-DEF8683780EA"}}
+    ,"created":"2019-03-15T23:44:58.515Z"
+  }
+*/
+  console.log("=======================================================: ");
 
   const x = random(-widthBound, widthBound);
   const y = 2;
@@ -118,7 +159,8 @@ function Hare (scene, hareCount) {
 
     //TODO: this should really be real-time-based, not loop based
     //TODO: it should also be part of a behavior model so these can be tuned the behavior models here
-    if(eating_paceCntr-- == 0){
+    //if(eating_paceCntr-- == 0)
+    {
       eating_paceCntr = eating_pace; 
       var deltaDistance = 500;
       findRemoveIfNear(hareMesh.position, deltaDistance);

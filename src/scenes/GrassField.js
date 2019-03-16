@@ -1,10 +1,12 @@
 import { random } from "../utils/helpers";
+//import SceneManager, { getSceneManager } from "./SceneManager";
 import { getSceneManager } from "./SceneManager";
-import { getGrassLinkedList } from "../utils/LinkedList.js";
+//import { getGrassLinkedList } from "../utils/LinkedList.js";
 import { Node } from "../utils/LinkedList.js";
 
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
+
 
 export const TYPE = "Grass";
 const grasses = new THREE.Object3D();
@@ -70,7 +72,7 @@ async function GrassField (config) {
     // Can then search this list to find the grass closest, or the right kind of grass, and move to it and eat it.
     // Then, since the grass object is on the list, we should be able to call grasses.remove(eaten_grass)
 
-    getGrassLinkedList().Append(new Node(grass));
+    //getGrassLinkedList().Append(new Node(grass));
   }
 
   grasses.type = TYPE;
@@ -92,13 +94,30 @@ export var myGrasses = function () {
 export var findRemoveIfNear = function (animalPos, range) {
   inPos = animalPos;
   theRange = range;
+  const mySceneManager = getSceneManager();
 
-  var ll = getGrassLinkedList();
-  var node = ll.First();
+    //  console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
+    //for (let s_idx = 0; s_idx < mySceneManager.scene.length; s_idx++) {
+      //console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
+      for (let i = 0; i < mySceneManager.scene[0].children.length; i++) {
+          console.log("findRemoveIfNear:::    SceneManager.scene: " + mySceneManager.scene[4].children[i].name );
+      }
+    //}
+  
+  //var ll = getGrassLinkedList();
+  //var node = ll.First();
   var shortestDist = 1000000.1;
   var shortestDist_node;
   var shortestDist_node_i = 0;
-  for (var idx = 0; idx < ll.length; idx++) {
+  const SceneManager = getSceneManager();
+  
+  //console.log("SceneManager: " + JSON.stringify(SceneManager) );
+  //console.log("SceneManager[4]: " + JSON.stringify(SceneManager[4]) );
+  //console.log("children: " + JSON.stringify(SceneManager[4].children) );
+  //for (var idx = 0; idx < ll.length; idx++) {
+  for(var idx=0; idx < SceneManager[4].children.count; idx++){
+
+    var node = SceneManager[4].children[idx];
     var distance = getDistance(animalPos, node.data.position);
     if(isGreaterThan(shortestDist.toFixed(), distance.toFixed()))
     //if(shortestDist.toFixed() > distance.toFixed())
@@ -110,8 +129,8 @@ export var findRemoveIfNear = function (animalPos, range) {
       // console.log("[" + idx + "] ------ grass at " + shortestDist_node.data.position.x.toFixed()
       //           + "   new shortestDist: " + shortestDist.toFixed());
     }
-    var next_node = ll.Next(node);
-    node = next_node;
+    //var next_node = ll.Next(node);
+    //node = next_node;
   }
 
   if (shortestDist < range) {
@@ -136,7 +155,7 @@ export var findRemoveIfNear = function (animalPos, range) {
     );
     // node.data.position.x + ":" + node.data.position.y + ":"+ node.data.position.z);
     grasses.remove(shortestDist_node.data);
-    ll.Remove(shortestDist_node);
+    //ll.Remove(shortestDist_node);
     // console.log("new count of grass list: " +  ll.length);
   }
 };

@@ -113,23 +113,23 @@ function Hawk (config) {
     vector.y = (-(vector.y - 1) / 2) * SceneManager.screenDimensions.height;
     return vector;
   }
-
+/*
   const hungerValue = label({
     text: "Hunger\n",
     initialValue: hawkHunger.get().toFixed(1),
     ...get2DPosition()
   });
-
+*/
   function setLabelTo ({ visible }) {
-    if (visible) hungerValue.showLabel();
-    else hungerValue.hideLabel();
+   // if (visible) hungerValue.showLabel();
+    //else hungerValue.hideLabel();
   }
 
   function update (elapsedTime, simulationTime) {
     count++;
     const position = get2DPosition();
-    hawkHunger.update(simulationTime);
-    hungerValue.update(position.x, position.y, hawkHunger.get().toFixed(1));
+    //hawkHunger.update(simulationTime);
+    //hungerValue.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
     // The updates happen very often for small position changes
     // This made the hawk behave erratically.
@@ -138,7 +138,7 @@ function Hawk (config) {
     // for now just scale back the number of times the position is reported to the other animals.
 
     if (count % 30 === 0) getHawkObserver().broadcast(hawk.position);
-    checkForHare();
+    //checkForHare();
     TWEEN.update();
   }
 
