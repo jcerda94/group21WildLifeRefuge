@@ -8,7 +8,11 @@
 
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
+
 import {getHawkObserver} from "./observer";
+
+import {getEnvironmentManager} from "./EnvironmentManager";
+
 const THREE = require("three");
 
 export const NAME = "tree";
@@ -104,6 +108,9 @@ function Tree (config) {
    setTreeto45Degree()
    setTreeToBronwnColor()
  }
+
+  let env = getEnvironmentManager();
+  env.registerTrackedObject(tree);
 
   return {
     update,

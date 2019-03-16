@@ -10,12 +10,20 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
     throw new Error("Maximum hunger value must be > minimum hunger value");
   }
 
-  let currentHunger = parseInt((max - min) / 2);
+  let currentHunger = max * 0.5;
   let lastUpdateTime = 0;
 
-  function update (elapsedTime) {
+  function update (elapsedTime, isEating) {
     const delta = elapsedTime - lastUpdateTime;
-    currentHunger += delta * tickRate;
+
+    if (isEating) {
+      currentHunger -= delta * tickRate * 4;
+    } else {
+      currentHunger += delta * tickRate;
+    }
+
+    if (currentHunger > max) currentHunger = max;
+    if (currentHunger < min) currentHunger = min;
     lastUpdateTime = elapsedTime;
   }
 
@@ -60,9 +68,14 @@ export const label = ({ text, initialValue, x, y }) => {
     label.style.display = "flex";
   }
 
+  function destroy () {
+    document.body.removeChild(label);
+  }
+
   return {
     update,
     hideLabel,
-    showLabel
+    showLabel,
+    destroy
   };
 };

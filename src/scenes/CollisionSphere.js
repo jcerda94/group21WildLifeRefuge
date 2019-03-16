@@ -45,8 +45,8 @@ function CollisionSphere (parent) {
     };
 
     return {
-      update,
-      ...parent
+      ...parent,
+      update
     };
   };
 }

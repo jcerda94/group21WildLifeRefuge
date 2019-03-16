@@ -12,7 +12,18 @@ function PreLoadModels ({ hawks, hares, cedars, bushes }) {
   }
   for (let i = 0; i < hawks; i++) {
 
-    SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hawk" }));
+    SceneManager.addObject(
+      ModelFactory.makeSceneObject({
+        type: "hawk",
+        config: {
+          useCollision: true,
+          collision: {
+            targets: ["Hare"]
+          }
+        }
+      })
+    );
+
   }
   for (let i = 0; i < hares; i++) {
     SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));

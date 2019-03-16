@@ -7,7 +7,11 @@ import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
 import { getPopUpInfo } from "../components/PopUpInfo";
 import ModelFactory from "./ModelFactory";
+
 import {getDisplayTime} from "../components/UI/DisplayTime";
+
+import { getEnvironmentManager } from "./EnvironmentManager";
+
 
 class SceneManager {
   groundSize = {
@@ -28,6 +32,8 @@ class SceneManager {
   intersected = null
   defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
+  hawkLabelOn = false
+  ready = false
 
   isPaused = false
   simulationElapsedTime = 0
@@ -208,6 +214,9 @@ class SceneManager {
     this.subjects.forEach(subject => {
       this.scene.add(subject.model);
     });
+
+    // Notifies EnvironmentManager that the ground can be drawn on
+    this.ready = true;
   }
 
   addObject (sceneObject) {
@@ -261,7 +270,8 @@ class SceneManager {
   removeAllModelsByType (type) {
     const modelsToRemove = this.subjects
       .filter(subject => {
-        if (subject.model) {
+        if (subject.model && subject.model.type === type) {
+          subject.destroyLabel && subject.destroyLabel();
           return subject.model.type === type;
         }
         return false;
@@ -277,12 +287,12 @@ class SceneManager {
     modelsToRemove.forEach(model => this.scene.remove(model));
   }
 
-  toggleLabelFor = ({ type }) => capiModel => {
+  toggleLabelFor = ({ type, labelName }) => capiModel => {
     this.subjects.forEach(subject => {
       if (subject.model && subject.model.type === type) {
         subject.setLabelTo &&
           subject.setLabelTo({
-            visible: capiModel.get("hawkLabel")
+            visible: capiModel.get(labelName)
           });
       }
     });
@@ -290,10 +300,9 @@ class SceneManager {
 
   onTransporterReady () {
     const capi = getCapiInstance();
-    this.toggleLabelFor({ type: "Hawk" })(capi.getCapiModel());
     capi.addListenerFor({
       key: "hawkLabel",
-      callback: this.toggleLabelFor({ type: "Hawk" })
+      callback: this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })
     });
 
     const [hawks, hares, cedars, bushes] = capi.getValues({
@@ -305,6 +314,9 @@ class SceneManager {
       ]
     });
     PreLoadModels({ hawks, hares, cedars, bushes });
+    this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })(
+      getCapiInstance().getCapiModel()
+    );
     capi.addListenerFor({
       key: "redtailHawkCount",
       callback: this.handleModelCountChange({
