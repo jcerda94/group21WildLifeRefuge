@@ -2,6 +2,12 @@ const random = (min, max) => {
   return Math.random() * (max - min) + min;
 };
 
+const randomInt = (min, max) => {
+  min = parseInt(min);
+  max = parseInt(max);
+  return Math.floor(Math.random() * max) + min;
+};
+
 const getValue = (accessor = "", initial = {}) => {
   if (initial === null) {
     throw new Error(`Cannot access ${accessor} on null initial value`);
@@ -24,5 +30,6 @@ const getValue = (accessor = "", initial = {}) => {
 
 module.exports = {
   random,
+  randomInt,
   getValue
 };

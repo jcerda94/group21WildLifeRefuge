@@ -1,5 +1,5 @@
 import TreeModel from "./Tree";
-//import GrassModel from "./Grass";
+import CollisionSphereModel from "./CollisionSphere";
 import HawkModel from "./Hawk";
 import HareModel from "./Hare";
 import BushModel from "./Bush";
@@ -10,13 +10,13 @@ import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import SpotLight from "./SpotLight";
 
-const Hawk = () => {
-  const { model, created, update } = HawkModel();
-  return {
-    model,
-    created,
-    update
-  };
+const Hawk = config => {
+  if (config && config.useCollision) {
+    const hawk = HawkModel(config);
+    return CollisionSphereModel(hawk)(config.collision);
+  } else {
+    return HawkModel(config);
+  }
 };
 const Hare = () => {
   const { model, created, update } = HareModel();
@@ -139,14 +139,14 @@ class modelFactory {
     const { type, config } = options;
     switch (type) {
       case MODEL_TYPES.Hawk.type:
-        return MODEL_TYPES.Hawk.model();
+        return MODEL_TYPES.Hawk.model(config);
       case MODEL_TYPES.Hare.type:
         return MODEL_TYPES.Hare.model();
       case MODEL_TYPES.Bush.type:
         return MODEL_TYPES.Bush.model();
       case MODEL_TYPES.Tree.type:
         return MODEL_TYPES.Tree.model();
-        case MODEL_TYPES.Grass.type: 
+      case MODEL_TYPES.Grass.type:
         return MODEL_TYPES.Grass.model(config);
       case MODEL_TYPES.Ground.type:
         return MODEL_TYPES.Ground.model(config);

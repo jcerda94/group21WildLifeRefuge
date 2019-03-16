@@ -1,7 +1,8 @@
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
-import { random } from "../utils/helpers";
+import { random, randomInt } from "../utils/helpers";
 import { hunger, label } from "../utils/behavior";
+import { getCapiInstance } from "../utils/CAPI/capi";
 const THREE = require("three");
 
 export const NAME = "redtailHawk";
@@ -11,8 +12,11 @@ var numberHawks = 0;
 let TWEEN = require("@tweenjs/tween.js");
 
 function Hawk (config) {
-  let ate = false;
+  let isEating = false;
+  let deathDelta = 0;
+  const deathTimer = 60 * 60 * 24; // Eat within a day at max hunger or die
   const maxHunger = 10;
+  const minHunger = 1;
   const size = 3;
   const color = "#db7093";
 
@@ -76,27 +80,21 @@ function Hawk (config) {
   var myHawkID = numberHawks++;
 
   function checkForHare () {
-    if (!ate) {
-      const subjects = getSceneManager().subjects;
-      for (let i = 4; i < subjects.length; i++) {
-        // console.log("Hawk:checkForHare:  length : " + subjects.length );
-        if (subjects.length > 4) {
-          if (subjects[i].model.name === "hare") {
-            // console.log(" Found a hare: " + position.x + ":" + position.y + ":" + position.z);
-            // JWC  tween3 = new TWEEN.Tween(cube.position)
-            tween3 = new TWEEN.Tween(hawk.position).to(
-              {
-                x: getSceneManager().subjects[i].model.position.x,
-                y: getSceneManager().subjects[i].model.position.y,
-                z: getSceneManager().subjects[i].model.position.z
-              },
-              10000
-            );
-            tween2.chain(tween3);
-            tween3.chain(tween1);
-          }
-        }
-      }
+    if (!isEating) {
+      const hares = SceneManager.getSceneObjectsOf({ types: ["Hare"] });
+      const hareIndex = randomInt(0, hares.length - 1);
+      const randomHare = hares[hareIndex];
+      if (!randomHare) return;
+      tween3 = new TWEEN.Tween(hawk.position).to(
+        {
+          x: randomHare.position.x,
+          y: randomHare.position.y,
+          z: randomHare.position.z
+        },
+        10000
+      );
+      tween2.chain(tween3);
+      tween3.chain(tween1);
     }
   }
   tween1.chain(tween2);
@@ -104,7 +102,11 @@ function Hawk (config) {
   tween3.chain(tween1);
   var count = 1;
 
-  const hawkHunger = hunger({ maxHunger, minHunger: 1 });
+  const hawkHunger = hunger({
+    maxHunger,
+    minHunger,
+    hungerTickRate: random(0.00001, 0.00005)
+  });
 
   function get2DPosition () {
     SceneManager.camera.updateProjectionMatrix();
@@ -114,31 +116,57 @@ function Hawk (config) {
     return vector;
   }
 
-  const hungerValue = label({
+  const hungerLabel = label({
     text: "Hunger\n",
     initialValue: hawkHunger.get().toFixed(1),
     ...get2DPosition()
   });
+  const shouldShowLabel = getCapiInstance().getValue({ key: "hawkLabel" });
+  if (shouldShowLabel) hungerLabel.showLabel();
 
   function setLabelTo ({ visible }) {
-    if (visible) hungerValue.showLabel();
-    else hungerValue.hideLabel();
+    if (visible) hungerLabel.showLabel();
+    else hungerLabel.hideLabel();
   }
 
+  function destroyLabel () {
+    hungerLabel.destroy();
+  }
+
+  let lastSimTime = 0;
   function update (elapsedTime, simulationTime) {
     count++;
+
+    if (deathDelta > deathTimer) {
+      SceneManager.removeObject(hawk);
+      hungerLabel.destroy();
+    }
+    if (hawkHunger.get() >= maxHunger) {
+      deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
+    } else if (isEating) {
+      deathDelta = 0;
+    }
+
+    lastSimTime = simulationTime;
     const position = get2DPosition();
-    hawkHunger.update(simulationTime);
-    hungerValue.update(position.x, position.y, hawkHunger.get().toFixed(1));
+    hawkHunger.update(simulationTime, isEating);
+    hungerLabel.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
-    // The updates happen very often for small position changes
-    // This made the hawk behave erratically.
-    // The observers probably don't care if the hawk moves a small distance
-    // May want to make this delta-position based.
-    // for now just scale back the number of times the position is reported to the other animals.
-
-    if (count % 30 === 0) getHawkObserver().broadcast(hawk.position);
-    checkForHare();
+    if (hawkHunger.get() >= maxHunger * 0.75) {
+      // Go get a rabbit
+      checkForHare();
+    } else if (hawkHunger.get() <= minHunger) {
+      hawk.remove(hareMesh);
+      isEating = false;
+    }
+    if (count % 30 === 0) {
+      // The updates happen very often for small position changes
+      // This made the hawk behave erratically.
+      // The observers probably don't care if the hawk moves a small distance
+      // May want to make this delta-position based.
+      // for now just scale back the number of times the position is reported to the other animals.
+      getHawkObserver().broadcast(hawk.position);
+    }
     TWEEN.update();
   }
 
@@ -147,7 +175,7 @@ function Hawk (config) {
       if (targets[i].object.type === "Hare") {
         // added a hare when collision occur
         hawk.add(hareMesh);
-        ate = true;
+        isEating = true;
         SceneManager.removeObject(targets[i].object);
       }
     }
@@ -156,6 +184,7 @@ function Hawk (config) {
   return {
     update,
     setLabelTo,
+    destroyLabel,
     model: hawk,
     created: new Date(),
     handleCollision

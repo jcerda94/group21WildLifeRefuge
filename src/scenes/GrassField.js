@@ -105,10 +105,9 @@ export var findRemoveIfNear = function (animalPos, range) {
   var shortestDist_node_i = 0;
   for (var idx = 0; idx < ll.length; idx++) {
     var distance = getDistance(animalPos, node.data.position);
-    if(isGreaterThan(shortestDist.toFixed(), distance.toFixed()))
-    //if(shortestDist.toFixed() > distance.toFixed())
-    //if(shortestDist > distance)
-    {
+    if (isGreaterThan(shortestDist.toFixed(), distance.toFixed())) {
+      // if(shortestDist.toFixed() > distance.toFixed())
+      // if(shortestDist > distance)
       shortestDist = distance;
       shortestDist_node = node;
       shortestDist_node_i = idx;
@@ -120,25 +119,25 @@ export var findRemoveIfNear = function (animalPos, range) {
   }
 
   if (shortestDist < range) {
-    console.log(
-      "remove [" +
-        shortestDist_node_i +
-        "] at " +
-        shortestDist_node.data.position.x.toFixed() +
-        ":" +
-        shortestDist_node.data.position.y.toFixed() +
-        ":" +
-        shortestDist_node.data.position.z.toFixed() +
-        // + "        within: " + theRange + "  to  "
-        "    dist: " +
-        shortestDist.toFixed() +
-        "    animal Pos: " +
-        inPos.x.toFixed(0) +
-        ":" +
-        inPos.y.toFixed(0) +
-        ":" +
-        inPos.z.toFixed(0)
-    );
+    // console.log(
+    //   "remove [" +
+    //     shortestDist_node_i +
+    //     "] at " +
+    //     shortestDist_node.data.position.x.toFixed() +
+    //     ":" +
+    //     shortestDist_node.data.position.y.toFixed() +
+    //     ":" +
+    //     shortestDist_node.data.position.z.toFixed() +
+    //     // + "        within: " + theRange + "  to  "
+    //     "    dist: " +
+    //     shortestDist.toFixed() +
+    //     "    animal Pos: " +
+    //     inPos.x.toFixed(0) +
+    //     ":" +
+    //     inPos.y.toFixed(0) +
+    //     ":" +
+    //     inPos.z.toFixed(0)
+    // );
     // node.data.position.x + ":" + node.data.position.y + ":"+ node.data.position.z);
     grasses.remove(shortestDist_node.data);
     ll.Remove(shortestDist_node);
@@ -148,50 +147,45 @@ export var findRemoveIfNear = function (animalPos, range) {
 
 function isGreaterThan (n1, n2) {
   // handling numbers in js is near impossible so we do this, which is ugly but seems to work
-  //return parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10)
+  // return parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10)
   //     > parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10);
-  return parseInt(n1)
-       > parseInt(n2);
+  return parseInt(n1) > parseInt(n2);
 }
 /*
 function calcDelta(n1, n2)
 {
   // handling numbers in js is near impossible so we do this, which is ugly but seems to work
-  //if(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10) < 0 
-  //&& parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10) < 0) 
+  //if(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10) < 0
+  //&& parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10) < 0)
     //return Math.abs(Math.abs(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10))
       //            - Math.abs(parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10))).toFixed();
-  //else 
-  //return Math.abs(Math.abs(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10)) 
+  //else
+  //return Math.abs(Math.abs(parseInt(JSON.parse(JSON.stringify(n1, null, 4)), 10))
     //            + Math.abs(parseInt(JSON.parse(JSON.stringify(n2, null, 4)), 10))).toFixed();
-  if(parseInt(n1) < 0 
-    && parseInt(n2) < 0) 
+  if(parseInt(n1) < 0
+    && parseInt(n2) < 0)
       return Math.abs(Math.abs(parseInt(n1))
                     - Math.abs(parseInt(n2))).toFixed();
-  else 
-    return Math.abs(Math.abs(parseInt(n1)) 
+  else
+    return Math.abs(Math.abs(parseInt(n1))
                   + Math.abs(parseInt(n2))).toFixed();
 }
 */
-export function getDistance(pos1, pos2)
-{
+export function getDistance (pos1, pos2) {
   var dist = 1.0;
   // handling numbers in js is near impossible so we do this, which is ugly but seems to work
-  //var deltaX = parseInt(JSON.parse(JSON.stringify(pos1.x, null, 4)), 10)
-  //           - parseInt(JSON.parse(JSON.stringify(pos2.x, null, 4)), 10); 
-  //var deltaY = parseInt(JSON.parse(JSON.stringify(pos1.y, null, 4)), 10)
-  //           - parseInt(JSON.parse(JSON.stringify(pos2.y, null, 4)), 10); 
-  //var deltaZ = parseInt(JSON.parse(JSON.stringify(pos1.z, null, 4)), 10)
-  //           - parseInt(JSON.parse(JSON.stringify(pos2.z, null, 4)), 10); 
+  // var deltaX = parseInt(JSON.parse(JSON.stringify(pos1.x, null, 4)), 10)
+  //           - parseInt(JSON.parse(JSON.stringify(pos2.x, null, 4)), 10);
+  // var deltaY = parseInt(JSON.parse(JSON.stringify(pos1.y, null, 4)), 10)
+  //           - parseInt(JSON.parse(JSON.stringify(pos2.y, null, 4)), 10);
+  // var deltaZ = parseInt(JSON.parse(JSON.stringify(pos1.z, null, 4)), 10)
+  //           - parseInt(JSON.parse(JSON.stringify(pos2.z, null, 4)), 10);
 
-  var deltaX = parseInt(pos1.x)
-             - parseInt(pos2.x); 
-  var deltaY = parseInt(pos1.y)
-             - parseInt(pos2.y); 
-  var deltaZ = parseInt(pos1.z)
-             - parseInt(pos2.z); 
-  //var dist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaZ , 2));
-  dist = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY) + (deltaZ*deltaZ));
-  return (dist);
-};
+  var deltaX = parseInt(pos1.x) - parseInt(pos2.x);
+  var deltaY = parseInt(pos1.y) - parseInt(pos2.y);
+  var deltaZ = parseInt(pos1.z) - parseInt(pos2.z);
+  // var dist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaZ , 2));
+  dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+  return dist;
+}
 export default GrassField;
