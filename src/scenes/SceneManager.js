@@ -130,9 +130,11 @@ class SceneManager {
       this.simulationElapsedTime += delta * simTimeScale;
     }
 
-    for (let i = 0; i < this.subjects.length; i++) {
-      this.subjects[i].update &&
-        this.subjects[i].update(elapsedTime, this.simulationElapsedTime);
+    if (this.loaded) {
+      for (let i = 0; i < this.subjects.length; i++) {
+        this.subjects[i].update &&
+          this.subjects[i].update(elapsedTime, this.simulationElapsedTime);
+      }
     }
 
     this.cameraControls.update(delta);
