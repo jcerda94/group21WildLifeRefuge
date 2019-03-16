@@ -111,7 +111,7 @@ function Hawk (config) {
   const hawkHunger = hunger({
     maxHunger,
     minHunger,
-    hungerTickRate: random(0.00001, 0.0001)
+    hungerTickRate: random(0.00001, 0.00005)
   });
 
   function get2DPosition () {
@@ -122,20 +122,24 @@ function Hawk (config) {
     return vector;
   }
 
-  const hungerValue = label({
+  const hungerLabel = label({
     text: "Hunger\n",
     initialValue: hawkHunger.get().toFixed(1),
     ...get2DPosition()
   });
 
   function setLabelTo ({ visible }) {
-    if (visible) hungerValue.showLabel();
-    else hungerValue.hideLabel();
+    if (visible) hungerLabel.showLabel();
+    else hungerLabel.hideLabel();
   }
 
   let lastSimTime = 0;
   function update (elapsedTime, simulationTime) {
     count++;
+    if (deathDelta > deathTimer) {
+      SceneManager.removeObject(hawk);
+      hungerLabel.destroy();
+    }
     if (hawkHunger.get() >= maxHunger) {
       deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
     } else if (isEating) {
@@ -145,13 +149,14 @@ function Hawk (config) {
     lastSimTime = simulationTime;
     const position = get2DPosition();
     hawkHunger.update(simulationTime, isEating);
-    hungerValue.update(position.x, position.y, deathDelta.toFixed(1));
+    hungerLabel.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
     if (hawkHunger.get() >= maxHunger * 0.75) {
       // Go get a rabbit
       checkForHare();
     } else if (hawkHunger.get() <= minHunger) {
       hawk.remove(hareMesh);
+      isEating = false;
     }
     if (count % 30 === 0) {
       // The updates happen very often for small position changes
