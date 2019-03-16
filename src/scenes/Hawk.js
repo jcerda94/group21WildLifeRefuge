@@ -161,8 +161,8 @@ function Hawk (config) {
       // for now just scale back the number of times the position is reported to the other animals.
       getHawkObserver().broadcast(hawk.position);
     }
+    TWEEN.update();
   }
-  TWEEN.update();
 
   function handleCollision (targets) {
     console.log(targets);
