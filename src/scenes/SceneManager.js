@@ -7,6 +7,7 @@ import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
 import { getPopUpInfo } from "../components/PopUpInfo";
 import ModelFactory from "./ModelFactory";
+import { getEnvironmentManager } from "./EnvironmentManager";
 
 class SceneManager {
   groundSize = {
@@ -28,6 +29,8 @@ class SceneManager {
   defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
   hawkLabelOn = false
+  ready = false
+
   isPaused = false
   simulationElapsedTime = 0
   currentTimeScale = "hours"
@@ -205,6 +208,9 @@ class SceneManager {
     this.subjects.forEach(subject => {
       this.scene.add(subject.model);
     });
+
+    // Notifies EnvironmentManager that the ground can be drawn on
+    this.ready = true;
   }
 
   addObject (sceneObject) {
