@@ -10,7 +10,7 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
     throw new Error("Maximum hunger value must be > minimum hunger value");
   }
 
-  let currentHunger = min;
+  let currentHunger = max * 0.5;
   let lastUpdateTime = 0;
 
   function update (elapsedTime, isEating) {
