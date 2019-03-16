@@ -1,6 +1,6 @@
 import { random } from "../utils/helpers";
-//import SceneManager, { getSceneManager } from "./SceneManager";
-import { getSceneManager } from "./SceneManager";
+import SceneManager, { getSceneManager } from "./SceneManager";
+//import { getSceneManager } from "./SceneManager";
 //import { getGrassLinkedList } from "../utils/LinkedList.js";
 import { Node } from "../utils/LinkedList.js";
 
@@ -97,7 +97,7 @@ export var findRemoveIfNear = function (animalPos, range) {
   const my_grasses = myGrasses();
   //console.log(" my_grasses length: " + my_grasses.children.length); // <<< defined
   //console.log(" my_grasses count: " + my_grasses.children.count);   // <<< undefined
-
+  
   var shortestDist = 1000000.1;
   var shortestDist_node;
   var shortestDist_node_i = 0;

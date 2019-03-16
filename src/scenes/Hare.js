@@ -128,7 +128,7 @@ function Hare (scene, hareCount) {
 
     //TODO: this should really be real-time-based, not loop based
     //TODO: it should also be part of a behavior model so these can be tuned the behavior models here
-    if(eating_paceCntr-- == 0)
+    //if(eating_paceCntr-- == 0)
     {
       eating_paceCntr = eating_pace; 
       var deltaDistance = 500;
