@@ -13,13 +13,13 @@ const THREE = require("three");
 
 export const NAME = "tree";
 export const TYPE = "Tree";
-
-function Tree () {
+let color = 0x33ff33;
+function Tree (config) {
   var sides = 8;
   var tiers = 6;
   var treeGeometry = new THREE.ConeGeometry(10, 10, sides, tiers);
-  var treeMaterial = new THREE.MeshStandardMaterial({
-    color: 0xFF7127,
+  let treeMaterial = new THREE.MeshStandardMaterial({
+    color: color,
     flatShading: true
   });
 
@@ -44,8 +44,7 @@ function Tree () {
   treeTrunk2.position.y = 10;
   treeTrunk.position.y = 0.25;
   let tree = new THREE.Group();
-  //tree fall flat on the ground
-  tree.rotation.x = 90*Math.PI/180;
+
   tree.castShadow = true;
 
   tree.add(treeTrunk);
@@ -68,15 +67,42 @@ function Tree () {
   tree.userData = {
     selectable: true,
     color: {
-      highlight: "#f7ff6d",
+      highlight: "#ff6039",
       selected: "#808080"
     },
     name: NAME
   };
   tree.name = NAME;
   tree.type = TYPE;
+  function setTreeLayFlat() {
+    //tree fall flat on the ground
+    tree.rotation.x = 90*Math.PI/180;
+
+  }
+  function setTreeto45Degree() {
+    //tree fall flat on the ground
+    tree.rotation.x = 90*Math.PI/290;
+
+  }
+  function setTreeToBronwnColor() {
+   // treeMaterial.color= 0xFF7127; color: 0xFF7127
+    tree.children[1].material.color.set( 0xff6039 );
+    //tree.children[ 1 ].material.color.set( 0x00ff00 );
+    //tree.treeMaterial.color.set( 0x00ff00 );
+    /*
+    color = 0xFF7127;
+    treeMaterial = new THREE.MeshStandardMaterial({
+      color:  0xFF6039,
+      flatShading: true
+    });
+    tree.add(treeTop1);
+    tree.add(treeTop);
+    */
+  }
  function update() {
-   con
+   //setTreeLayFlat();
+   setTreeto45Degree()
+   setTreeToBronwnColor()
  }
 
   return {
