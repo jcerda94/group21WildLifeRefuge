@@ -138,7 +138,10 @@ function Hawk (config) {
     count++;
     if (hawkHunger.get() >= maxHunger) {
       deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
+    } else if (isEating) {
+      deathDelta = 0;
     }
+
     lastSimTime = simulationTime;
     const position = get2DPosition();
     hawkHunger.update(simulationTime, isEating);
