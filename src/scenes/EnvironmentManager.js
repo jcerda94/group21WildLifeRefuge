@@ -88,10 +88,26 @@ class EnvironmentManager {
 
     //CAUTION! Object will only be shallow copied
     defaultEnvironmentObject = {
-      water: 1.0
+        water: 1.0,
+        treeThirst: 0.025,
+        grassThirst: 0.01
     };
 
     constructor(){
+
+        this.initializeEnvironmentWithParams(this.defaultEnvironmentObject);
+        // Creates a THREE Texture using an HTML Canvas element
+        var drawingCanvas = document.getElementById( 'drawing-canvas' );
+        var drawingContext = drawingCanvas.getContext( '2d' );
+        drawingContext.fillStyle = '#996600';
+        drawingContext.fillRect( 0, 0, this.sceneManager.groundSize.x, this.sceneManager.groundSize.y);
+
+        this.textureCanvas = drawingCanvas;
+        this.drawingContext = drawingContext;
+
+    }
+
+    initializeEnvironmentWithParams(environmentObject) {
         this.sceneManager = getSceneManager();
 
         //Added 1 to array size to handle odd ground sizes (1222 x 899) and objects at the absolute edge of the ground
@@ -103,18 +119,8 @@ class EnvironmentManager {
         //TODO: Add dynamically generated environments (non-uniform starting conditions, maybe toy environment 'painter')
         this.localEnv = [...Array(groundX)].map(
             ()=>Array(groundY).fill().map(
-                () => Object.assign({}, this.defaultEnvironmentObject)
+                () => Object.assign({}, environmentObject)
             ));
-
-        // Creates a THREE Texture using an HTML Canvas element
-        var drawingCanvas = document.getElementById( 'drawing-canvas' );
-        var drawingContext = drawingCanvas.getContext( '2d' );
-        drawingContext.fillStyle = '#996600';
-        drawingContext.fillRect( 0, 0, this.sceneManager.groundSize.x, this.sceneManager.groundSize.y);
-
-        this.textureCanvas = drawingCanvas;
-        this.drawingContext = drawingContext;
-
     }
 
     getEnvByXYPos(x, y){
