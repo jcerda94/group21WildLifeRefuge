@@ -104,7 +104,7 @@ export var findRemoveIfNear = function (animalPos, range) {
   for (var idx = 0; idx < my_grasses.children.length; idx++) {
     var node = my_grasses.children[idx];
     var distance = getDistance(animalPos, node.position);
-    if (isGreaterThan(shortestDist.toFixed(), distance.toFixed())) {
+    if (shortestDist > distance) {
       // if(shortestDist.toFixed() > distance.toFixed())
       // ^^^ fails w/o error, just doesn't do compare, likely as toFixed returns string
       // if(shortestDist > distance) // <<< fails w/o error, just doesn't do comparison correctly
@@ -145,11 +145,6 @@ function isGreaterThan (n1, n2) {
   return parseInt(n1) > parseInt(n2);
 }
 export function getDistance (pos1, pos2) {
-  var dist = 1.0;
-  var deltaX = parseInt(pos1.x) - parseInt(pos2.x);
-  var deltaY = parseInt(pos1.y) - parseInt(pos2.y);
-  var deltaZ = parseInt(pos1.z) - parseInt(pos2.z);
-  dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-  return dist;
+  return pos1.distanceTo(pos2);
 }
 export default GrassField;
