@@ -141,6 +141,9 @@ function Hawk (config) {
   function update (elapsedTime, simulationTime) {
     //console.log("call hawk");
     count++;
+    const position = get2DPosition();
+    //hawkHunger.update(simulationTime);
+    //hungerValue.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
     if (deathDelta > deathTimer) {
       SceneManager.removeObject(hawk);
@@ -153,7 +156,6 @@ function Hawk (config) {
     }
 
     lastSimTime = simulationTime;
-    const position = get2DPosition();
     hawkHunger.update(simulationTime, isEating);
     hungerLabel.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
