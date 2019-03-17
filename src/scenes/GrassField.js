@@ -117,25 +117,25 @@ export var findRemoveIfNear = function (animalPos, range) {
   }
 
   if (shortestDist < range) {
-    console.log(
-      "remove [" +
-        shortestDist_node_i +
-        "] at " +
-        shortestDist_node.position.x.toFixed() +
-        ":" +
-        shortestDist_node.position.y.toFixed() +
-        ":" +
-        shortestDist_node.position.z.toFixed() +
-        // + "        within: " + theRange + "  to  "
-        "    dist: " +
-        shortestDist.toFixed() +
-        "    animal Pos: " +
-        inPos.x.toFixed(0) +
-        ":" +
-        inPos.y.toFixed(0) +
-        ":" +
-        inPos.z.toFixed(0)
-    );
+    // console.log(
+    //   "remove [" +
+    //     shortestDist_node_i +
+    //     "] at " +
+    //     shortestDist_node.position.x.toFixed() +
+    //     ":" +
+    //     shortestDist_node.position.y.toFixed() +
+    //     ":" +
+    //     shortestDist_node.position.z.toFixed() +
+    //     // + "        within: " + theRange + "  to  "
+    //     "    dist: " +
+    //     shortestDist.toFixed() +
+    //     "    animal Pos: " +
+    //     inPos.x.toFixed(0) +
+    //     ":" +
+    //     inPos.y.toFixed(0) +
+    //     ":" +
+    //     inPos.z.toFixed(0)
+    // );
     grasses.remove(shortestDist_node);
     // console.log("new count of grass list: " +  ll.length);
   }
