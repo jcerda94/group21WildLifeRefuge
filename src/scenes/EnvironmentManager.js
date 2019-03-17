@@ -281,9 +281,7 @@ class EnvironmentManager {
 
         for (var i = 0; i < this.trackedObjects.length; i++) {
             let envTile = this.getEnvByXYPos(this.trackedObjects[i].position.x, this.trackedObjects[i].position.z);
-
             envTile.water -= this.trackedObjects[i].water;
-           // console.log("called environment");
         }
 
         this.balanceWaterTable();
@@ -295,21 +293,17 @@ class EnvironmentManager {
     //consume water by a specif tree or grass
     consumeWater(x, z, type){
         let envTile = this.getEnvByXYPos(x,z);
-        if(type == "Tree"){
-            //console.log("envTiel.water called from consume water" + envTile.water);
+        if(type === "Tree"){
             envTile.water -= 0.25;
         }
-
-        this.toggleEnvironmentViewOnCanvas();
+        //this.toggleEnvironmentViewOnCanvas();
     }
 
     //return envTile level
-    getEnvTileLeve(x,z){
-        let eneTile =  this.getEnvByXYPos(x,z);
-        return eneTile.water;
+    getEnvTileLevel(x,z){
+        let envTile =  this.getEnvByXYPos(x,z);
+        return envTile.water;
     }
-
-
 
 }
 

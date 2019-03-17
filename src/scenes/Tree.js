@@ -22,11 +22,12 @@ let color = 0x33ff33;
 
 function Tree (config) {
   let removeLabel = false;
+  let treeDeath = false;
   let isConsuming = false;
   let deathDelta = 0;
   const deathTimer = 60 * 60 * 24; // Eat within a day at max hunger or die
   const maxThirsty = 10;
-  const minhirsty = 1;
+  const minThirsty = 1;
   var sides = 8;
   var tiers = 6;
   var treeGeometry = new THREE.ConeGeometry(10, 10, sides, tiers);
@@ -89,14 +90,17 @@ function Tree (config) {
   function setTreeToBrownColor() {
     tree.children[1].material.color.set( 0xff6039 );
   }
+  function setTreeToGreen(){
+    tree.children[1].material.color.set( 0x33ff33 );
+  }
 
   let env = getEnvironmentManager();
-  env.toggleEnvironmentViewOnCanvas();
+  //env.toggleEnvironmentViewOnCanvas();
   env.registerTrackedObject(tree);
 
   const treeThirsty = waterLevel({
     maxThirsty,
-    minhirsty,
+    minThirsty,
     hungerTickRate: random(0.00001, 0.00005)
   });
 
@@ -122,39 +126,52 @@ function Tree (config) {
 
   let lastSimTime = 0;
   function update(elapsedTime, simulationTime) {
+    if(!treeDeath){
+      if (deathDelta > deathTimer) {
+        if(!removeLabel){
+          thirstyLabel.destroy();
+          removeLabel = true;
+          treeDeath = true;
+        }
 
-    if (deathDelta > deathTimer) {
-      if(!removeLabel){
-        thirstyLabel.destroy();
-        removeLabel = true;
       }
+      if (treeThirsty.get() >= maxThirsty) {
+        deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
+      } else if (isConsuming) {
+        deathDelta = 0;
+      }
+      lastSimTime = simulationTime;
+      const position = get2DPosition();
+      treeThirsty.update(simulationTime, isConsuming);
+      thirstyLabel.update(position.x, position.y, treeThirsty.get().toFixed(1));
 
-    }
-    if (treeThirsty.get() >= maxThirsty) {
-      deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
-    } else if (isConsuming) {
-      deathDelta = 0;
-    }
-    lastSimTime = simulationTime;
-    const position = get2DPosition();
-    treeThirsty.update(simulationTime, isConsuming);
-    thirstyLabel.update(position.x, position.y, treeThirsty.get().toFixed(1));
+      if (treeThirsty.get() >= maxThirsty * 0.75 && !isConsuming) {
+        env.consumeWater(tree.position.x, tree.position.z ,TYPE);
+        if(env.getEnvTileLevel(tree.position.x, tree.position.z) > 0){
+          isConsuming = true;
+        } else if (env.getEnvTileLevel(tree.position.x, tree.position.z) < 0
+            && env.getEnvTileLevel(tree.position.x, tree.position.z) > -1 ) {
+          isConsuming = false;
+          setTreeToBrownColor();
+          setTreeTo45Degree();
 
-    if (treeThirsty.get() >= maxThirsty * 0.75) {
-      env.consumeWater(tree.position.x, tree.position.z ,TYPE);
-      if(env.getEnvTileLeve(tree.position.x, tree.position.z) > 0){
-        isConsuming = true;
-      } else if (env.getEnvTileLeve(tree.position.x, tree.position.z) < 0
-          && env.getEnvTileLeve(tree.position.x, tree.position.z) > -1 ) {
+        }else if(env.getEnvTileLevel(tree.position.x, tree.position.z) < -15){
+          setTreeToBrownColor();
+          setTreeLayFlat();
+          isConsuming = false;
 
+        }
+
+      }
+      if(treeThirsty.get() <= 6){
+        setTreeToGreen();
         isConsuming = false;
-        setTreeToBrownColor();
-        setTreeTo45Degree()
-      }else if(env.getEnvTileLeve(tree.position.x, tree.position.z) < -2){
-        setTreeLayFlat();
+
       }
 
     }
+
+
  }
   return {
     update,
