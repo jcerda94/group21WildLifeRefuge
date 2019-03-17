@@ -8,10 +8,8 @@ import PreLoadModels from "./PreLoadModels";
 import { getPopUpInfo } from "../components/PopUpInfo";
 import ModelFactory from "./ModelFactory";
 
-import {getDisplayTime} from "../components/UI/DisplayTime";
-
 import { getEnvironmentManager } from "./EnvironmentManager";
-
+import Subject from "../utils/subject";
 
 class SceneManager {
   groundSize = {
@@ -129,6 +127,10 @@ class SceneManager {
     }
   }
 
+  updateDisplayTime (elapsedTime, simTime) {
+    Subject.next("update_sim_time", { elapsedTime, simTime });
+  }
+
   update () {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
@@ -138,7 +140,8 @@ class SceneManager {
       this.simulationElapsedTime += delta * simTimeScale;
     }
 
-    getDisplayTime().setSimulationTime(elapsedTime, this.simulationElapsedTime);
+    this.updateDisplayTime(elapsedTime, this.simulationElapsedTime);
+
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update &&
         this.subjects[i].update(elapsedTime, this.simulationElapsedTime);
