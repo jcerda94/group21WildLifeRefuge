@@ -80,6 +80,7 @@ function Hawk (config) {
   var myHawkID = numberHawks++;
 
   function checkForHare () {
+
     if (!isEating) {
       const hares = SceneManager.getSceneObjectsOf({ types: ["Hare"] });
       const hareIndex = randomInt(0, hares.length - 1);
@@ -95,6 +96,7 @@ function Hawk (config) {
       );
       tween2.chain(tween3);
       tween3.chain(tween1);
+
     }
   }
   tween1.chain(tween2);
@@ -134,7 +136,10 @@ function Hawk (config) {
   }
 
   let lastSimTime = 0;
+
+
   function update (elapsedTime, simulationTime) {
+    //console.log("call hawk");
     count++;
     const position = get2DPosition();
     //hawkHunger.update(simulationTime);
