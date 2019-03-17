@@ -121,7 +121,7 @@ export var findRemoveIfNear = function (animalPos, range) {
 
     // node.data.position.x + ":" + node.data.position.y + ":"+ node.data.position.z);
     grasses.remove(shortestDist_node.data);
-    ll.Remove(shortestDist_node);
+    //ll.Remove(shortestDist_node);
     // console.log(
     //   "remove [" +
     //     shortestDist_node_i +
