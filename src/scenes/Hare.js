@@ -1,9 +1,7 @@
 import { getValue, random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
-import { myGrasses } from "./GrassField.js";
 import { findRemoveIfNear } from "./GrassField";
-import { distance } from "./GrassField";
 const THREE = require("three");
 
 export const NAME = "hare";
@@ -30,6 +28,18 @@ function Hare (scene, hareCount) {
   const SceneManager = getSceneManager();
   const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
   const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
+
+  //console.log("SceneManager: " + JSON.stringify(SceneManager) );
+  console.log("=======================================================: ");
+  for (let s_idx = 0; s_idx < SceneManager.scene.length; s_idx++) {
+    //console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
+    for (let i = 0; i < SceneManager.scene[s_idx].children.length; i++) {
+        console.log("SceneManager.scene: " + SceneManager.scene[s_idx].children[i].name );
+    }
+  }
+  //console.log("SceneManager[4]: " + JSON.stringify(SceneManager.subjects[4].model.metadata) );
+
+  console.log("=======================================================: ");
 
   const x = random(-widthBound, widthBound);
   const y = 2;
@@ -78,6 +88,7 @@ function Hare (scene, hareCount) {
       )
       .start();
   }
+  //TODO: when hare finds hawk hide under a bush
   function checkForHawks () {
     // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
     for (let i = 4; i < getSceneManager().subjects.length; i++) {
@@ -108,14 +119,21 @@ function Hare (scene, hareCount) {
   tween3.chain(tween1);
   // tween4.chain(tween1);
 
-  var doCnt = 5;
+  var eating_pace = 20;
+  var eating_paceCntr = eating_pace;
 
   function update () {
+
     checkForHawks();
-    var deltaDistance = 500;
-    // hareMesh.position.x = 500;
-    // hareMesh.position.z = 500;// fix the hare position for testing
-    findRemoveIfNear(hareMesh.position, deltaDistance);
+
+    //TODO: this should really be real-time-based, not loop based
+    //TODO: it should also be part of a behavior model so these can be tuned the behavior models here
+    //if(eating_paceCntr-- == 0)
+    {
+      eating_paceCntr = eating_pace; 
+      var deltaDistance = 500;
+      findRemoveIfNear(hareMesh.position, deltaDistance);
+    }
     TWEEN.update();
   }
   function handleCollision (targets) {
