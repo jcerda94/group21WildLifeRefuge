@@ -1,12 +1,9 @@
 import { random } from "../utils/helpers";
-import SceneManager, { getSceneManager } from "./SceneManager";
-//import { getSceneManager } from "./SceneManager";
-//import { getGrassLinkedList } from "../utils/LinkedList.js";
+import { getSceneManager } from "./SceneManager";
 import { Node } from "../utils/LinkedList.js";
 
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
-
 
 export const TYPE = "Grass";
 const grasses = new THREE.Object3D();
@@ -28,8 +25,10 @@ async function GrassField (config) {
   });
 
   const bounds = getSceneManager().groundSize;
-  bounds.x *= 0.95;
-  bounds.y *= 0.95;
+  const positionBound = {
+    x: bounds.x * 0.95,
+    y: bounds.y * 0.95
+  };
 
   for (let i = 0; i < count; i++) {
     // for (let i = 0; i < 15; i++) { // testing
@@ -46,8 +45,8 @@ async function GrassField (config) {
     };
     const size = random(1, 2);
 
-    const x = random(-bounds.x / 2, bounds.x / 2);
-    const z = random(-bounds.y / 2, bounds.y / 2);
+    const x = random(-positionBound.x / 2, positionBound.x / 2);
+    const z = random(-positionBound.y / 2, positionBound.y / 2);
 
     const rotation = random(-Math.PI / 2, Math.PI / 2);
 
@@ -70,8 +69,8 @@ async function GrassField (config) {
     // Can then search this list to find the grass closest, or the right kind of grass, and move to it and eat it.
     // Then, since the grass object is on the list, we should be able to call grasses.remove(eaten_grass)
 
-    //getGrassLinkedList().Append(new Node(grass));
-    //console.log(" grasses length: " + grasses.children.length); 
+    // getGrassLinkedList().Append(new Node(grass));
+    // console.log(" grasses length: " + grasses.children.length);
   }
 
   grasses.type = TYPE;
@@ -95,21 +94,20 @@ export var findRemoveIfNear = function (animalPos, range) {
   theRange = range;
 
   const my_grasses = myGrasses();
-  //console.log(" my_grasses length: " + my_grasses.children.length); // <<< defined
-  //console.log(" my_grasses count: " + my_grasses.children.count);   // <<< undefined
-  
+  // console.log(" my_grasses length: " + my_grasses.children.length); // <<< defined
+  // console.log(" my_grasses count: " + my_grasses.children.count);   // <<< undefined
+
   var shortestDist = 1000000.1;
   var shortestDist_node;
   var shortestDist_node_i = 0;
 
-  for(var idx=0; idx < my_grasses.children.length; idx++){
-
+  for (var idx = 0; idx < my_grasses.children.length; idx++) {
     var node = my_grasses.children[idx];
     var distance = getDistance(animalPos, node.position);
-    if(isGreaterThan(shortestDist.toFixed(), distance.toFixed()))
-    //if(shortestDist.toFixed() > distance.toFixed())  // <<< fails w/o error, just doesn't do compare, likely as toFixed returns string
-    //if(shortestDist > distance) // <<< fails w/o error, just doesn't do comparison correctly
-    {
+    if (isGreaterThan(shortestDist.toFixed(), distance.toFixed())) {
+      // if(shortestDist.toFixed() > distance.toFixed())
+      // ^^^ fails w/o error, just doesn't do compare, likely as toFixed returns string
+      // if(shortestDist > distance) // <<< fails w/o error, just doesn't do comparison correctly
       shortestDist = distance;
       shortestDist_node = node;
       shortestDist_node_i = idx;
@@ -144,19 +142,14 @@ export var findRemoveIfNear = function (animalPos, range) {
 };
 
 function isGreaterThan (n1, n2) {
-  return parseInt(n1)
-       > parseInt(n2);
+  return parseInt(n1) > parseInt(n2);
 }
-export function getDistance(pos1, pos2)
-{
+export function getDistance (pos1, pos2) {
   var dist = 1.0;
-  var deltaX = parseInt(pos1.x)
-             - parseInt(pos2.x); 
-  var deltaY = parseInt(pos1.y)
-             - parseInt(pos2.y); 
-  var deltaZ = parseInt(pos1.z)
-             - parseInt(pos2.z); 
-  dist = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY) + (deltaZ*deltaZ));
-  return (dist);
-};
+  var deltaX = parseInt(pos1.x) - parseInt(pos2.x);
+  var deltaY = parseInt(pos1.y) - parseInt(pos2.y);
+  var deltaZ = parseInt(pos1.z) - parseInt(pos2.z);
+  dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+  return dist;
+}
 export default GrassField;
