@@ -249,7 +249,7 @@ class EnvironmentManager {
         const yBnd = this.localEnv.length;
         const xBnd = this.localEnv[0].length;
 
-
+         //console.log("lowerWater lenghthv " + lowWater.length);
         for (var i = 0; i < lowWater.length; i++) {
             adjacencyMatrix.forEach((offset) => {
                 let x = lowWater[i].x + offset[0];
@@ -262,6 +262,7 @@ class EnvironmentManager {
                 }
 
                 if (neighborsWithWater.length > 0) {
+                    //console.log("neighbor with water + " + neighborsWithWater.length);
                     let waterBalanced = 0.05 / neighborsWithWater.length;
                     for (var j = 0; j < neighborsWithWater.length; j++) {
                         neighborsWithWater[j].water -= waterBalanced;
@@ -280,13 +281,32 @@ class EnvironmentManager {
 
         for (var i = 0; i < this.trackedObjects.length; i++) {
             let envTile = this.getEnvByXYPos(this.trackedObjects[i].position.x, this.trackedObjects[i].position.z);
+
             envTile.water -= this.trackedObjects[i].water;
+           // console.log("called environment");
         }
 
         this.balanceWaterTable();
 
         this.toggleEnvironmentViewOnCanvas();
 
+    }
+
+    //consume water by a specif tree or grass
+    consumeWater(x, z, type){
+        let envTile = this.getEnvByXYPos(x,z);
+        if(type == "Tree"){
+            //console.log("envTiel.water called from consume water" + envTile.water);
+            envTile.water -= 0.25;
+        }
+
+        this.toggleEnvironmentViewOnCanvas();
+    }
+
+    //return envTile level
+    getEnvTileLeve(x,z){
+        let eneTile =  this.getEnvByXYPos(x,z);
+        return eneTile.water;
     }
 
 

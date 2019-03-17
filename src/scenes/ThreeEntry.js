@@ -14,7 +14,7 @@ class ThreeEntry {
     this.environmentManager = EnvironmentManager();
     this.frames = 0;
     this.fpsCounter = setInterval(() => {
-      console.log(this.frames);
+      //console.log(this.frames);
       this.resizeCanvas();
       this.frames = 0;
     }, 1000);
