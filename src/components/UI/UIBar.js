@@ -10,6 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ModelAdd from "./ModelAdd";
 import ModelMenu from "./ModelMenu";
 import Subject from "../../utils/subject";
+import SimControls from "./SimControls";
 
 const styles = {
   root: {
@@ -66,31 +67,11 @@ class UIBar extends Component {
             </IconButton>
             <Typography variant='h6' color='inherit' className={classes.grow}>
               Willapa Refuge
-            </Typography>{" "}
-            <Button onClick={this.handleMenu("floraAnchor")} color='inherit'>
-              Flora
-            </Button>
-            <Button onClick={this.handleMenu("faunaAnchor")} color='inherit'>
-              Fauna
-            </Button>
-            <ModelMenu
-              id='menu-fauna'
-              anchor={faunaAnchor}
-              open={faunaOpen}
-              onClose={this.handleClose("faunaAnchor")}
-            >
-              <ModelAdd label='Redtail Hawk' />
-              <ModelAdd label='Snowshoe Hare' />
-            </ModelMenu>
-            <ModelMenu
-              id='menu-flora'
-              anchor={floraAnchor}
-              open={floraOpen}
-              onClose={this.handleClose("floraAnchor")}
-            >
-              <ModelAdd label='Big Sagebush' />
-              <ModelAdd label='Western Cedar' />
-            </ModelMenu>
+            </Typography>
+            <SimControls
+              color='inherit'
+              className={classes.menuButton}
+            />
           </Toolbar>
         </AppBar>
       </div>

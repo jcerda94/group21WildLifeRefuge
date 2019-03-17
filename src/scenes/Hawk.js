@@ -1,8 +1,9 @@
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { random, randomInt } from "../utils/helpers";
-import { hunger, label } from "../utils/behavior";
+import { hunger, label, pauseResume } from "../utils/behavior";
 import { getCapiInstance } from "../utils/CAPI/capi";
+
 const THREE = require("three");
 
 export const NAME = "redtailHawk";
@@ -124,21 +125,38 @@ function Hawk (config) {
   const shouldShowLabel = getCapiInstance().getValue({ key: "hawkLabel" });
   if (shouldShowLabel) hungerLabel.showLabel();
 
+  const pauseResumeCleanup = pauseResume(pauseHawk, resumeHawk);
+
   function setLabelTo ({ visible }) {
     if (visible) hungerLabel.showLabel();
     else hungerLabel.hideLabel();
   }
 
-  function destroyLabel () {
+  function onDestroy () {
     hungerLabel.destroy();
+    pauseResumeCleanup();
+  }
+
+  function updateLabelPosition () {
+    const position = get2DPosition();
+    hungerLabel.update(position.x, position.y, hawkHunger.get().toFixed(1));
+  }
+
+  function pauseHawk () {
+    tween3.stop();
+  }
+
+  function resumeHawk () {
+    tween3.start();
   }
 
   let lastSimTime = 0;
+
   function update (elapsedTime, simulationTime) {
     count++;
-    const position = get2DPosition();
-    //hawkHunger.update(simulationTime);
-    //hungerValue.update(position.x, position.y, hawkHunger.get().toFixed(1));
+    // const position = get2DPosition();
+    // hawkHunger.update(simulationTime);
+    // hungerValue.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
     if (deathDelta > deathTimer) {
       SceneManager.removeObject(hawk);
@@ -152,7 +170,8 @@ function Hawk (config) {
 
     lastSimTime = simulationTime;
     hawkHunger.update(simulationTime, isEating);
-    hungerLabel.update(position.x, position.y, hawkHunger.get().toFixed(1));
+    updateLabelPosition();
+    // hungerLabel.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
     if (hawkHunger.get() >= maxHunger * 0.75) {
       // Go get a rabbit
@@ -186,7 +205,8 @@ function Hawk (config) {
   return {
     update,
     setLabelTo,
-    destroyLabel,
+    onDestroy,
+    updateLabelPosition,
     model: hawk,
     created: new Date(),
     handleCollision
