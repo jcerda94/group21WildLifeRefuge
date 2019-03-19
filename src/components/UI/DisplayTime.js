@@ -7,8 +7,8 @@ import Subject from "../../utils/subject";
 
 const Container = styled(Paper)`
   position: absolute;
-  right: 0%;
-  top: 8%;
+  right: 13px;
+  top: 78px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -54,7 +54,7 @@ class DisplayTime extends Component {
     const { day } = this.state;
 
     return (
-      <Container>
+      <Container style={{ backgroundColor: "#FFFFFFBB" }}>
         <div className='header'>
           <h2>Simulation Time</h2>
           <div className='month' id='month'>

@@ -1,3 +1,5 @@
+import Subject from "../utils/subject";
+
 export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
   const max = maxHunger || 20;
   const min = minHunger || 1;
@@ -34,6 +36,16 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
   return {
     update,
     get
+  };
+};
+
+export const pauseResume = (pauseHandler, resumeHandler) => {
+  Subject.subscribe("simulation_paused", pauseHandler);
+  Subject.subscribe("simulation_resumed", resumeHandler);
+
+  return function cleanup () {
+    Subject.unsubscribe("simulation_paused", pauseHandler);
+    Subject.unsubscribe("simulation_resumed", resumeHandler);
   };
 };
 

@@ -50,8 +50,14 @@ class SceneManager {
     this.initializeScene();
     this.initializeRenderer();
     this.initializeCamera();
+    this.initializeSimEvents();
 
     this.createSceneSubjects();
+  }
+
+  initializeSimEvents () {
+    Subject.subscribe("pause_simulation", this.pauseSimulation);
+    Subject.subscribe("resume_simulation", this.resumeSimulation);
   }
 
   initializeLoadingScreen () {
@@ -136,10 +142,18 @@ class SceneManager {
     const elapsedTime = this.clock.getElapsedTime();
 
     const simTimeScale = this.timeScale[this.currentTimeScale] || 1;
-    if (!this.isPaused) {
-      this.simulationElapsedTime += delta * simTimeScale;
+    if (this.isPaused) {
+      this.renderer.render(this.scene, this.camera);
+      this.cameraControls.update(delta);
+      this.subjects.forEach(subject => {
+        if (subject.updateLabelPosition) {
+          subject.updateLabelPosition();
+        }
+      });
+      return;
     }
 
+    this.simulationElapsedTime += delta * simTimeScale;
     this.updateDisplayTime(elapsedTime, this.simulationElapsedTime);
 
     for (let i = 0; i < this.subjects.length; i++) {
@@ -147,7 +161,6 @@ class SceneManager {
         this.subjects[i].update(elapsedTime, this.simulationElapsedTime);
     }
 
-    this.cameraControls.update(delta);
     if (!this.loaded) {
       this.renderer.render(this.loadingScreen.scene, this.loadingScreen.camera);
       return;
@@ -246,6 +259,7 @@ class SceneManager {
     this.subjects = this.subjects.filter(
       subject => subject.model.uuid !== sceneObject.uuid
     );
+    sceneObject.onDestroy && sceneObject.onDestroy();
     this.scene.remove(sceneObject);
   }
 
@@ -274,8 +288,8 @@ class SceneManager {
     const modelsToRemove = this.subjects
       .filter(subject => {
         if (subject.model && subject.model.type === type) {
-          subject.destroyLabel && subject.destroyLabel();
-          return subject.model.type === type;
+          subject.onDestroy && subject.onDestroy();
+          return true;
         }
         return false;
       })
@@ -301,11 +315,31 @@ class SceneManager {
     });
   }
 
+  pauseSimulation = () => {
+    this.isPaused = true;
+    this.clock.stop();
+    Subject.next("simulation_paused");
+  }
+
+  resumeSimulation = () => {
+    this.isPaused = false;
+    this.clock.start();
+    Subject.next("simulation_resumed");
+  }
+
   onTransporterReady () {
     const capi = getCapiInstance();
     capi.addListenerFor({
       key: "hawkLabel",
       callback: this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })
+    });
+
+    capi.addListenerFor({
+      key: "westernCedarLabel",
+      callback: this.toggleLabelFor({
+        type: "Tree",
+        labelName: "westernCedarLabel"
+      })
     });
 
     const [hawks, hares, cedars, bushes] = capi.getValues({
