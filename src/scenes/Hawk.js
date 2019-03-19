@@ -182,7 +182,7 @@ function Hawk (config) {
       }
     }
   }
-
+  
   return {
     update,
     setLabelTo,
@@ -192,4 +192,8 @@ function Hawk (config) {
     handleCollision
   };
 }
+export var myHawks = function () {
+  return getSceneManager().getSceneObjectsOf({types: ["Hawk"]});
+};
+
 export default Hawk;

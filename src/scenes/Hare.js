@@ -2,6 +2,7 @@ import { getValue, random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { findRemoveIfNear } from "./GrassField";
+import { myHawks } from "./Hawk.js";
 const THREE = require("three");
 
 export const NAME = "hare";
@@ -10,59 +11,61 @@ let TWEEN = require("@tweenjs/tween.js");
 var numberOfHares = 0;
 
 function Hare (scene, hareCount) {
-  // const size = 3;
-  const color = "#db7093";
-  let tween1 = {};
-  let tween2 = {};
-  let tween3 = {};
-  // let tween4 = {};
-  // let grassPositon = {};
-  // let nearestGrassPositon = {};
-  let distanceFromHawk = 0.0;
-  // create a sphere
-  var sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
-  var sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
-  var hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  hareMesh.name = "hare";
+    // const size = 3;
+    const color = "#db7093";
+    let tween1 = {};
+    let tween2 = {};
+    let tween3 = {};
+    // let tween4 = {};
+    // let grassPositon = {};
+    // let nearestGrassPositon = {};
+    let distanceFromHawk = 0.0;
+    // create a sphere
+    var sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
+    var sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
+    var hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    hareMesh.name = "hare";
 
-  const SceneManager = getSceneManager();
-  const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
-  const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
+    const SceneManager = getSceneManager();
+    const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
+    const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
 
-  //console.log("SceneManager: " + JSON.stringify(SceneManager) );
-  console.log("=======================================================: ");
-  for (let s_idx = 0; s_idx < SceneManager.scene.length; s_idx++) {
-    //console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
-    for (let i = 0; i < SceneManager.scene[s_idx].children.length; i++) {
-        console.log("SceneManager.scene: " + SceneManager.scene[s_idx].children[i].name );
+    //console.log("SceneManager: " + JSON.stringify(SceneManager) );
+    console.log("=======================================================: ");
+    for (let s_idx = 0; s_idx < SceneManager.scene.length; s_idx++) {
+      //console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
+      for (let i = 0; i < SceneManager.scene[s_idx].children.length; i++) {
+          console.log("SceneManager.scene: " + SceneManager.scene[s_idx].children[i].name );
+      }
     }
-  }
-  //console.log("SceneManager[4]: " + JSON.stringify(SceneManager.subjects[4].model.metadata) );
+    //console.log("SceneManager[4]: " + JSON.stringify(SceneManager.subjects[4].model.metadata) );
 
-  console.log("=======================================================: ");
+    console.log("=======================================================: ");
 
-  const x = random(-widthBound, widthBound);
-  const y = 2;
-  const z = random(-heightBound, heightBound);
-  const position = { x, y, z };
+    const x = random(-widthBound, widthBound);
+    const y = 2;
+    const z = random(-heightBound, heightBound);
+    const position = { x, y, z };
 
-  hareMesh.position.set(position.x, position.y, position.z);
-  // hareMesh = new THREE.Vector3(position.x,y,z);
-  hareMesh.castShadow = true;
-  hareMesh.userData = {
-    selectable: true,
-    color: {
-      original: color,
-      highlight: "#f7ff6d",
-      selected: "#808080"
-    },
-    name: NAME
-  };
-  // var myName = "hare_" + hareCount;
-  // console.log("subscribe to hawkObserver for " + myName);
-  getHawkObserver().subscribe(position => {
+    hareMesh.position.set(position.x, position.y, position.z);
+    // hareMesh = new THREE.Vector3(position.x,y,z);
+    hareMesh.castShadow = true;
+    hareMesh.userData = {
+      selectable: true,
+      color: {
+        original: color,
+        highlight: "#f7ff6d",
+        selected: "#808080"
+      },
+      name: NAME
+    };
+    // var myName = "hare_" + hareCount;
+    // console.log("subscribe to hawkObserver for " + myName);
+    getHawkObserver().subscribe(position => {
     // console.log("hawkObserver method called for " + myName);
     // checkForHare(position);
+    var deltaDistance = 500;
+    checkForHawks(hareMesh.position, deltaDistance);
   });
 
   // scene.add(hareMesh);
@@ -88,26 +91,52 @@ function Hare (scene, hareCount) {
       )
       .start();
   }
-  //TODO: when hare finds hawk hide under a bush
-  function checkForHawks () {
-    // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
-    for (let i = 4; i < getSceneManager().subjects.length; i++) {
-      if (getSceneManager().subjects[i].model.name === "redtailHawk") {
-        // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[i].model.name);
-        // console.log("Hare has found a hawk");
-      }
-    }
+  //var shortestDist = 1000000.1;
+  //var shortestDist_node;
+  //var shortestDist_node_i = 0;
+  // when hare finds hawk hide under a bush
+  //function checkForHawks () {
+  //  // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
+  //  for (let i = 4; i < getSceneManager().subjects.length; i++) {
+  //    if (getSceneManager().subjects[i].model.name === "redtailHawk") {
+  //      // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[i].model.name);
+  //      // console.log("Hare has found a hawk");
+  //    }
+  //  }
+  // function for animals to call to detect the distance to the closest hawk
+  var checkForHawks = function (animalPos, range) {
 
-    return distanceFromHawk;
+      const hawks = myHawks();
+      //console.log(" hawks length: " + hawks.length); // <<< defined
+      //console.log(" hawks count: " + hawks.count);   // <<< undefined
+
+      var shortestDist = 1000000.1;
+
+      for (var idx = 0; idx < hawks.length; idx++) {
+        var node = hawks[idx];
+        var distance = getDistance(animalPos, node.position);
+        if (shortestDist > distance) {
+          shortestDist = distance;
+        }
+      }
+      
+      if (shortestDist < range) {
+        //console.log(" ------ hawk at new shortestDist: " + shortestDist.toFixed());
+        escapeFromHawk();
+      }
+    };
+
+    //return distanceFromHawk;
+  function escapeFromHawk () {
+    //console.log(" escapeFromHawk: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
   }
-  function escapeFormHawk () {}
   // looking for closest grass potion
   // function getGrassPosition() {
   //  const grassPosition ={};
   //  return grassPosition;
   // }
   createTween();
-  checkForHawks();
+  //checkForHawks();
 
   myHareID = numberOfHares++;
 
@@ -124,7 +153,7 @@ function Hare (scene, hareCount) {
 
   function update () {
 
-    checkForHawks();
+    //checkForHawks();
 
     //TODO: this should really be real-time-based, not loop based
     //TODO: it should also be part of a behavior model so these can be tuned the behavior models here
@@ -132,8 +161,9 @@ function Hare (scene, hareCount) {
     {
       eating_paceCntr = eating_pace; 
       var deltaDistance = 500;
-      findRemoveIfNear(hareMesh.position, deltaDistance);
+       findRemoveIfNear(hareMesh.position, deltaDistance);
     }
+
     TWEEN.update();
   }
   function handleCollision (targets) {
@@ -151,6 +181,9 @@ function Hare (scene, hareCount) {
     created: new Date(),
     handleCollision
   };
+}
+function getDistance (pos1, pos2) {
+  return pos1.distanceTo(pos2);
 }
 
 export default Hare;

@@ -144,7 +144,7 @@ export var findRemoveIfNear = function (animalPos, range) {
 function isGreaterThan (n1, n2) {
   return parseInt(n1) > parseInt(n2);
 }
-export function getDistance (pos1, pos2) {
+function getDistance (pos1, pos2) {
   return pos1.distanceTo(pos2);
 }
 export default GrassField;
