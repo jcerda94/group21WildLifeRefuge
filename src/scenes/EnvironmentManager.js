@@ -87,7 +87,7 @@ class EnvironmentManager {
     trackedObjects = [];
 
     //CAUTION! Object will only be shallow copied
-    defaultEnvironmentObject = {
+    defaultEnvironment = {
         water: 1.0,
         treeThirst: 0.025,
         grassThirst: 0.01
@@ -95,7 +95,7 @@ class EnvironmentManager {
 
     constructor(){
 
-        this.initializeEnvironmentWithParams(this.defaultEnvironmentObject);
+        this.initializeEnvironmentWithParams(this.defaultEnvironment);
         // Creates a THREE Texture using an HTML Canvas element
         var drawingCanvas = document.getElementById( 'drawing-canvas' );
         var drawingContext = drawingCanvas.getContext( '2d' );
@@ -108,6 +108,15 @@ class EnvironmentManager {
     }
 
     initializeEnvironmentWithParams(environmentObject) {
+
+        this.defaultEnvironment = environmentObject;
+
+        //Include any parameters that we want in every environment tile,
+        //other object values will simply be made available under the defaultEnvironment object
+        const fillObject = {
+            water: environmentObject.water
+        };
+
         this.sceneManager = getSceneManager();
 
         //Added 1 to array size to handle odd ground sizes (1222 x 899) and objects at the absolute edge of the ground
@@ -200,14 +209,13 @@ class EnvironmentManager {
 
     registerTrackedObject(object) {
 
-        //Temp values for testing
-        //TODO: Update with preloaded values from CAPI
+        //TODO: Add object type for bushes
         switch (object.type) {
             case "Tree":
-                object.water = 0.25;
+                object.water = this.defaultEnvironment.treeThirst;
                 break;
             case "Grass":
-                object.water = 0.1;
+                object.water = this.defaultEnvironment.grassThirst;
                 break;
             default:
                 console.warn("Object type: " + object.type + " not currently supported by EnvironmentManger")
