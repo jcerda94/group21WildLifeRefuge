@@ -44,5 +44,8 @@ function Bush () {
     created: new Date()
   };
 }
+export var getBushes = function () {
+  return getSceneManager().getSceneObjectsOf({types: ["Bush"]});
+};
 
 export default Bush;

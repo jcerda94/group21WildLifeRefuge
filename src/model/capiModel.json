@@ -5,13 +5,13 @@
   "reviewMode": false,
   "hawkLabel": true,
   "hawkMetabolism": 1,
-  "redtailHawkCount": 15,
+  "redtailHawkCount": 10,
   "redtailHawkSelected": 0,
   "snowshoeHareCount": 3,
   "showshoeHareSelected": 0,
   "sageBushCount": 0,
   "sageBushSelected": 0,
-  "westernCedarCount": 0,
+  "westernCedarCount": 10,
   "westernCedarSelected": 0,
   "inputTable": []
 }

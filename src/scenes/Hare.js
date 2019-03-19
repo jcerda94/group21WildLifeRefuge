@@ -2,13 +2,12 @@ import { getValue, random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { findRemoveIfNear } from "./GrassField";
-import { myHawks } from "./Hawk.js";
+import { getTrees } from "./Tree.js";
 const THREE = require("three");
 
 export const NAME = "hare";
 export const TYPE = "Hare";
 let TWEEN = require("@tweenjs/tween.js");
-var numberOfHares = 0;
 
 function Hare (scene, hareCount) {
     // const size = 3;
@@ -30,25 +29,12 @@ function Hare (scene, hareCount) {
     const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
     const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
 
-    //console.log("SceneManager: " + JSON.stringify(SceneManager) );
-    console.log("=======================================================: ");
-    for (let s_idx = 0; s_idx < SceneManager.scene.length; s_idx++) {
-      //console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
-      for (let i = 0; i < SceneManager.scene[s_idx].children.length; i++) {
-          console.log("SceneManager.scene: " + SceneManager.scene[s_idx].children[i].name );
-      }
-    }
-    //console.log("SceneManager[4]: " + JSON.stringify(SceneManager.subjects[4].model.metadata) );
-
-    console.log("=======================================================: ");
-
     const x = random(-widthBound, widthBound);
     const y = 2;
     const z = random(-heightBound, heightBound);
     const position = { x, y, z };
 
     hareMesh.position.set(position.x, position.y, position.z);
-    // hareMesh = new THREE.Vector3(position.x,y,z);
     hareMesh.castShadow = true;
     hareMesh.userData = {
       selectable: true,
@@ -59,19 +45,13 @@ function Hare (scene, hareCount) {
       },
       name: NAME
     };
-    // var myName = "hare_" + hareCount;
-    // console.log("subscribe to hawkObserver for " + myName);
     getHawkObserver().subscribe(position => {
-    // console.log("hawkObserver method called for " + myName);
-    // checkForHare(position);
     var deltaDistance = 500;
-    checkForHawks(hareMesh.position, deltaDistance);
+    // this gets sent for every hawk, so shouldn't have to use the list thing
+    checkForHawks(hareMesh.position, position, deltaDistance);
   });
 
-  // scene.add(hareMesh);
   hareMesh.type = TYPE;
-
-  var myHareID;
 
   function createTween () {
     tween1 = new TWEEN.Tween(hareMesh.position).to(
@@ -91,58 +71,54 @@ function Hare (scene, hareCount) {
       )
       .start();
   }
-  //var shortestDist = 1000000.1;
-  //var shortestDist_node;
-  //var shortestDist_node_i = 0;
-  // when hare finds hawk hide under a bush
-  //function checkForHawks () {
-  //  // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
-  //  for (let i = 4; i < getSceneManager().subjects.length; i++) {
-  //    if (getSceneManager().subjects[i].model.name === "redtailHawk") {
-  //      // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[i].model.name);
-  //      // console.log("Hare has found a hawk");
-  //    }
-  //  }
   // function for animals to call to detect the distance to the closest hawk
-  var checkForHawks = function (animalPos, range) {
-
-      const hawks = myHawks();
-      //console.log(" hawks length: " + hawks.length); // <<< defined
-      //console.log(" hawks count: " + hawks.count);   // <<< undefined
-
-      var shortestDist = 1000000.1;
-
-      for (var idx = 0; idx < hawks.length; idx++) {
-        var node = hawks[idx];
-        var distance = getDistance(animalPos, node.position);
-        if (shortestDist > distance) {
-          shortestDist = distance;
-        }
-      }
-      
-      if (shortestDist < range) {
-        //console.log(" ------ hawk at new shortestDist: " + shortestDist.toFixed());
-        escapeFromHawk();
-      }
+  var checkForHawks = function (harePos, hawkPos, range) {
+    var distance = getDistance(harePos, hawkPos);
+    if (distance < range) {
+      //console.log(" ------ hawk at new shortestDist: " + distance.toFixed());
+      escapeFromHawk(harePos);
+    }
+    //else console.log(" ------ hawk far away: " + distance.toFixed());
     };
 
     //return distanceFromHawk;
-  function escapeFromHawk () {
+  function escapeFromHawk (harePos) {
     //console.log(" escapeFromHawk: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
+
+    const trees = getTrees(); 
+    //console.log(" trees length: " + trees.length); // <<< defined
+    //console.log(" trees count: " + trees.count);   // <<< undefined
+
+    var shortestDist = 1000000.1;
+    var tree; 
+    for (var idx = 0; idx < trees.length; idx++) {
+      var x = trees[idx];
+      var distance = getDistance(harePos, x.position);
+      if (shortestDist > distance) {
+        shortestDist = distance;
+        tree = trees[idx];
+      }
+    }
+    
+    //console.log(" ------ run to tree at : " + shortestDist.toFixed());
+    moveToPosition(harePos, tree.position);
   }
-  // looking for closest grass potion
-  // function getGrassPosition() {
-  //  const grassPosition ={};
-  //  return grassPosition;
-  // }
+  function moveToPosition(harePos, newPos){
+    // I'm guessing that this works like this
+    tween3 = new TWEEN.Tween(harePos).to(
+      {
+        x: newPos.x,
+        y: newPos.y,
+        z: newPos.z
+      },
+      10000
+    );
+    tween2.chain(tween3);
+    tween3.chain(tween1);
+  }
+
   createTween();
-  //checkForHawks();
-
-  myHareID = numberOfHares++;
-
-  console.log("hare created: hare__" + myHareID);
-
-  createTween();
+  
   tween1.chain(tween2);
   tween2.chain(tween3);
   tween3.chain(tween1);
@@ -152,8 +128,6 @@ function Hare (scene, hareCount) {
   var eating_paceCntr = eating_pace;
 
   function update () {
-
-    //checkForHawks();
 
     //TODO: this should really be real-time-based, not loop based
     //TODO: it should also be part of a behavior model so these can be tuned the behavior models here
@@ -184,6 +158,9 @@ function Hare (scene, hareCount) {
 }
 function getDistance (pos1, pos2) {
   return pos1.distanceTo(pos2);
+}
+export function getHareID (theHare) {
+ return theHare.id; 
 }
 
 export default Hare;

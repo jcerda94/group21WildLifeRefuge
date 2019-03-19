@@ -80,4 +80,7 @@ function Tree () {
   };
 }
 
+export var getTrees = function () {
+  return getSceneManager().getSceneObjectsOf({types: ["Tree"]});
+};
 export default Tree;
