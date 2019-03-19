@@ -334,6 +334,14 @@ class SceneManager {
       callback: this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })
     });
 
+    capi.addListenerFor({
+      key: "westernCedarLabel",
+      callback: this.toggleLabelFor({
+        type: "Tree",
+        labelName: "westernCedarLabel"
+      })
+    });
+
     const [hawks, hares, cedars, bushes] = capi.getValues({
       keys: [
         "redtailHawkCount",

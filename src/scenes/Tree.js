@@ -186,6 +186,7 @@ function Tree (config) {
     update,
     onDestroy,
     updateLabelPosition,
+    setLabelTo,
     model: tree,
     created: new Date()
   };
