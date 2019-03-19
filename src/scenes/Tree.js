@@ -151,13 +151,17 @@ function Tree (config) {
         env.getEnvByXYPos(tree.position.x, tree.position.z).water -= tree.water;
         if(env.getEnvByXYPos(tree.position.x, tree.position.z).water > 0){
           isConsuming = true;
-        } else if (env.getEnvByXYPos(tree.position.x, tree.position.z).water < 0
-            && env.getEnvByXYPos(tree.position.x, tree.position.z).water > -1 ) {
+        } else if (
+            env.getEnvByXYPos(tree.position.x, tree.position.z).water < 0 &&
+            env.getEnvByXYPos(tree.position.x, tree.position.z).water > -1
+        ) {
           isConsuming = false;
           setTreeToBrownColor();
           setTreeTo45Degree();
 
-        }else if(env.getEnvByXYPos(tree.position.x, tree.position.z).water < -15){
+        }else if(
+            env.getEnvByXYPos(tree.position.x, tree.position.z).water < -15
+        ){
           setTreeToBrownColor();
           setTreeLayFlat();
           isConsuming = false;
