@@ -128,7 +128,7 @@ class EnvironmentManager {
         //TODO: Add dynamically generated environments (non-uniform starting conditions, maybe toy environment 'painter')
         this.localEnv = [...Array(groundX)].map(
             ()=>Array(groundY).fill().map(
-                () => Object.assign({}, environmentObject)
+                () => Object.assign({}, fillObject)
             ));
     }
 
@@ -207,6 +207,7 @@ class EnvironmentManager {
 
     }
 
+    //TODO: Add dynamic updating of the tree/grass thirstyness, add a listener on the appropriate values
     registerTrackedObject(object) {
 
         //TODO: Add object type for bushes
@@ -303,7 +304,7 @@ class EnvironmentManager {
         this.toggleEnvironmentViewOnCanvas();
 
     }
-    
+
 }
 
 export const getEnvironmentManager = () => {
