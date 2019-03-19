@@ -153,6 +153,7 @@ function Hawk (config) {
   let lastSimTime = 0;
 
   function update (elapsedTime, simulationTime) {
+    // console.log("call hawk");
     count++;
     // const position = get2DPosition();
     // hawkHunger.update(simulationTime);

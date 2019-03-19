@@ -7,6 +7,7 @@ import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
 import { getPopUpInfo } from "../components/PopUpInfo";
 import ModelFactory from "./ModelFactory";
+
 import { getEnvironmentManager } from "./EnvironmentManager";
 import Subject from "../utils/subject";
 
@@ -132,9 +133,14 @@ class SceneManager {
     }
   }
 
+  updateDisplayTime (elapsedTime, simTime) {
+    Subject.next("update_sim_time", { elapsedTime, simTime });
+  }
+
   update () {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
+
     const simTimeScale = this.timeScale[this.currentTimeScale] || 1;
     if (this.isPaused) {
       this.renderer.render(this.scene, this.camera);
@@ -148,6 +154,7 @@ class SceneManager {
     }
 
     this.simulationElapsedTime += delta * simTimeScale;
+    this.updateDisplayTime(elapsedTime, this.simulationElapsedTime);
 
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update &&
