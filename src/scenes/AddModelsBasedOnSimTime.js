@@ -7,15 +7,16 @@
 import {getSimTime} from "../components/UI/DisplayTime";
 import AddModels from "./AddModels";
 const maxAmountOfTree = 15;
-let days = 2;
+let timeInterval = 1;
+let days = timeInterval;
 function AddModelsBasedOnSimTime() {
 
 
     const simTime = getSimTime();
-   //adding tree every 3 days (simulation time)
-    if( simTime.getDay()>= days && parseInt(simTime.getDay()% 3) == 2){
+   //adding tree every 1 days (simulation time)
+    if( parseInt(simTime.getDay()) >= days && parseInt(simTime.getDay()%(timeInterval)) == 0){
         addTree();
-        days = days + 3;
+        days = days +timeInterval;
     }
 
     function addTree(){
