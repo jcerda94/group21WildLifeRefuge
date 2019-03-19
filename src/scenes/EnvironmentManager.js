@@ -303,22 +303,7 @@ class EnvironmentManager {
         this.toggleEnvironmentViewOnCanvas();
 
     }
-
-    //consume water by a specif tree or grass
-    consumeWater(x, z, type){
-        let envTile = this.getEnvByXYPos(x,z);
-        if(type === "Tree"){
-            envTile.water -= 0.25;
-        }
-        //this.toggleEnvironmentViewOnCanvas();
-    }
-
-    //return envTile level
-    getEnvTileLevel(x,z){
-        let envTile =  this.getEnvByXYPos(x,z);
-        return envTile.water;
-    }
-
+    
 }
 
 export const getEnvironmentManager = () => {
