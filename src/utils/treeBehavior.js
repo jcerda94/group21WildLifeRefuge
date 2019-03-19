@@ -4,84 +4,84 @@
     Reference: identical to behavior.js created by Andrew.
  */
 
-export const waterLevel = ({ maxHunger, minHunger, hungerTickRate }) => {
-    const max = maxHunger || 20;
-    const min = minHunger || 1;
-    const tickRate = hungerTickRate || 0.0001; // hunger units per second
-    if (min < 1) {
-        throw new Error("Minimum hunger value must be >= 1");
+export const waterLevel = ({ maxThirsty, minThirsty, thirstTickRate }) => {
+  const max = maxThirsty || 20;
+  const min = minThirsty || 1;
+  const tickRate = thirstTickRate || 0.0001; // hunger units per second
+  if (min < 1) {
+    throw new Error("Minimum hunger value must be >= 1");
+  }
+
+  if (max < min) {
+    throw new Error("Maximum hunger value must be > minimum hunger value");
+  }
+
+  let currentHunger = max * 0.5;
+  let lastUpdateTime = 0;
+
+  function update (elapsedTime, isEating) {
+    const delta = elapsedTime - lastUpdateTime;
+
+    if (isEating) {
+      currentHunger -= delta * tickRate * 4;
+    } else {
+      currentHunger += delta * tickRate;
     }
 
-    if (max < min) {
-        throw new Error("Maximum hunger value must be > minimum hunger value");
-    }
+    if (currentHunger > max) currentHunger = max;
+    if (currentHunger < min) currentHunger = min;
+    lastUpdateTime = elapsedTime;
+  }
 
-    let currentHunger = max * 0.5;
-    let lastUpdateTime = 0;
+  function get () {
+    return currentHunger;
+  }
 
-    function update (elapsedTime, isEating) {
-        const delta = elapsedTime - lastUpdateTime;
-
-        if (isEating) {
-            currentHunger -= delta * tickRate * 4;
-        } else {
-            currentHunger += delta * tickRate;
-        }
-
-        if (currentHunger > max) currentHunger = max;
-        if (currentHunger < min) currentHunger = min;
-        lastUpdateTime = elapsedTime;
-    }
-
-    function get () {
-        return currentHunger;
-    }
-
-    return {
-        update,
-        get
-    };
+  return {
+    update,
+    get
+  };
 };
 
 export const label = ({ text, initialValue, x, y }) => {
-    const label = document.createElement("div");
-    label.style.position = "absolute";
-    label.style.width = "60px";
+  const label = document.createElement("div");
+  label.style.position = "absolute";
+  label.style.width = "60px";
 
-    label.style.backgroundColor = "#30303080";
-    label.style.borderRadius = "0.25em";
+  label.style.backgroundColor = "#30303080";
+  label.style.borderRadius = "0.25em";
+  label.style.display = "none";
+  label.style.alignItems = "center";
+  label.style.justifyContent = "center";
+  label.style.color = "#FFFFFF";
+  label.innerHTML = `${text}${initialValue}`;
+
+  label.style.top = y + "px";
+  label.style.left = x + "px";
+  document.body.appendChild(label);
+
+  function update (x, y, value) {
+    label.style.top = `${y}px`;
+    label.style.left = `${x}px`;
+    label.innerHTML = `${text}${value}`;
+  }
+
+  function hideLabel () {
     label.style.display = "none";
-    label.style.alignItems = "center";
-    label.style.justifyContent = "center";
-    label.style.color = "#FFFFFF";
-    label.innerHTML = `${text}${initialValue}`;
+  }
 
-    label.style.top = y + "px";
-    label.style.left = x + "px";
-    document.body.appendChild(label);
+  function showLabel () {
+    label.style.display = "flex";
+  }
 
-    function update (x, y, value) {
-        label.style.top = `${y}px`;
-        label.style.left = `${x}px`;
-        label.innerHTML = `${text}${value}`;
-    }
+  function destroy () {
+    document.body.removeChild(label);
+  }
 
-    function hideLabel () {
-        label.style.display = "none";
-    }
-
-    function showLabel () {
-        label.style.display = "flex";
-    }
-
-    function destroy () {
-       document.body.removeChild(label);
-    }
-
-    return {
-        update,
-        hideLabel,
-        showLabel,
-        destroy
-    };
+  return {
+    update,
+    hideLabel,
+    showLabel,
+    destroy
+  };
 };
