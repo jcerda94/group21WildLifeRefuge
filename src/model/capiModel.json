@@ -13,8 +13,9 @@
   "sageBushSelected": 0,
   "SimCount.westernCedarCount": 15,
   "westernCedarSelected": 0,
-  "inputTable": [],
   "env.water": 1.0,
   "env.treeThirst": 0.025,
-  "env.grassThirst": 0.01
+  "env.grassThirst": 0.01,
+  "westernCedarLabel": true,
+  "inputTable": []
 }

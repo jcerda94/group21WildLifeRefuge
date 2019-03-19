@@ -1,7 +1,7 @@
 /*
-  
+
   Reference:
-  1. For create tree: 
+  1. For create tree:
   URL: https://gamedevelopment.tutsplus.com/tutorials/creating-a-simple-3d-endless-runner-game-using-three-js--cms-29157
   Update: March 16, 2019
   By: Thongphanh Duangboudda
@@ -10,9 +10,9 @@
 
 import { getSceneManager } from "./SceneManager";
 import { random, randomInt } from "../utils/helpers";
-import {label, waterLevel} from "../utils/treeBehavior";
-import {getEnvironmentManager} from "./EnvironmentManager";
-import {getCapiInstance} from "../utils/CAPI/capi";
+import { label, waterLevel } from "../utils/treeBehavior";
+import { getEnvironmentManager } from "./EnvironmentManager";
+import { getCapiInstance } from "../utils/CAPI/capi";
 
 const THREE = require("three");
 
@@ -81,27 +81,27 @@ function Tree (config) {
   tree.name = NAME;
   tree.type = TYPE;
 
-  function setTreeLayFlat() {
-    tree.rotation.x = 90*Math.PI/180;
+  function setTreeLayFlat () {
+    tree.rotation.x = (90 * Math.PI) / 180;
   }
-  function setTreeTo45Degree() {
-    tree.rotation.x = 90*Math.PI/290;
+  function setTreeTo45Degree () {
+    tree.rotation.x = (90 * Math.PI) / 290;
   }
-  function setTreeToBrownColor() {
-    tree.children[1].material.color.set( 0xff6039 );
+  function setTreeToBrownColor () {
+    tree.children[1].material.color.set(0xff6039);
   }
-  function setTreeToGreen(){
-    tree.children[1].material.color.set( 0x33ff33 );
+  function setTreeToGreen () {
+    tree.children[1].material.color.set(0x33ff33);
   }
 
   let env = getEnvironmentManager();
-  //env.toggleEnvironmentViewOnCanvas();
+  // env.toggleEnvironmentViewOnCanvas();
   env.registerTrackedObject(tree);
 
   const treeThirsty = waterLevel({
     maxThirsty,
     minThirsty,
-    hungerTickRate: random(0.00001, 0.00005)
+    thirstTickRate: random(0.00001, 0.00005)
   });
 
   function get2DPosition () {
@@ -116,24 +116,26 @@ function Tree (config) {
     initialValue: treeThirsty.get().toFixed(1),
     ...get2DPosition()
   });
-  const shouldShowLabel = getCapiInstance().getValue({ key: "hawkLabel" });
-  if (shouldShowLabel) thirstyLabel.showLabel();
+  const shouldShowLabel = getCapiInstance().getValue({
+    key: "westernCedarLabel"
+  });
 
   function setLabelTo ({ visible }) {
     if (visible) thirstyLabel.showLabel();
     else thirstyLabel.hideLabel();
   }
 
+  setLabelTo({ visible: shouldShowLabel });
+
   let lastSimTime = 0;
-  function update(elapsedTime, simulationTime) {
-    if(!treeDeath){
+  function update (elapsedTime, simulationTime) {
+    if (!treeDeath) {
       if (deathDelta > deathTimer) {
-        if(!removeLabel){
+        if (!removeLabel) {
           thirstyLabel.destroy();
           removeLabel = true;
           treeDeath = true;
         }
-
       }
       if (treeThirsty.get() >= maxThirsty) {
         deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
@@ -159,22 +161,29 @@ function Tree (config) {
           setTreeToBrownColor();
           setTreeLayFlat();
           isConsuming = false;
-
         }
-
       }
-      if(treeThirsty.get() <= 6){
+      if (treeThirsty.get() <= 6) {
         setTreeToGreen();
         isConsuming = false;
-
       }
-
     }
+  }
 
+  function onDestroy () {
+    thirstyLabel.destroy();
+  }
 
- }
+  function updateLabelPosition () {
+    const position = get2DPosition();
+    thirstyLabel.update(position.x, position.y, treeThirsty.get().toFixed(1));
+  }
+
   return {
     update,
+    onDestroy,
+    updateLabelPosition,
+    setLabelTo,
     model: tree,
     created: new Date()
   };

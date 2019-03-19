@@ -35,12 +35,7 @@ const Bush = () => {
   };
 };
 const Tree = () => {
-  const { model, created, update } = TreeModel();
-  return {
-    model,
-    created,
-    update
-  };
+  return TreeModel();
 };
 const Cube = config => {
   const { model, created, update } = CubeModel(config);
