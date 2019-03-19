@@ -10,6 +10,7 @@ import ModelFactory from "./ModelFactory";
 
 import { getEnvironmentManager } from "./EnvironmentManager";
 import Subject from "../utils/subject";
+import AddModelsBasedOnSimTime from "./AddModelsBasedOnSimTime";
 
 class SceneManager {
   groundSize = {
@@ -167,6 +168,7 @@ class SceneManager {
     }
     this.renderer.render(this.scene, this.camera);
     this.checkIntersects();
+    AddModelsBasedOnSimTime();
   }
 
   checkIntersects = () => {
