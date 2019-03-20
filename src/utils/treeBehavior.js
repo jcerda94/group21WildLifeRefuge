@@ -1,9 +1,13 @@
-import Subject from "../utils/subject";
+/*
+    Create by: Thongphanh Duangboudda
+    Date: March 16, 2019
+    Reference: identical to behavior.js created by Andrew.
+ */
 
-export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
-  const max = maxHunger || 20;
-  const min = minHunger || 1;
-  const tickRate = hungerTickRate || 0.0001; // hunger units per second
+export const waterLevel = ({ maxThirsty, minThirsty, thirstTickRate }) => {
+  const max = maxThirsty || 20;
+  const min = minThirsty || 1;
+  const tickRate = thirstTickRate || 0.0001; // hunger units per second
   if (min < 1) {
     throw new Error("Minimum hunger value must be >= 1");
   }
@@ -36,16 +40,6 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
   return {
     update,
     get
-  };
-};
-
-export const pauseResume = (pauseHandler, resumeHandler) => {
-  Subject.subscribe("simulation_paused", pauseHandler);
-  Subject.subscribe("simulation_resumed", resumeHandler);
-
-  return function cleanup () {
-    Subject.unsubscribe("simulation_paused", pauseHandler);
-    Subject.unsubscribe("simulation_resumed", resumeHandler);
   };
 };
 

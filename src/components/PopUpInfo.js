@@ -68,7 +68,6 @@ class PopUpInfo extends React.Component {
   }
 
   handleClose = () => {
-    // console.log("Value of anchorEL" + this.state.anchorEl);
     this.setState({
       anchorEl: null
     });
@@ -113,7 +112,6 @@ class PopUpInfo extends React.Component {
         <Popover
           id='simple-popper'
           open={open}
-          // anchorEl={anchorEl}
           onClose={this.handleClose}
           anchorOrigin={{
             vertical: "center",
