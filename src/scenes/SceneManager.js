@@ -7,9 +7,10 @@ import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
 import { getPopUpInfo } from "../components/PopUpInfo";
 import ModelFactory from "./ModelFactory";
+import capiModel from "../model/capiModel";
 
-import { getEnvironmentManager } from "./EnvironmentManager";
 import Subject from "../utils/subject";
+import {getEnvironmentManager} from "./EnvironmentManager";
 
 class SceneManager {
   groundSize = {
@@ -328,7 +329,25 @@ class SceneManager {
   }
 
   onTransporterReady () {
+
     const capi = getCapiInstance();
+
+    //Finds keys in our capiModel.json file that are prefixed with 'env.'
+    const envKeys = Object.keys(capiModel).filter(key => key.includes("env."));
+
+    //The values for the above keys are retrieved from capi and the key value pairs are combined into one object.
+    //That object is then passed to the environment manager to initialize the local env.
+    const envParams = capi.getValues({
+      keys: [...envKeys]
+    });
+
+    //The keys have the 'env.' prefix removed before being sent to the environment manager, so they will no longer
+    //have the same variable name in the capi model. Accordingly these values should only be used for initialization of
+    //the environment, not for dynamic simulation adjustments.
+    getEnvironmentManager().initializeEnvironmentWithParams(
+        envKeys.reduce((o, key, idx) => ({...o, [key.substr(4)]:envParams[idx]}), {})
+    );
+
     capi.addListenerFor({
       key: "hawkLabel",
       callback: this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })
@@ -344,10 +363,10 @@ class SceneManager {
 
     const [hawks, hares, cedars, bushes] = capi.getValues({
       keys: [
-        "redtailHawkCount",
-        "snowshoeHareCount",
-        "westernCedarCount",
-        "sageBushCount"
+        "SimCount.redtailHawkCount",
+        "SimCount.snowshoeHareCount",
+        "SimCount.westernCedarCount",
+        "SimCount.sageBushCount"
       ]
     });
     PreLoadModels({ hawks, hares, cedars, bushes });

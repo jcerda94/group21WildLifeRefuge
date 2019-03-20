@@ -148,19 +148,20 @@ function Tree (config) {
       thirstyLabel.update(position.x, position.y, treeThirsty.get().toFixed(1));
 
       if (treeThirsty.get() >= maxThirsty * 0.75 && !isConsuming) {
-        env.consumeWater(tree.position.x, tree.position.z, TYPE);
-        if (env.getEnvTileLevel(tree.position.x, tree.position.z) > 0) {
+        env.getEnvByXYPos(tree.position.x, tree.position.z).water -= tree.water;
+        if(env.getEnvByXYPos(tree.position.x, tree.position.z).water > 0){
           isConsuming = true;
         } else if (
-          env.getEnvTileLevel(tree.position.x, tree.position.z) < 0 &&
-          env.getEnvTileLevel(tree.position.x, tree.position.z) > -1
+            env.getEnvByXYPos(tree.position.x, tree.position.z).water < 0 &&
+            env.getEnvByXYPos(tree.position.x, tree.position.z).water > -1
         ) {
           isConsuming = false;
           setTreeToBrownColor();
           setTreeTo45Degree();
-        } else if (
-          env.getEnvTileLevel(tree.position.x, tree.position.z) < -15
-        ) {
+
+        }else if(
+            env.getEnvByXYPos(tree.position.x, tree.position.z).water < -15
+        ){
           setTreeToBrownColor();
           setTreeLayFlat();
           isConsuming = false;
