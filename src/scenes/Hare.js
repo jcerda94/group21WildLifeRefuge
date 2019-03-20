@@ -29,7 +29,7 @@ function Hare (scene, hareCount) {
   const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
 
   // console.log("SceneManager: " + JSON.stringify(SceneManager) );
-  console.log("=======================================================: ");
+  //console.log("=======================================================: ");
   for (let s_idx = 0; s_idx < SceneManager.scene.length; s_idx++) {
     // console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
     for (let i = 0; i < SceneManager.scene[s_idx].children.length; i++) {
@@ -40,7 +40,7 @@ function Hare (scene, hareCount) {
   }
   // console.log("SceneManager[4]: " + JSON.stringify(SceneManager.subjects[4].model.metadata) );
 
-  console.log("=======================================================: ");
+ // console.log("=======================================================: ");
 
   const x = random(-widthBound, widthBound);
   const y = 2;
@@ -92,7 +92,7 @@ function Hare (scene, hareCount) {
 
   myHareID = numberOfHares++;
 
-  console.log("hare created: hare__" + myHareID);
+  //console.log("hare created: hare__" + myHareID);
   const tween1 = new TWEEN.Tween(hareMesh.position).to(
     { x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 },
     10000 / 10

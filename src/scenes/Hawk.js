@@ -70,23 +70,42 @@ function Hawk (config) {
   );
 
   var tween3 = new TWEEN.Tween(hawk.position)
-    .to({ x: randomX(), y: 50, z: randomZ() }, 10000)
-    .start();
+    .to({ x: randomX(), y: 50, z: randomZ() }, 10000);
+    tween3.start();
 
   // hawk must track it's position and look for hares nearby as it flys
   getHawkObserver().subscribe(position => {
     // console.log("hawkObserver method called for Hawk: ");
   });
-
+  let tweenChase = null;
+  let chase = false;
+  let newCycleChase = false;
   var myHawkID = numberHawks++;
 
   function checkForHare () {
+
+    if(isEating){
+      console.log(" hawk has been eating");
+    }
     if (!isEating) {
+      console.log(" hawk has NOT been eating");
+
+      tween3.stop();
       const hares = SceneManager.getSceneObjectsOf({ types: ["Hare"] });
       const hareIndex = randomInt(0, hares.length - 1);
       const randomHare = hares[hareIndex];
-      if (!randomHare) return;
-      tween3 = new TWEEN.Tween(hawk.position).to(
+      if (!randomHare) {
+        console.log("No target");
+        routineFlying();
+        return;
+      }
+      console.log("target is acquired");
+
+      if(tweenChase != null){
+        //tweenChase.stop();
+      }
+
+       tweenChase = new TWEEN.Tween(hawk.position).to(
         {
           x: randomHare.position.x,
           y: randomHare.position.y,
@@ -94,13 +113,74 @@ function Hawk (config) {
         },
         10000
       );
-      tween2.chain(tween3);
-      tween3.chain(tween1);
+      if(!chase){
+        console.log("target is acquired");
+        tweenChase.start();
+        chase = true;
+      }
+
+      tweenChase.onComplete(function() {
+        console.log("got hare");
+        if(!isEating){
+          //chase = false;
+          console.log("did not get a hare");
+          //Todo: check if target still available
+          //Todo: if target still available keep chasing
+          //Todo: acquire new target
+
+          tweenChase = new TWEEN.Tween(hawk.position).to(
+              {
+                x: randomHare.position.x,
+                y: randomHare.position.y,
+                z: randomHare.position.z
+              },
+              1000
+          );
+          tweenChase.onComplete(function () {
+
+            routineFlying();
+            console.log("new cycle completed");
+          })
+          if(!newCycleChase){
+            console.log("start new chasing tween");
+            /*
+            tweenChase = new TWEEN.Tween(hawk.position).to(
+                {
+                  x: randomHare.position.x,
+                  y: randomHare.position.y,
+                  z: randomHare.position.z
+                },
+                10000
+            );
+            */
+            tweenChase.start();
+            newCycleChase = true;
+          }
+
+        }
+        if(isEating){
+          console.log("eating and now going back to routine");
+          routineFlying();
+
+        }
+      });
+
     }
+  }
+
+  function routineFlying(){
+
+    tween3 = new TWEEN.Tween(hawk.position)
+        .to({ x: randomX(), y: 50, z: randomZ() }, 10000);
+    tween3.start();
+    tween3.chain(tween2);
+    tween2.chain(tween1);
+    tween1.chain(tween2);
+    console.log("start new routine");
   }
   tween1.chain(tween2);
   tween2.chain(tween3);
-  tween3.chain(tween1);
+  tween3.chain(tween2);
   var count = 1;
 
   const hawkHunger = hunger({
@@ -176,7 +256,7 @@ function Hawk (config) {
 
     if (hawkHunger.get() >= maxHunger * 0.75) {
       // Go get a rabbit
-      checkForHare();
+      //checkForHare();
     } else if (hawkHunger.get() <= minHunger) {
       hawk.remove(hareMesh);
       isEating = false;
@@ -189,6 +269,7 @@ function Hawk (config) {
       // for now just scale back the number of times the position is reported to the other animals.
       getHawkObserver().broadcast(hawk.position);
     }
+    checkForHare();
     TWEEN.update();
   }
 
