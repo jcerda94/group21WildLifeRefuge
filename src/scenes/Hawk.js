@@ -13,6 +13,7 @@ var numberHawks = 0;
 let TWEEN = require("@tweenjs/tween.js");
 
 function Hawk (config) {
+  let sameTween = true;
   let isEating = false;
   let deathDelta = 0;
   const deathTimer = 60 * 60 * 24; // Eat within a day at max hunger or die
@@ -85,10 +86,10 @@ function Hawk (config) {
   function checkForHare () {
 
     if(isEating){
-      console.log(" hawk has been eating");
+     // console.log(" hawk has been eating");
     }
     if (!isEating) {
-      console.log(" hawk has NOT been eating");
+     // console.log(" hawk has NOT been eating");
 
       tween3.stop();
       const hares = SceneManager.getSceneObjectsOf({ types: ["Hare"] });
@@ -99,24 +100,29 @@ function Hawk (config) {
         routineFlying();
         return;
       }
-      console.log("target is acquired");
+      //console.log("target is acquired");
 
       if(tweenChase != null){
+        //if (this.activeTween) this.activeTween.stop();
         //tweenChase.stop();
       }
 
        tweenChase = new TWEEN.Tween(hawk.position).to(
         {
           x: randomHare.position.x,
-          y: randomHare.position.y,
+          y: randomHare.position.y + 20,
           z: randomHare.position.z
         },
-        10000
+        10000/10
       );
+    // tweenChase.start();
+
+
+
       if(!chase){
-        console.log("target is acquired");
+        //console.log("target is acquired");
         tweenChase.start();
-        chase = true;
+       chase = true;
       }
 
       tweenChase.onComplete(function() {
@@ -124,49 +130,53 @@ function Hawk (config) {
         if(!isEating){
           //chase = false;
           console.log("did not get a hare");
-          //Todo: check if target still available
-          //Todo: if target still available keep chasing
-          //Todo: acquire new target
-
           tweenChase = new TWEEN.Tween(hawk.position).to(
               {
                 x: randomHare.position.x,
-                y: randomHare.position.y,
+                y: randomHare.position.y +20,
                 z: randomHare.position.z
               },
-              1000
+              10000/10
           );
-          tweenChase.onComplete(function () {
-
-            routineFlying();
-            console.log("new cycle completed");
-          })
-          if(!newCycleChase){
-            console.log("start new chasing tween");
-            /*
-            tweenChase = new TWEEN.Tween(hawk.position).to(
-                {
-                  x: randomHare.position.x,
-                  y: randomHare.position.y,
-                  z: randomHare.position.z
-                },
-                10000
-            );
-            */
-            tweenChase.start();
-            newCycleChase = true;
-          }
-
+          chase = false;
+         //keepChasing(randomHare.x, randomHare.y, randomHare.z);
+          //Todo: check if target still available
+          //Todo: if target still available keep chasing
+          //Todo: acquire new target
         }
-        if(isEating){
-          console.log("eating and now going back to routine");
-          routineFlying();
 
-        }
       });
 
     }
+
+
+    function keepChasing(x,y,z ) {
+      console.log("keep chasingfuniton");
+      tweenChase = new TWEEN.Tween(hawk.position).to(
+          {
+            x: x,
+            y: y,
+            z: z
+          },
+          1000
+      );
+      if(sameTween){
+        console.log("start tween");
+        tweenChase.start();
+      }
+
+      tweenChase.onComplete(function () {
+        sameTween = false;
+        keepChasing(x,y,z);
+
+      })
+
+
+    }
+
+
   }
+
 
   function routineFlying(){
 

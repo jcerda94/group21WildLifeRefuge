@@ -3,6 +3,7 @@ import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { findRemoveIfNear } from "./GrassField";
 import { pauseResume } from "../utils/behavior";
+import FindDistance from "../utils/Findistance";
 
 const THREE = require("three");
 
@@ -73,15 +74,48 @@ function Hare (scene, hareCount) {
 
   // TODO: when hare finds hawk hide under a bush
   function checkForHawks () {
+    const hawks = SceneManager.getSceneObjectsOf({ types: ["Hawk"] });
+   // console.log("there are " + hawk.length);
+    const nearestHawk = nearestHawkPosition(hawks);
     // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
-    for (let i = 4; i < getSceneManager().subjects.length; i++) {
-      if (getSceneManager().subjects[i].model.name === "redtailHawk") {
-        // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[i].model.name);
-        // console.log("Hare has found a hawk");
+    const distanceFromHawk = FindDistance(hareMesh, hawks[nearestHawk]);
+      //console.log("Position form hawk + " + FindDistance(hareMesh, hawks[nearestHawk]));
+      if(distanceFromHawk < 50){
+        chaseScene();
+
+      }
+
+
+
+  }
+
+  function nearestHawkPosition(hawks) {
+    // console.log("I found grass objects " +grasses.children.length);
+    let nearestPosition = 1000;
+    let nearestPosition2 = 0.0;
+    let position = 0;
+    for(let i = 0 ; i < hawks.length; i++){
+      nearestPosition2 = FindDistance(hareMesh, hawks[i]);
+      if(nearestPosition2 < nearestPosition){
+        nearestPosition = nearestPosition2;
+        position = i;
       }
     }
+    // console.log("Nearest Position : " + nearestPosition);
+    return position;
+  }
+  function chaseScene() {
+    tween1.stop();
+    tween2.stop();
+    const tween3 = new TWEEN.Tween(hareMesh.position)
+        .to(
+            { x: hareMesh.position.x + 50, y: 10, z: hareMesh.position.z + 25 },
+            10000 / 10
+        )
+        .start();
 
-    return distanceFromHawk;
+
+
   }
   function escapeFormHawk () {}
   // looking for closest grass potion
@@ -109,7 +143,7 @@ function Hare (scene, hareCount) {
       10000 / 10
     )
     .start();
-  tween1.chain(tween2);
+  //tween1.chain(tween2);
   tween2.chain(tween3);
   tween3.chain(tween1);
   // tween4.chain(tween1);
