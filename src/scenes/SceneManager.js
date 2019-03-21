@@ -7,7 +7,10 @@ import { FlyControls } from "../js/three/FlyControls";
 import PreLoadModels from "./PreLoadModels";
 import { getPopUpInfo } from "../components/PopUpInfo";
 import ModelFactory from "./ModelFactory";
-import { getEnvironmentManager } from "./EnvironmentManager";
+import capiModel from "../model/capiModel";
+
+import Subject from "../utils/subject";
+import {getEnvironmentManager} from "./EnvironmentManager";
 
 class SceneManager {
   groundSize = {
@@ -48,8 +51,14 @@ class SceneManager {
     this.initializeScene();
     this.initializeRenderer();
     this.initializeCamera();
+    this.initializeSimEvents();
 
     this.createSceneSubjects();
+  }
+
+  initializeSimEvents () {
+    Subject.subscribe("pause_simulation", this.pauseSimulation);
+    Subject.subscribe("resume_simulation", this.resumeSimulation);
   }
 
   initializeLoadingScreen () {
@@ -125,20 +134,34 @@ class SceneManager {
     }
   }
 
+  updateDisplayTime (elapsedTime, simTime) {
+    Subject.next("update_sim_time", { elapsedTime, simTime });
+  }
+
   update () {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
+
     const simTimeScale = this.timeScale[this.currentTimeScale] || 1;
-    if (!this.isPaused) {
-      this.simulationElapsedTime += delta * simTimeScale;
+    if (this.isPaused) {
+      this.renderer.render(this.scene, this.camera);
+      this.cameraControls.update(delta);
+      this.subjects.forEach(subject => {
+        if (subject.updateLabelPosition) {
+          subject.updateLabelPosition();
+        }
+      });
+      return;
     }
+
+    this.simulationElapsedTime += delta * simTimeScale;
+    this.updateDisplayTime(elapsedTime, this.simulationElapsedTime);
 
     for (let i = 0; i < this.subjects.length; i++) {
       this.subjects[i].update &&
         this.subjects[i].update(elapsedTime, this.simulationElapsedTime);
     }
 
-    this.cameraControls.update(delta);
     if (!this.loaded) {
       this.renderer.render(this.loadingScreen.scene, this.loadingScreen.camera);
       return;
@@ -237,6 +260,7 @@ class SceneManager {
     this.subjects = this.subjects.filter(
       subject => subject.model.uuid !== sceneObject.uuid
     );
+    sceneObject.onDestroy && sceneObject.onDestroy();
     this.scene.remove(sceneObject);
   }
 
@@ -265,8 +289,8 @@ class SceneManager {
     const modelsToRemove = this.subjects
       .filter(subject => {
         if (subject.model && subject.model.type === type) {
-          subject.destroyLabel && subject.destroyLabel();
-          return subject.model.type === type;
+          subject.onDestroy && subject.onDestroy();
+          return true;
         }
         return false;
       })
@@ -292,19 +316,57 @@ class SceneManager {
     });
   }
 
+  pauseSimulation = () => {
+    this.isPaused = true;
+    this.clock.stop();
+    Subject.next("simulation_paused");
+  }
+
+  resumeSimulation = () => {
+    this.isPaused = false;
+    this.clock.start();
+    Subject.next("simulation_resumed");
+  }
+
   onTransporterReady () {
+
     const capi = getCapiInstance();
+
+    //Finds keys in our capiModel.json file that are prefixed with 'env.'
+    const envKeys = Object.keys(capiModel).filter(key => key.includes("env."));
+
+    //The values for the above keys are retrieved from capi and the key value pairs are combined into one object.
+    //That object is then passed to the environment manager to initialize the local env.
+    const envParams = capi.getValues({
+      keys: [...envKeys]
+    });
+
+    //The keys have the 'env.' prefix removed before being sent to the environment manager, so they will no longer
+    //have the same variable name in the capi model. Accordingly these values should only be used for initialization of
+    //the environment, not for dynamic simulation adjustments.
+    getEnvironmentManager().initializeEnvironmentWithParams(
+        envKeys.reduce((o, key, idx) => ({...o, [key.substr(4)]:envParams[idx]}), {})
+    );
+
     capi.addListenerFor({
       key: "hawkLabel",
       callback: this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })
     });
 
+    capi.addListenerFor({
+      key: "westernCedarLabel",
+      callback: this.toggleLabelFor({
+        type: "Tree",
+        labelName: "westernCedarLabel"
+      })
+    });
+
     const [hawks, hares, cedars, bushes] = capi.getValues({
       keys: [
-        "redtailHawkCount",
-        "snowshoeHareCount",
-        "westernCedarCount",
-        "sageBushCount"
+        "SimCount.redtailHawkCount",
+        "SimCount.snowshoeHareCount",
+        "SimCount.westernCedarCount",
+        "SimCount.sageBushCount"
       ]
     });
     PreLoadModels({ hawks, hares, cedars, bushes });

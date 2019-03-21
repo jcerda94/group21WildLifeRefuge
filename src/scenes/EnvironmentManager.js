@@ -87,11 +87,36 @@ class EnvironmentManager {
     trackedObjects = [];
 
     //CAUTION! Object will only be shallow copied
-    defaultEnvironmentObject = {
-      water: 1.0
+    defaultEnvironment = {
+        water: 1.0,
+        treeThirst: 0.025,
+        grassThirst: 0.01
     };
 
     constructor(){
+
+        this.initializeEnvironmentWithParams(this.defaultEnvironment);
+        // Creates a THREE Texture using an HTML Canvas element
+        var drawingCanvas = document.getElementById( 'drawing-canvas' );
+        var drawingContext = drawingCanvas.getContext( '2d' );
+        drawingContext.fillStyle = '#996600';
+        drawingContext.fillRect( 0, 0, this.sceneManager.groundSize.x, this.sceneManager.groundSize.y);
+
+        this.textureCanvas = drawingCanvas;
+        this.drawingContext = drawingContext;
+
+    }
+
+    initializeEnvironmentWithParams(environmentObject) {
+
+        this.defaultEnvironment = environmentObject;
+
+        //Include any parameters that we want in every environment tile,
+        //other object values will simply be made available under the defaultEnvironment object
+        const fillObject = {
+            water: environmentObject.water
+        };
+
         this.sceneManager = getSceneManager();
 
         //Added 1 to array size to handle odd ground sizes (1222 x 899) and objects at the absolute edge of the ground
@@ -103,18 +128,8 @@ class EnvironmentManager {
         //TODO: Add dynamically generated environments (non-uniform starting conditions, maybe toy environment 'painter')
         this.localEnv = [...Array(groundX)].map(
             ()=>Array(groundY).fill().map(
-                () => Object.assign({}, this.defaultEnvironmentObject)
+                () => Object.assign({}, fillObject)
             ));
-
-        // Creates a THREE Texture using an HTML Canvas element
-        var drawingCanvas = document.getElementById( 'drawing-canvas' );
-        var drawingContext = drawingCanvas.getContext( '2d' );
-        drawingContext.fillStyle = '#996600';
-        drawingContext.fillRect( 0, 0, this.sceneManager.groundSize.x, this.sceneManager.groundSize.y);
-
-        this.textureCanvas = drawingCanvas;
-        this.drawingContext = drawingContext;
-
     }
 
     getEnvByXYPos(x, y){
@@ -192,16 +207,16 @@ class EnvironmentManager {
 
     }
 
+    //TODO: Add dynamic updating of the tree/grass thirstyness, add a listener on the appropriate values
     registerTrackedObject(object) {
 
-        //Temp values for testing
-        //TODO: Update with preloaded values from CAPI
+        //TODO: Add object type for bushes
         switch (object.type) {
             case "Tree":
-                object.water = 0.25;
+                object.water = this.defaultEnvironment.treeThirst;
                 break;
             case "Grass":
-                object.water = 0.1;
+                object.water = this.defaultEnvironment.grassThirst;
                 break;
             default:
                 console.warn("Object type: " + object.type + " not currently supported by EnvironmentManger")
@@ -249,7 +264,7 @@ class EnvironmentManager {
         const yBnd = this.localEnv.length;
         const xBnd = this.localEnv[0].length;
 
-
+         //console.log("lowerWater lenghthv " + lowWater.length);
         for (var i = 0; i < lowWater.length; i++) {
             adjacencyMatrix.forEach((offset) => {
                 let x = lowWater[i].x + offset[0];
@@ -262,6 +277,7 @@ class EnvironmentManager {
                 }
 
                 if (neighborsWithWater.length > 0) {
+                    //console.log("neighbor with water + " + neighborsWithWater.length);
                     let waterBalanced = 0.05 / neighborsWithWater.length;
                     for (var j = 0; j < neighborsWithWater.length; j++) {
                         neighborsWithWater[j].water -= waterBalanced;
@@ -288,8 +304,6 @@ class EnvironmentManager {
         this.toggleEnvironmentViewOnCanvas();
 
     }
-
-
 
 }
 

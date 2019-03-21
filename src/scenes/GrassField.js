@@ -8,6 +8,7 @@ require("three/examples/js/loaders/GLTFLoader");
 export const TYPE = "Grass";
 const grasses = new THREE.Object3D();
 async function GrassField (config) {
+
   const loadingManager = new THREE.LoadingManager();
   loadingManager.onLoad = config.onLoad || (() => null);
 
@@ -117,6 +118,10 @@ export var findRemoveIfNear = function (animalPos, range) {
   }
 
   if (shortestDist < range) {
+
+    // node.data.position.x + ":" + node.data.position.y + ":"+ node.data.position.z);
+    grasses.remove(shortestDist_node.data);
+    //ll.Remove(shortestDist_node);
     // console.log(
     //   "remove [" +
     //     shortestDist_node_i +

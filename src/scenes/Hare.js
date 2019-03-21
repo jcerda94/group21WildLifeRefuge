@@ -54,6 +54,7 @@ function Hare (scene, hareCount) {
   hareMesh.type = TYPE;
 
   function createTween () {
+    console.log("in create tween");
     tween1 = new TWEEN.Tween(hareMesh.position).to(
       { x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 },
       10000 / 10
@@ -87,7 +88,6 @@ function Hare (scene, hareCount) {
 
     const trees = getTrees(); 
     //console.log(" trees length: " + trees.length); // <<< defined
-    //console.log(" trees count: " + trees.count);   // <<< undefined
 
     var shortestDist = 1000000.1;
     var tree; 
@@ -101,17 +101,34 @@ function Hare (scene, hareCount) {
     }
     
     //console.log(" ------ run to tree at : " + shortestDist.toFixed());
-    moveToPosition(harePos, tree.position);
+    const numberOfTress = SceneManager.getSceneObjectsOf({ types: ["Tree"] });
+    if(numberOfTress.length > 0){
+      moveToPosition(harePos, tree.position);
+    }
   }
+  function pause() {
+    tween1.stop();
+    tween2.stop();
+    tween3.stop();
+  }
+
+  function resume() {
+    tween3.start();
+  }
+  var treePos;
+  var movingToTree = false;
   function moveToPosition(harePos, newPos){
     // I'm guessing that this works like this
+    treePos = newPos;
+    movingToTree = true;
     tween3 = new TWEEN.Tween(harePos).to(
       {
         x: newPos.x,
         y: newPos.y,
         z: newPos.z
       },
-      10000
+      //1000 // speed?
+      500
     );
     tween2.chain(tween3);
     tween3.chain(tween1);
@@ -137,7 +154,15 @@ function Hare (scene, hareCount) {
       var deltaDistance = 500;
        findRemoveIfNear(hareMesh.position, deltaDistance);
     }
-
+    if(movingToTree)
+    {
+      var h_x = parseInt(hareMesh.position.x.toFixed());
+      var t_x = parseInt(treePos.x.toFixed());
+      console.log("hare x: tree x " + h_x + ":"+ t_x);
+      if(h_x == t_x)
+       //&&(hareMesh.position.y == treePos.y))
+        pause();
+    }
     TWEEN.update();
   }
   function handleCollision (targets) {
