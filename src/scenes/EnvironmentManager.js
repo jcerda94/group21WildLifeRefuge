@@ -90,7 +90,9 @@ class EnvironmentManager {
     defaultEnvironment = {
         water: 1.0,
         treeThirst: 0.025,
-        grassThirst: 0.01
+        grassThirst: 0.01,
+        waterRegen: 0.001,
+        waterBalanceThreshold : 0.5
     };
 
     constructor(){
@@ -254,17 +256,17 @@ class EnvironmentManager {
     }
 
     //TODO: Clarify code and add input parameters to support CAPI use
+    //TODO: Add documentation of approach/use of this function
     async balanceWaterTable() {
 
         const adjacencyMatrix = [[1,1], [0,1], [1,0], [-1,0], [0, -1], [-1,-1], [1,-1], [-1, 1]];
 
         const envGen = this.localEnvGenerator();
-        let lowWater = [...envGen].filter(val => val.env.water < 0.5);
+        let lowWater = [...envGen].filter(val => val.env.water < this.defaultEnvironment.waterBalanceThreshold);
 
         const yBnd = this.localEnv.length;
         const xBnd = this.localEnv[0].length;
 
-         //console.log("lowerWater lenghthv " + lowWater.length);
         for (var i = 0; i < lowWater.length; i++) {
             adjacencyMatrix.forEach((offset) => {
                 let x = lowWater[i].x + offset[0];
@@ -272,7 +274,9 @@ class EnvironmentManager {
 
                 let neighborsWithWater = [];
 
-                if (((-1 < x && x < xBnd) && (-1 < y && y < yBnd)) && this.localEnv[x][y].water >= 0.05){
+                if (((-1 < x && x < xBnd) &&
+                    (-1 < y && y < yBnd)) &&
+                    this.localEnv[x][y].water >= this.defaultEnvironment.waterBalanceThreshold) {
                     neighborsWithWater.push(this.localEnv[x][y]);
                 }
 
