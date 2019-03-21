@@ -1,6 +1,7 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { Node } from "../utils/LinkedList.js";
+import { getGrassLinkedList } from "../utils/LinkedList.js";
 
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
@@ -119,37 +120,24 @@ export var findRemoveIfNear = function (animalPos, range) {
 
   if (shortestDist < range) {
 
-    // node.data.position.x + ":" + node.data.position.y + ":"+ node.data.position.z);
-    grasses.remove(shortestDist_node.data);
-    //ll.Remove(shortestDist_node);
-    // console.log(
-    //   "remove [" +
-    //     shortestDist_node_i +
-    //     "] at " +
-    //     shortestDist_node.position.x.toFixed() +
-    //     ":" +
-    //     shortestDist_node.position.y.toFixed() +
-    //     ":" +
-    //     shortestDist_node.position.z.toFixed() +
-    //     // + "        within: " + theRange + "  to  "
-    //     "    dist: " +
-    //     shortestDist.toFixed() +
-    //     "    animal Pos: " +
-    //     inPos.x.toFixed(0) +
-    //     ":" +
-    //     inPos.y.toFixed(0) +
-    //     ":" +
-    //     inPos.z.toFixed(0)
-    // );
     grasses.remove(shortestDist_node);
     // console.log("new count of grass list: " +  ll.length);
+    getGrassLinkedList().Append(new Node(shortestDist_node));
+
+    //console.log("eaten grass count: " + getGrassLinkedList().length);
+    if(getGrassLinkedList().length > 100) {
+      //console.log("put grass back");
+      var grass_node = getGrassLinkedList().First();
+      grasses.add(grass_node.data);
+      getGrassLinkedList().Remove(grass_node);
+    }
   }
 };
 
 function isGreaterThan (n1, n2) {
   return parseInt(n1) > parseInt(n2);
 }
-export function getDistance (pos1, pos2) {
+function getDistance (pos1, pos2) {
   return pos1.distanceTo(pos2);
 }
 export default GrassField;
