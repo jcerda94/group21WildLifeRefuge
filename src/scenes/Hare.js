@@ -13,10 +13,10 @@ export const NAME = "hare";
 export const TYPE = "Hare";
 let TWEEN = require("@tweenjs/tween.js");
 
-function Hare (scene, hareCount) {
+function Hare (config) {
   const maxHunger = 20;
   const minHunger = 1;
-  const hungerTickRate = 0.001;
+  const hungerTickRate = 0.0001;
   const hareHunger = hunger({
     maxHunger,
     minHunger,
@@ -59,7 +59,7 @@ function Hare (scene, hareCount) {
   const currentPosition = get2DPosition(hareMesh);
   const hareLabel = label({
     text: "Hunger\n",
-    initialValue: hareHunger.get(),
+    initialValue: hareHunger.get().toFixed(1),
     x: currentPosition.x,
     y: currentPosition.y
   });
@@ -149,10 +149,12 @@ function Hare (scene, hareCount) {
   var eating_pace = 20;
   var eating_paceCntr = eating_pace;
 
-  function update () {
+  function update (elapsedTime, simulationTime) {
     // TODO: this should really be real-time-based, not loop based
     // TODO: it should also be part of a behavior model so these can be tuned the behavior models here
     // if(eating_paceCntr-- == 0)
+    updateLabelPosition();
+    hareHunger.update(simulationTime);
     {
       eating_paceCntr = eating_pace;
       var deltaDistance = 500;
@@ -181,7 +183,11 @@ function Hare (scene, hareCount) {
 
   function updateLabelPosition () {
     const currentPosition = get2DPosition(hareMesh);
-    hareLabel.update(currentPosition.x, currentPosition.y, hareHunger.get());
+    hareLabel.update(
+      currentPosition.x,
+      currentPosition.y,
+      hareHunger.get().toFixed(1)
+    );
   }
 
   return {
