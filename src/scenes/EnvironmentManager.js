@@ -255,7 +255,6 @@ class EnvironmentManager {
 
     }
 
-    //TODO: Clarify code and add input parameters to support CAPI use
     //TODO: Add documentation of approach/use of this function
     async balanceWaterTable() {
 
@@ -282,12 +281,12 @@ class EnvironmentManager {
 
                 if (neighborsWithWater.length > 0) {
                     //console.log("neighbor with water + " + neighborsWithWater.length);
-                    let waterBalanced = 0.05 / neighborsWithWater.length;
+                    let waterBalanced = this.defaultEnvironment.waterRegen / neighborsWithWater.length;
                     for (var j = 0; j < neighborsWithWater.length; j++) {
                         neighborsWithWater[j].water -= waterBalanced;
                     }
 
-                    lowWater[i].water += 0.05;
+                    lowWater[i].water += this.defaultEnvironment.waterRegen;
                 }
 
             })
@@ -304,9 +303,7 @@ class EnvironmentManager {
         }
 
         this.balanceWaterTable();
-
-        this.toggleEnvironmentViewOnCanvas();
-
+        
     }
 
 }
