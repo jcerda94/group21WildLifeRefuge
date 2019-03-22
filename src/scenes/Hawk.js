@@ -110,15 +110,15 @@ function Hawk (config) {
        tweenChase = new TWEEN.Tween(hawk.position).to(
         {
           x: randomHare.position.x,
-          y: randomHare.position.y + 20,
+          y: randomHare.position.y,
           z: randomHare.position.z
         },
-        10000/10
+        10000
       );
     // tweenChase.start();
 
 
-
+      hawk.position.y = hawk.position.y + 20;
       if(!chase){
         //console.log("target is acquired");
         tweenChase.start();
@@ -133,7 +133,7 @@ function Hawk (config) {
           tweenChase = new TWEEN.Tween(hawk.position).to(
               {
                 x: randomHare.position.x,
-                y: randomHare.position.y +20,
+                y: randomHare.position.y,
                 z: randomHare.position.z
               },
               10000/10
