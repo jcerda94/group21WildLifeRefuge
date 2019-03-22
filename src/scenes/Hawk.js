@@ -118,7 +118,7 @@ function Hawk (config) {
     // tweenChase.start();
 
 
-      hawk.position.y = hawk.position.y + 20;
+      hawk.position.y = hawk.position.y + 5;
       if(!chase){
         //console.log("target is acquired");
         tweenChase.start();
