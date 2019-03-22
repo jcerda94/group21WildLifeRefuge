@@ -75,22 +75,16 @@ function Hare (scene, hareCount) {
   // TODO: when hare finds hawk hide under a bush
   function checkForHawks () {
     const hawks = SceneManager.getSceneObjectsOf({ types: ["Hawk"] });
-   // console.log("there are " + hawk.length);
     const nearestHawk = nearestHawkPosition(hawks);
-    // console.log("Hare has found a hawk :  -->"  + getSceneManager().subjects[4].model.name);
     const distanceFromHawk = FindDistance(hareMesh, hawks[nearestHawk]);
       //console.log("Position form hawk + " + FindDistance(hareMesh, hawks[nearestHawk]));
       if(distanceFromHawk < 50){
         chaseScene();
 
       }
-
-
-
   }
 
   function nearestHawkPosition(hawks) {
-    // console.log("I found grass objects " +grasses.children.length);
     let nearestPosition = 1000;
     let nearestPosition2 = 0.0;
     let position = 0;
@@ -101,7 +95,6 @@ function Hare (scene, hareCount) {
         position = i;
       }
     }
-    // console.log("Nearest Position : " + nearestPosition);
     return position;
   }
   function chaseScene() {
@@ -113,9 +106,6 @@ function Hare (scene, hareCount) {
             10000 / 10
         )
         .start();
-
-
-
   }
   function escapeFormHawk () {}
   // looking for closest grass potion
