@@ -105,7 +105,7 @@ function Hare (scene, hareCount) {
   }
   function moveToPosition(harePos, newPos){
     // I'm guessing that this works like this
-    tween3 = new TWEEN.Tween(harePos).to(
+    tween3 = new TWEEN.Tween(hareMesh.position).to(
       {
         x: newPos.x,
         y: newPos.y,
@@ -113,6 +113,8 @@ function Hare (scene, hareCount) {
       },
       10000
     );
+    const distanceFromTree = getDistance(hareMesh.position, newPos);
+    console.log("Distance Form tree "+ distanceFromTree);
     tween2.chain(tween3);
     tween3.chain(tween1);
   }
