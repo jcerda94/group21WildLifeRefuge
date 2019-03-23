@@ -32,7 +32,7 @@ class DisplayTime extends Component {
       month: simTime / (60 * 60 * 24 * 30)
     });
   }
-   getDay () {
+  getDay () {
     return this.state.day;
   }
   getWeek () {
@@ -84,15 +84,4 @@ class DisplayTime extends Component {
   }
 }
 
-export const getSimTime = ()=>{
-  return DisplayTime.instance || null;
-}
-
-export default function (container) {
-  if(!DisplayTime.instance){
-
-    return DisplayTime.instance = new DisplayTime(container);
-  }
-  return DisplayTime.instance;
-
-}
+export default DisplayTime;
