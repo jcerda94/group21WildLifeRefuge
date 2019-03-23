@@ -125,7 +125,7 @@ function Hawk (config) {
       if(!chase){
         //console.log("target is acquired");
         tweenChase.start();
-       chase = true;
+        chase = true;
       }
       tweenChase.onComplete(function() {
         console.log("got hare");
