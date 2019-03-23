@@ -2,23 +2,33 @@ import { getValue, random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { findRemoveIfNear } from "./GrassField";
+import { hunger, label } from "../utils/behavior";
 import { getHawks } from "./Hawk.js";
 import { getTrees } from "./Tree.js";
+import { get2DPosition } from "../utils/helpers";
+import { getCapiInstance } from "../utils/CAPI/capi";
+
 const THREE = require("three");
 
 export const NAME = "hare";
 export const TYPE = "Hare";
 let TWEEN = require("@tweenjs/tween.js");
 
-function Hare (scene, hareCount) {
-  // const size = 3;
+function Hare (config) {
+  const maxHunger = 20;
+  const minHunger = 1;
+  const hungerTickRate = 0.0001;
+  const hareHunger = hunger({
+    maxHunger,
+    minHunger,
+    hungerTickRate
+  });
+
   const color = "#db7093";
   let tween1 = {};
   let tween2 = {};
   let tween3 = {};
-  // let tween4 = {};
-  // let grassPositon = {};
-  // let nearestGrassPositon = {};
+
   let distanceFromHawk = 0.0;
   // create a sphere
   var sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
@@ -46,6 +56,18 @@ function Hare (scene, hareCount) {
     },
     name: NAME
   };
+  
+  const currentPosition = get2DPosition(hareMesh);
+  const hareLabel = label({
+    text: "Hunger\n",
+    initialValue: hareHunger.get().toFixed(1),
+    x: currentPosition.x,
+    y: currentPosition.y
+  });
+
+  const shouldShowLabel = getCapiInstance().getValue({ key: "Hare.label" });
+  if (shouldShowLabel) hareLabel.showLabel();
+
   const dangerRange = 300;
   getHawkObserver().subscribe(position => {
     // this gets sent for every hawk, so shouldn't have to use the list thing
@@ -149,6 +171,7 @@ function Hare (scene, hareCount) {
   // var savedTween3;
   function moveToPosition (hare, newPos) {
     var harePos = hare.position;
+
     // I'm guessing that this works like this
     treePos = newPos;
     movingToTree = true;
@@ -181,7 +204,12 @@ function Hare (scene, hareCount) {
   var eating_pace = 20;
   var eating_paceCntr = eating_pace;
 
-  function update () {
+  function update (elapsedTime, simulationTime) {
+    // TODO: this should really be real-time-based, not loop based
+    // TODO: it should also be part of a behavior model so these can be tuned the behavior models here
+    // if(eating_paceCntr-- == 0)
+    updateLabelPosition();
+    hareHunger.update(simulationTime);
     {
       eating_paceCntr = eating_pace;
       var deltaDistance = 500;
@@ -223,9 +251,30 @@ function Hare (scene, hareCount) {
     }
   }
 
+  function setLabelTo ({ visible }) {
+    if (visible) hareLabel.showLabel();
+    else hareLabel.hideLabel();
+  }
+
+  function onDestroy () {
+    hareLabel.destroy();
+  }
+
+  function updateLabelPosition () {
+    const currentPosition = get2DPosition(hareMesh);
+    hareLabel.update(
+      currentPosition.x,
+      currentPosition.y,
+      hareHunger.get().toFixed(1)
+    );
+  }
+
   return {
     update,
     model: hareMesh,
+    setLabelTo,
+    onDestroy,
+    updateLabelPosition,
     created: new Date(),
     handleCollision
   };

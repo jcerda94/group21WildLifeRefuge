@@ -366,6 +366,11 @@ class SceneManager {
     });
 
     capi.addListenerFor({
+      key: "Hare.label",
+      callback: this.toggleLabelFor({ type: "Hare", labelName: "Hare.label" })
+    });
+
+    capi.addListenerFor({
       key: "westernCedarLabel",
       callback: this.toggleLabelFor({
         type: "Tree",
@@ -382,9 +387,7 @@ class SceneManager {
       ]
     });
     PreLoadModels({ hawks, hares, cedars, bushes });
-    this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })(
-      getCapiInstance().getCapiModel()
-    );
+
     capi.addListenerFor({
       key: "redtailHawkCount",
       callback: this.handleModelCountChange({
