@@ -8,8 +8,8 @@ import PreLoadModels from "./PreLoadModels";
 import { getPopUpInfo } from "../components/PopUpInfo";
 import ModelFactory from "./ModelFactory";
 import capiModel from "../model/capiModel";
-
 import Subject from "../utils/subject";
+import AddModelsBasedOnSimTime from "./AddModelsBasedOnSimTime";
 import { getEnvironmentManager } from "./EnvironmentManager";
 
 class SceneManager {
@@ -138,6 +138,15 @@ class SceneManager {
     Subject.next("update_sim_time", { elapsedTime, simTime });
   }
 
+  getElapsedSimTime ({ unit } = { unit: "seconds" }) {
+    if (unit === "seconds") return this.simulationElapsedTime;
+
+    const conversionFactor = this.timeScale[unit];
+    if (!conversionFactor) return this.simulationElapsedTime;
+
+    return Math.floor(this.simulationElapsedTime / conversionFactor);
+  }
+
   update () {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
@@ -168,6 +177,7 @@ class SceneManager {
     }
     this.renderer.render(this.scene, this.camera);
     this.checkIntersects();
+    AddModelsBasedOnSimTime();
   }
 
   checkIntersects = () => {
