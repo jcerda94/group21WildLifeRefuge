@@ -3,6 +3,7 @@ import { getHawkObserver } from "./observer.js";
 import { random, randomInt } from "../utils/helpers";
 import { hunger, label, pauseResume } from "../utils/behavior";
 import { getCapiInstance } from "../utils/CAPI/capi";
+import FindDistance from "../utils/Findistance";
 
 const THREE = require("three");
 
@@ -59,19 +60,19 @@ function Hawk (config) {
   hawk.position.x = randomX();
   hawk.position.z = randomZ();
   hawk.position.y = 100;
-
+  const distance = 100;
   const tween1 = new TWEEN.Tween(hawk.position).to(
     { x: randomX(), y: 100, z: randomZ() },
-    10000
+    distance/0.05
   );
 
   const tween2 = new TWEEN.Tween(hawk.position).to(
     { x: randomX(), y: 100, z: randomZ() },
-    10000
+      distance/0.05
   );
 
   var tween3 = new TWEEN.Tween(hawk.position)
-    .to({ x: randomX(), y: 50, z: randomZ() }, 10000);
+    .to({ x: randomX(), y: 50, z: randomZ() }, distance/0.05);
     tween3.start();
 
   // hawk must track it's position and look for hares nearby as it flys
@@ -103,9 +104,11 @@ function Hawk (config) {
       //console.log("target is acquired");
 
       if(tweenChase != null){
-        //if (this.activeTween) this.activeTween.stop();
-        //tweenChase.stop();
+
       }
+      const a = new THREE.Vector3( hawk.position.x, hawk.position.y, hawk.position.z );
+      const b = new THREE.Vector3(randomHare.position.x, randomHare.position.y, randomHare.position.z );
+      const d = a.distanceTo( b );
 
        tweenChase = new TWEEN.Tween(hawk.position).to(
         {
@@ -113,7 +116,7 @@ function Hawk (config) {
           y: randomHare.position.y,
           z: randomHare.position.z
         },
-        10000
+        d/0.05
       );
     // tweenChase.start();
 

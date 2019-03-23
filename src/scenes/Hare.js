@@ -75,13 +75,16 @@ function Hare (scene, hareCount) {
   // TODO: when hare finds hawk hide under a bush
   function checkForHawks () {
     const hawks = SceneManager.getSceneObjectsOf({ types: ["Hawk"] });
-    const nearestHawk = nearestHawkPosition(hawks);
-    const distanceFromHawk = FindDistance(hareMesh, hawks[nearestHawk]);
+    if(hawks.length > 0){
+      const nearestHawk = nearestHawkPosition(hawks);
+      const distanceFromHawk = FindDistance(hareMesh, hawks[nearestHawk]);
       //console.log("Position form hawk + " + FindDistance(hareMesh, hawks[nearestHawk]));
       if(distanceFromHawk < 50){
         chaseScene();
 
       }
+    }
+
   }
 
   function nearestHawkPosition(hawks) {
@@ -100,10 +103,14 @@ function Hare (scene, hareCount) {
   function chaseScene() {
     tween1.stop();
     tween2.stop();
+    const a = new THREE.Vector3( hareMesh.position.x, hareMesh.position.y, hareMesh.position.z );
+    const b = new THREE.Vector3(hareMesh.position.x +50, hareMesh.position.y, hareMesh.position.z +25 );
+    const d = a.distanceTo( b );
+
     const tween3 = new TWEEN.Tween(hareMesh.position)
         .to(
             { x: hareMesh.position.x + 50, y: 10, z: hareMesh.position.z + 25 },
-            10000 / 10
+            d/ 0.05
         )
         .start();
   }
@@ -115,22 +122,22 @@ function Hare (scene, hareCount) {
   // }
 
   myHareID = numberOfHares++;
-
+  const distance = 100;
   //console.log("hare created: hare__" + myHareID);
   const tween1 = new TWEEN.Tween(hareMesh.position).to(
     { x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 },
-    10000 / 10
+     distance/0.05
   );
 
   const tween2 = new TWEEN.Tween(hareMesh.position).to(
     { x: hareMesh.position.x + 10, y: 0, z: hareMesh.position.z + 15 },
-    10000 / 10
+      distance/0.05
   );
 
   const tween3 = new TWEEN.Tween(hareMesh.position)
     .to(
       { x: hareMesh.position.x + 25, y: 10, z: hareMesh.position.z + 25 },
-      10000 / 10
+        distance/0.05
     )
     .start();
   //tween1.chain(tween2);
