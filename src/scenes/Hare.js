@@ -101,7 +101,11 @@ function Hare (scene, hareCount) {
     }
     
     //console.log(" ------ run to tree at : " + shortestDist.toFixed());
-    moveToPosition(harePos, tree.position);
+    const numberOfTress = SceneManager.getSceneObjectsOf({ types: ["Tree"] });
+    if(numberOfTress.length > 0){
+      moveToPosition(harePos, tree.position);
+    }
+
   }
   function moveToPosition(harePos, newPos){
     // I'm guessing that this works like this
