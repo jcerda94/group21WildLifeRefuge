@@ -81,7 +81,9 @@ export const label = ({ text, initialValue, x, y }) => {
   }
 
   function destroy () {
-    document.body.removeChild(label);
+    if (label.parentElement && label.parentElement.hasChildNodes()) {
+      label.parentElement.removeChild(label);
+    }
   }
 
   return {
