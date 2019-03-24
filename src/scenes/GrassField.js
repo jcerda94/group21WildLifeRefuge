@@ -95,40 +95,31 @@ export var findRemoveIfNear = function (animalPos, range) {
   theRange = range;
 
   const my_grasses = myGrasses();
-  // console.log(" my_grasses length: " + my_grasses.children.length); // <<< defined
-  // console.log(" my_grasses count: " + my_grasses.children.count);   // <<< undefined
-
-  var shortestDist = 1000000.1;
-  var shortestDist_node;
-  var shortestDist_node_i = 0;
+  
+  //var shortestDist = 1000000.1;
+  var shortestDist_node = null;
+  //var shortestDist_node_i = 0;
 
   for (var idx = 0; idx < my_grasses.children.length; idx++) {
     var node = my_grasses.children[idx];
     var distance = getDistance(animalPos, node.position);
-    if (shortestDist > distance) {
-      // if(shortestDist.toFixed() > distance.toFixed())
-      // ^^^ fails w/o error, just doesn't do compare, likely as toFixed returns string
-      // if(shortestDist > distance) // <<< fails w/o error, just doesn't do comparison correctly
-      shortestDist = distance;
-      shortestDist_node = node;
-      shortestDist_node_i = idx;
-      // console.log("[" + idx + "] ------ grass at " + shortestDist_node.data.position.x.toFixed()
-      //           + "   new shortestDist: " + shortestDist.toFixed());
-    }
-  }
 
-  if (shortestDist < range) {
-
-    grasses.remove(shortestDist_node);
-    // console.log("new count of grass list: " +  ll.length);
-    getGrassLinkedList().Append(new Node(shortestDist_node));
-
-    //console.log("eaten grass count: " + getGrassLinkedList().length);
-    if(getGrassLinkedList().length > 100) {
-      //console.log("put grass back");
-      var grass_node = getGrassLinkedList().First();
-      grasses.add(grass_node.data);
-      getGrassLinkedList().Remove(grass_node);
+    if(distance < 100) { // get all the grass inside a range
+      // Since the grass field is greated randomly, the first one we find is pretty random
+      // so we'll use it
+      grasses.remove(node);
+      // console.log("new count of grass list: " +  ll.length);
+      getGrassLinkedList().Append(new Node(node));
+  
+      //console.log("eaten grass count: " + getGrassLinkedList().length);
+      if(getGrassLinkedList().length > 100) {
+        //console.log("put grass back");
+        var grass_node = getGrassLinkedList().First();
+        grasses.add(grass_node.data);
+        getGrassLinkedList().Remove(grass_node);
+      }
+      break;
+  
     }
   }
 };
