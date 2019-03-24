@@ -267,9 +267,14 @@ class SceneManager {
   }
 
   removeObject (sceneObject) {
-    this.subjects = this.subjects.filter(
-      subject => subject.model.uuid !== sceneObject.uuid
-    );
+    this.subjects = this.subjects.filter(subject => {
+      const targetSubject = subject.model.uuid === sceneObject.uuid;
+      if (targetSubject) {
+        subject.onDestroy && subject.onDestroy();
+      }
+
+      return !targetSubject;
+    });
     sceneObject.onDestroy && sceneObject.onDestroy();
     this.scene.remove(sceneObject);
   }
