@@ -95,7 +95,7 @@ export var findRemoveIfNear = function (animalPos, range) {
   theRange = range;
 
   const my_grasses = myGrasses();
-  
+  var eatingRange = 100;
   //var shortestDist = 1000000.1;
   var shortestDist_node = null;
   //var shortestDist_node_i = 0;
@@ -104,7 +104,7 @@ export var findRemoveIfNear = function (animalPos, range) {
     var node = my_grasses.children[idx];
     var distance = getDistance(animalPos, node.position);
 
-    if(distance < 100) { // get all the grass inside a range
+    if(distance < eatingRange) { // get all the grass inside a range
       // Since the grass field is greated randomly, the first one we find is pretty random
       // so we'll use it
       grasses.remove(node);
