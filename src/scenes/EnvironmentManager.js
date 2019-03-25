@@ -92,7 +92,9 @@ class EnvironmentManager {
         treeThirst: 0.025,
         grassThirst: 0.01,
         waterRegen: 0.001,
-        waterBalanceThreshold : 0.5
+        waterBalanceThreshold : 0.5,
+        nutrients: 1.0,
+        envConsumeKeys: ['water', 'nutrients']
     };
 
     constructor(){
@@ -113,11 +115,7 @@ class EnvironmentManager {
 
         this.defaultEnvironment = environmentObject;
 
-        //Include any parameters that we want in every environment tile,
-        //other object values will simply be made available under the defaultEnvironment object
-        const fillObject = {
-            water: environmentObject.water
-        };
+        
 
         this.sceneManager = getSceneManager();
 
@@ -209,13 +207,44 @@ class EnvironmentManager {
 
     }
 
+
+
+    consume(object) {
+
+        const pos = this.groundXYToCanvasXY(object.position.x, object.position.z);
+
+        const envArrX = Math.trunc(pos.x/10);
+        const envArrY = Math.trunc(pos.y/10);
+
+        let neighbors = [this.localEnv(envArrX, envArrY)];
+
+        if (object.type === 'Tree'){
+
+        }
+
+        for (var i=0; i < this.defaultEnvironment.envConsumeKeys.length; i++){
+
+        }
+
+    }
+
     //TODO: Add dynamic updating of the tree/grass thirstyness, add a listener on the appropriate values
+    //TODO: Add nutrient values to CAPI/SPR
+    //TODO: Add nutrientParams and env params by type
+    //TODO: Add germination stats/params
+    //TODO: Add random grass/tree in radius by germination stats
+    //TODO: Add hare/hawk nutrient replenishment upon death
+    //TODO: Tree water radius
+    //TODO: Add raindrops on environment
+    //TODO: Change ground tile darkness based on water saturation
     registerTrackedObject(object) {
 
         //TODO: Add object type for bushes
+        //TODO: Add nutrients
         switch (object.type) {
             case "Tree":
                 object.water = this.defaultEnvironment.treeThirst;
+                //object.nutrients = this.defaultEnvironment.treeNutrients;
                 break;
             case "Grass":
                 object.water = this.defaultEnvironment.grassThirst;
@@ -230,6 +259,10 @@ class EnvironmentManager {
 
         this.trackedObjects.push(object);
     }
+
+    //TODO add function for nutrient addition that can be called in onDestroy
+
+    //TODO: Absorb nutrients/water in a given radius (object.env object, radius)
 
     //Creates a Generator iterator. This will iterate through the entire environment array with each call.
     //Use: localEnvGenerator.next() returns an object similar to {value: nextVal, done: false}
@@ -258,38 +291,27 @@ class EnvironmentManager {
     //TODO: Add documentation of approach/use of this function
     async balanceWaterTable() {
 
-        const adjacencyMatrix = [[1,1], [0,1], [1,0], [-1,0], [0, -1], [-1,-1], [1,-1], [-1, 1]];
-
         const envGen = this.localEnvGenerator();
         let lowWater = [...envGen].filter(val => val.env.water < this.defaultEnvironment.waterBalanceThreshold);
 
-        const yBnd = this.localEnv.length;
-        const xBnd = this.localEnv[0].length;
-
         for (var i = 0; i < lowWater.length; i++) {
-            adjacencyMatrix.forEach((offset) => {
-                let x = lowWater[i].x + offset[0];
-                let y = lowWater[i].y + offset[1];
 
-                let neighborsWithWater = [];
+            //Will return valid adjacent env tiles
+            let neighborsWithWater = this.getAdjacentTiles(lowWater[i].x, lowWater[i].y).filter(
+                tile => tile.water > this.defaultEnvironment.waterBalanceThreshold);
 
-                if (((-1 < x && x < xBnd) &&
-                    (-1 < y && y < yBnd)) &&
-                    this.localEnv[x][y].water >= this.defaultEnvironment.waterBalanceThreshold) {
-                    neighborsWithWater.push(this.localEnv[x][y]);
+            if (neighborsWithWater.length > 0) {
+                //console.log("neighbor with water + " + neighborsWithWater.length);
+                //TODO: Change name of waterRegen to reflect the value is actually how much water is being
+                //TODO: redistributed to the center tile
+                let waterBalanced = this.defaultEnvironment.waterRegen / neighborsWithWater.length;
+                for (var j = 0; j < neighborsWithWater.length; j++) {
+                    neighborsWithWater[j].water -= waterBalanced;
                 }
 
-                if (neighborsWithWater.length > 0) {
-                    //console.log("neighbor with water + " + neighborsWithWater.length);
-                    let waterBalanced = this.defaultEnvironment.waterRegen / neighborsWithWater.length;
-                    for (var j = 0; j < neighborsWithWater.length; j++) {
-                        neighborsWithWater[j].water -= waterBalanced;
-                    }
+                lowWater[i].water += this.defaultEnvironment.waterRegen;
+            }
 
-                    lowWater[i].water += this.defaultEnvironment.waterRegen;
-                }
-
-            })
         }
 
     }
@@ -303,8 +325,11 @@ class EnvironmentManager {
         }
 
         this.balanceWaterTable();
-        
+
     }
+
+    //TODO update with flip flop for water/nutrients
+    //TODO update registered objects
 
 }
 
