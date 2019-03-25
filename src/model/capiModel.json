@@ -19,6 +19,8 @@
   "env.grassThirst": 0.01,
   "env.waterRegen": 0.001,
   "env.waterBalanceThreshold" : 0.5,
+  "env.nutrients": 1.0,
+  "env.ConsumeKeys": ["water", "nutrients"],
   "westernCedarLabel": true,
   "inputTable": []
 }
