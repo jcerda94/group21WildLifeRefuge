@@ -256,7 +256,7 @@ function Hare (config) {
         tween3.start();
       }
 
-    })
+    });
 
   }
 
