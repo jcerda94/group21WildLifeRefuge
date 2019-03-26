@@ -133,6 +133,7 @@ function Tree (config) {
       if (deathDelta > deathTimer) {
         if (!removeLabel) {
           thirstyLabel.destroy();
+          SceneManager.removeObject(tree);
           removeLabel = true;
           treeDeath = true;
         }

@@ -70,7 +70,7 @@ function Hawk (config) {
   let b = new THREE.Vector3(random_X, 0, random_Z);
   let d = a.distanceTo(b);
   const tween1 = new TWEEN.Tween(hawk.position).to(
-    { x: random_Z, y: 100, z: random_Z},
+    { x: random_X, y: 100, z: random_Z},
     d/0.05
   );
   random_X = randomX();
@@ -80,7 +80,7 @@ function Hawk (config) {
   d = a.distanceTo(b);
 
   const tween2 = new TWEEN.Tween(hawk.position).to(
-    { x: randomX(), y: 100, z: randomZ() },
+    { x:  random_X, y: 100, z:  random_Z },
       d/0.05
   );
   random_X = randomX();
@@ -89,7 +89,7 @@ function Hawk (config) {
   b = new THREE.Vector3(random_X, 0, random_Z);
   d = a.distanceTo(b);
   var tween3 = new TWEEN.Tween(hawk.position)
-    .to({ x: randomX(), y: 50, z: randomZ() }, d/0.05);
+    .to({ x:  random_X, y: 50, z:  random_Z }, d/0.05);
     tween3.start();
 
   // hawk must track it's position and look for hares nearby as it flys
