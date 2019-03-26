@@ -56,12 +56,6 @@ function Hare (config) {
       );
     }
   }
-  // console.log("SceneManager[4]: " + JSON.stringify(SceneManager.subjects[4].model.metadata) );
-
- // console.log("=======================================================: ");
-
-
-
   const x = random(-widthBound, widthBound);
   const y = 2;
   const z = random(-heightBound, heightBound);
@@ -319,13 +313,8 @@ function Hare (config) {
     }
     treePos = newPos;
     movingToTree = true;
-    // console.log("hare[" + getHareID(hare) + "]    set movingToTree ");
-    // this doesn't work
-    // savedTween3 = tween3; // seems to keep this target position
     if(tween3 != null){
       tween3.stop();
-      //tween2.stop();
-      //tween1.stop();
     }
 
     const moveToTree = new TWEEN.Tween(hareMesh.position).to(
