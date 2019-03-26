@@ -1,6 +1,7 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { Node } from "../utils/LinkedList.js";
+import { getGrassLinkedList } from "../utils/LinkedList.js";
 
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
@@ -8,7 +9,6 @@ require("three/examples/js/loaders/GLTFLoader");
 export const TYPE = "Grass";
 const grasses = new THREE.Object3D();
 async function GrassField (config) {
-
   const loadingManager = new THREE.LoadingManager();
   loadingManager.onLoad = config.onLoad || (() => null);
 
@@ -95,61 +95,39 @@ export var findRemoveIfNear = function (animalPos, range) {
   theRange = range;
 
   const my_grasses = myGrasses();
-  // console.log(" my_grasses length: " + my_grasses.children.length); // <<< defined
-  // console.log(" my_grasses count: " + my_grasses.children.count);   // <<< undefined
-
-  var shortestDist = 1000000.1;
-  var shortestDist_node;
-  var shortestDist_node_i = 0;
+  var eatingRange = 100;
+  //var shortestDist = 1000000.1;
+  var shortestDist_node = null;
+  //var shortestDist_node_i = 0;
 
   for (var idx = 0; idx < my_grasses.children.length; idx++) {
     var node = my_grasses.children[idx];
     var distance = getDistance(animalPos, node.position);
-    if (shortestDist > distance) {
-      // if(shortestDist.toFixed() > distance.toFixed())
-      // ^^^ fails w/o error, just doesn't do compare, likely as toFixed returns string
-      // if(shortestDist > distance) // <<< fails w/o error, just doesn't do comparison correctly
-      shortestDist = distance;
-      shortestDist_node = node;
-      shortestDist_node_i = idx;
-      // console.log("[" + idx + "] ------ grass at " + shortestDist_node.data.position.x.toFixed()
-      //           + "   new shortestDist: " + shortestDist.toFixed());
+
+    if(distance < eatingRange) { // get all the grass inside a range
+      // Since the grass field is greated randomly, the first one we find is pretty random
+      // so we'll use it
+      grasses.remove(node);
+      // console.log("new count of grass list: " +  ll.length);
+      getGrassLinkedList().Append(new Node(node));
+  
+      //console.log("eaten grass count: " + getGrassLinkedList().length);
+      if(getGrassLinkedList().length > 100) {
+        //console.log("put grass back");
+        var grass_node = getGrassLinkedList().First();
+        grasses.add(grass_node.data);
+        getGrassLinkedList().Remove(grass_node);
+      }
+      break;
+  
     }
-  }
-
-  if (shortestDist < range) {
-
-    // node.data.position.x + ":" + node.data.position.y + ":"+ node.data.position.z);
-    grasses.remove(shortestDist_node.data);
-    //ll.Remove(shortestDist_node);
-    // console.log(
-    //   "remove [" +
-    //     shortestDist_node_i +
-    //     "] at " +
-    //     shortestDist_node.position.x.toFixed() +
-    //     ":" +
-    //     shortestDist_node.position.y.toFixed() +
-    //     ":" +
-    //     shortestDist_node.position.z.toFixed() +
-    //     // + "        within: " + theRange + "  to  "
-    //     "    dist: " +
-    //     shortestDist.toFixed() +
-    //     "    animal Pos: " +
-    //     inPos.x.toFixed(0) +
-    //     ":" +
-    //     inPos.y.toFixed(0) +
-    //     ":" +
-    //     inPos.z.toFixed(0)
-    // );
-    grasses.remove(shortestDist_node);
-    // console.log("new count of grass list: " +  ll.length);
   }
 };
 
 function isGreaterThan (n1, n2) {
   return parseInt(n1) > parseInt(n2);
 }
-export function getDistance (pos1, pos2) {
+function getDistance (pos1, pos2) {
   return pos1.distanceTo(pos2);
 }
 export default GrassField;

@@ -1,14 +1,24 @@
-const random = (min, max) => {
+import { getSceneManager } from "../scenes/SceneManager";
+export const random = (min, max) => {
   return Math.random() * (max - min) + min;
 };
 
-const randomInt = (min, max) => {
+export const randomInt = (min, max) => {
   min = parseInt(min);
   max = parseInt(max);
   return Math.floor(Math.random() * max) + min;
 };
 
-const getValue = (accessor = "", initial = {}) => {
+export const get2DPosition = model => {
+  const SceneManager = getSceneManager();
+  SceneManager.camera.updateProjectionMatrix();
+  const vector = model.position.clone().project(SceneManager.camera);
+  vector.x = ((vector.x + 1) / 2) * SceneManager.screenDimensions.width - 14;
+  vector.y = (-(vector.y - 1) / 2) * SceneManager.screenDimensions.height;
+  return vector;
+};
+
+export const getValue = (accessor = "", initial = {}) => {
   if (initial === null) {
     throw new Error(`Cannot access ${accessor} on null initial value`);
   }
@@ -26,10 +36,4 @@ const getValue = (accessor = "", initial = {}) => {
 
     return val || {};
   }, initial);
-};
-
-module.exports = {
-  random,
-  randomInt,
-  getValue
 };

@@ -18,13 +18,8 @@ const Hawk = config => {
     return HawkModel(config);
   }
 };
-const Hare = () => {
-  const { model, created, update } = HareModel();
-  return {
-    model,
-    created,
-    update
-  };
+const Hare = config => {
+  return HareModel(config);
 };
 const Bush = () => {
   const { model, created, update } = BushModel();

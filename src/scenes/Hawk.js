@@ -1,5 +1,6 @@
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
+import { getHareID } from "./Hare.js";
 import { random, randomInt } from "../utils/helpers";
 import { hunger, label, pauseResume } from "../utils/behavior";
 import { getCapiInstance } from "../utils/CAPI/capi";
@@ -96,6 +97,7 @@ function Hawk (config) {
       const hares = SceneManager.getSceneObjectsOf({ types: ["Hare"] });
       const hareIndex = randomInt(0, hares.length - 1);
       const randomHare = hares[hareIndex];
+
       if (!randomHare) {
         console.log("No target");
         routineFlying();
@@ -114,6 +116,7 @@ function Hawk (config) {
       const d = a.distanceTo( b );
 
        tweenChase = new TWEEN.Tween(hawk.position).to(
+
         {
           x: randomHare.position.x,
           y: randomHare.position.y,
@@ -280,4 +283,8 @@ function Hawk (config) {
     handleCollision
   };
 }
+export var getHawks = function () {
+  return getSceneManager().getSceneObjectsOf({ types: ["Hawk"] });
+};
+
 export default Hawk;
