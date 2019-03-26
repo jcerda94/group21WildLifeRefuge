@@ -334,9 +334,7 @@ function Hare (config) {
     moveToTree.onComplete(function () {
       isMoveToTree = false;
       moveToTree.stop();
-      console.log("have reach the tree");
       const distanceFromHawk = closestDistanceFromHawk();
-      console.log("Closest distance " + distanceFromHawk);
       if(distanceFromHawk > dangerRange){
         tween3.start();
       }
