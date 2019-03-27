@@ -115,7 +115,6 @@ class EnvironmentManager {
 
         this.defaultEnvironment = environmentObject;
 
-        
 
         this.sceneManager = getSceneManager();
 
@@ -207,7 +206,10 @@ class EnvironmentManager {
 
     }
 
+    getAdjacentTiles(envArrX, envArrY) {
 
+
+    }
 
     consume(object) {
 
@@ -219,11 +221,19 @@ class EnvironmentManager {
         let neighbors = [this.localEnv(envArrX, envArrY)];
 
         if (object.type === 'Tree'){
-
+           neighbors.push(...this.getAdjacentTiles(envArrX, envArrY));
         }
 
         for (var i=0; i < this.defaultEnvironment.envConsumeKeys.length; i++){
 
+            let key = this.defaultEnvironment.envConsumeKeys[i];
+
+            let valid = neighbors.filter(tile => tile[key] > 0);
+
+            let balancedConsumption = object[key] / valid.length;
+            for (var k=0; k < valid.length; k++){
+                valid[k][key] -= balancedConsumption;
+            }
         }
 
     }
@@ -296,9 +306,7 @@ class EnvironmentManager {
 
         for (var i = 0; i < lowWater.length; i++) {
 
-            //Will return valid adjacent env tiles
-            let neighborsWithWater = this.getAdjacentTiles(lowWater[i].x, lowWater[i].y).filter(
-                tile => tile.water > this.defaultEnvironment.waterBalanceThreshold);
+
 
             if (neighborsWithWater.length > 0) {
                 //console.log("neighbor with water + " + neighborsWithWater.length);
