@@ -15,7 +15,7 @@
   "sageBushSelected": 0,
   "westernCedarSelected": 0,
   "env.water": 1.0,
-  "env.treeThirst": 0.085,
+  "env.treeThirst": 0.125,
   "env.grassThirst": 0.01,
   "westernCedarLabel": true,
   "inputTable": []
