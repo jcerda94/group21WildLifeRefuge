@@ -11,10 +11,10 @@ class ThreeEntry {
   constructor (container) {
     this.canvas = createCanvas(document, container);
     this.sceneManager = SceneManager(this.canvas);
-    this.environmentManager = EnvironmentManager();
+    // this.environmentManager = EnvironmentManager();
     this.frames = 0;
     this.fpsCounter = setInterval(() => {
-      //console.log(this.frames);
+      // console.log(this.frames);
       this.resizeCanvas();
       this.frames = 0;
     }, 1000);

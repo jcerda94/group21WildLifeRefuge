@@ -358,12 +358,12 @@ class SceneManager {
     // The keys have the 'env.' prefix removed before being sent to the environment manager, so they will no longer
     // have the same variable name in the capi model. Accordingly these values should only be used for initialization of
     // the environment, not for dynamic simulation adjustments.
-    getEnvironmentManager().initializeEnvironmentWithParams(
-      envKeys.reduce(
-        (o, key, idx) => ({ ...o, [key.substr(4)]: envParams[idx] }),
-        {}
-      )
-    );
+    // getEnvironmentManager().initializeEnvironmentWithParams(
+    //   envKeys.reduce(
+    //     (o, key, idx) => ({ ...o, [key.substr(4)]: envParams[idx] }),
+    //     {}
+    //   )
+    // );
 
     capi.addListenerFor({
       key: "hawkLabel",

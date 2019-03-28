@@ -4,6 +4,7 @@
   "SimCount.sageBushCount": 0,
   "SimCount.westernCedarCount": 4,
   "Hare.label": true,
+  "Hare.maleBias": 50,
   "toggleContext": true,
   "studentMode": true,
   "authorMode": false,

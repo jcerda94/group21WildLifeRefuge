@@ -1,5 +1,5 @@
 import Subject from "../utils/subject";
-
+import { random } from "../utils/helpers";
 export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
   const max = maxHunger || 20;
   const min = minHunger || 1;
@@ -47,6 +47,26 @@ export const pauseResume = (pauseHandler, resumeHandler) => {
     Subject.unsubscribe("simulation_paused", pauseHandler);
     Subject.unsubscribe("simulation_resumed", resumeHandler);
   };
+};
+
+export const breed = ({ gender, type, breedingHandler, id }) => {
+  if (gender === "male") {
+    Subject.subscribe("hare_ovulation", breedingHandler);
+    return {
+      cleanup: () => Subject.unsubscribe("hare_ovulation", breedingHandler)
+    };
+  }
+
+  return {
+    signal: () => {
+      Subject.next("hare_ovulation", { id });
+    }
+  };
+};
+
+export const gender = ({ bias } = { bias: 50 }) => {
+  const assignment = random(0, 100);
+  return assignment >= bias ? "female" : "male";
 };
 
 export const label = ({ text, initialValue, x, y }) => {

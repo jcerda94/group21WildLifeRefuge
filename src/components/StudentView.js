@@ -13,8 +13,8 @@ class StudentView extends Component {
     return (
       <Container>
         <SimViewer />
-        <canvas hidden={true} id="drawing-canvas" height="1000" width="1000" style={{
-          'backgroundColor': '996600', "cursor": "crosshair" }}/>
+        {/* <canvas hidden={true} id="drawing-canvas" height="1000" width="1000" style={{
+          'backgroundColor': '996600', "cursor": "crosshair" }}/> */}
       </Container>
     );
   }
