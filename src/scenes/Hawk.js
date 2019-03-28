@@ -19,7 +19,7 @@ function Hawk (config) {
   let hawkSpeed = 0.05;
   let isEating = false;
   let deathDelta = 0;
-  let gender = ""
+  let gender = "not selected";
   const deathTimer = 60 * 60 * 24; // Eat within a day at max hunger or die
   const maxHunger = 10;
   const minHunger = 1;
@@ -120,7 +120,6 @@ function Hawk (config) {
         return;
       }
       const selectedHare = hares[selectedHareIndex];
-
       tween3.stop();
       routineTweenStop = true;
       const a = new THREE.Vector3( hawk.position.x, hawk.position.y, hawk.position.z );
@@ -225,7 +224,6 @@ function Hawk (config) {
     tween3.start();
   }
   routineFlying();
-
   let lastSimTime = 0;
 
   function update (elapsedTime, simulationTime) {
