@@ -50,7 +50,6 @@ function Hawk (config) {
   };
   hawk.name = NAME;
   hawk.type = TYPE;
-  console.log("gender " + gender);
   const randomX = () => {
     const groundX = SceneManager.groundSize.x / 2;
     return random(-groundX, groundX);
