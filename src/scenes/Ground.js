@@ -8,8 +8,8 @@ function Ground (config) {
   const depth = 15;
   const geometry = new THREE.BoxBufferGeometry(size.x, depth, size.y);
 
-  // const env = getEnvironmentManager();
-  // const textureCanvas = env.textureCanvas;
+  const env = getEnvironmentManager();
+  const textureCanvas = env.textureCanvas;
 
   const material = [
     new THREE.MeshLambertMaterial({
@@ -18,9 +18,9 @@ function Ground (config) {
     new THREE.MeshLambertMaterial({
       color
     }),
-    // new THREE.MeshLambertMaterial({
-    //   map: new THREE.CanvasTexture(textureCanvas)
-    // }),
+    new THREE.MeshLambertMaterial({
+      map: new THREE.CanvasTexture(textureCanvas)
+    }),
     new THREE.MeshLambertMaterial({
       color
     }),
