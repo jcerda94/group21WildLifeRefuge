@@ -96,8 +96,13 @@ function Hare (config) {
     return random(-groundZ, groundZ);
   };
 
-  function breedingHandler (id) {
-    console.log(id);
+  let seekingMate = null;
+
+  function breedingHandler ({ id }) {
+    if (seekingMate === null) {
+      seekingMate = { id };
+      // TODO: Send one hare to the other hare
+    }
   }
 
   function createTween () {
