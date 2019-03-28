@@ -7,6 +7,7 @@ import { getHawks } from "./Hawk.js";
 import { getTrees } from "./Tree.js";
 import { get2DPosition } from "../utils/helpers";
 import { getCapiInstance } from "../utils/CAPI/capi";
+import FindDistance from "../utils/Findistance";
 
 const THREE = require("three");
 
@@ -15,6 +16,7 @@ export const TYPE = "Hare";
 let TWEEN = require("@tweenjs/tween.js");
 
 function Hare (config) {
+  const dangerRange = 170;
   const maxHunger = 20;
   const minHunger = 1;
   const hungerTickRate = 0.0001;
@@ -68,7 +70,7 @@ function Hare (config) {
   const shouldShowLabel = getCapiInstance().getValue({ key: "Hare.label" });
   if (shouldShowLabel) hareLabel.showLabel();
 
-  const dangerRange = 300;
+
   getHawkObserver().subscribe(position => {
     // this gets sent for every hawk, so shouldn't have to use the list thing
     checkForHawks(hareMesh, position, dangerRange);
@@ -76,24 +78,44 @@ function Hare (config) {
 
   hareMesh.type = TYPE;
 
+  const randomX = () => {
+    const groundX = SceneManager.groundSize.x / 2;
+    return random(-groundX, groundX);
+  };
+
+  const randomZ = () => {
+    const groundZ = SceneManager.groundSize.y / 2;
+    return random(-groundZ, groundZ);
+  };
   function createTween () {
     // console.log("hare in create tween");
     tween1 = new TWEEN.Tween(hareMesh.position).to(
       { x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 },
-      10000 / 10
+      15000
     );
-
+    let random_X = randomX();
+    let random_Z = randomZ();
+    let a = new THREE.Vector3(hareMesh.position.x,hareMesh.position.y, hareMesh.position.z );
+    let b = new THREE.Vector3(random_X, 0, random_Z);
+    let d = a.distanceTo(b);
     tween2 = new TWEEN.Tween(hareMesh.position).to(
-      { x: hareMesh.position.x + 10, y: 0, z: hareMesh.position.z + 15 },
-      10000 / 10
+      { x: random_X, y: 0, z: random_Z},
+      d/0.03
     );
-
+     random_X = randomX();
+     random_Z = randomZ();
+     a = new THREE.Vector3(hareMesh.position.x,hareMesh.position.y, hareMesh.position.z );
+     b = new THREE.Vector3(random_X, 0, random_Z);
+     d = a.distanceTo(b);
     tween3 = new TWEEN.Tween(hareMesh.position)
       .to(
-        { x: hareMesh.position.x + 25, y: 10, z: hareMesh.position.z + 25 },
-        10000 / 10
+        { x: random_X, y: 0, z: random_Z},
+        d/0.03
       )
       .start();
+    tween1.chain(tween3);
+    tween2.chain(tween1);
+    tween3.chain(tween2);
   }
   // function for animals to call to detect the distance to the closest hawk
   var checkForHawks = function (hare, hawkPos, range) {
@@ -106,12 +128,26 @@ function Hare (config) {
     // else console.log(" ------ hawk far away: " + distance.toFixed());
   };
 
-  // return distanceFromHawk;
+  function closestDistanceFromHawk() {
+    const hawks = SceneManager.getSceneObjectsOf({ types: ["Hawk"] });
+    let nearestPosition = 900;
+    if(hawks.length > 0){
+      let nearestPosition2 = 0.0;
+      for(let i = 0 ; i < hawks.length; i++){
+        nearestPosition2 = FindDistance(hareMesh, hawks[i]);
+        if(nearestPosition2 < nearestPosition){
+          nearestPosition = nearestPosition2;
+        }
+      }
+    }
+    return nearestPosition;
+  }
+
   function escapeFromHawk (hare) {
     var harePos = hare.position;
     // console.log("hare[" + getHareID(hare) + "] escapeFromHawk: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
 
-    const trees = getTrees();
+    const trees = SceneManager.getSceneObjectsOf({ types: ["Tree"] });
 
     var shortestDist = 1000000.1;
     var tree;
@@ -135,7 +171,7 @@ function Hare (config) {
     // console.log("hare[" + getHareID(hare) + "] hideFromHawk: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
 
     // find the closest hawk and stay hidden until they fly away
-    const hawks = getHawks();
+    const hawks = SceneManager.getSceneObjectsOf({ types: ["Hawk"] });
     var shortestDist = 1000000.1;
     for (var idx = 0; idx < hawks.length; idx++) {
       var x = hawks[idx];
@@ -155,50 +191,76 @@ function Hare (config) {
   }
   function pause (hare) {
     // console.log("hare[" + getHareID(hare) + "]    paused ");
-    tween1.stop();
-    tween2.stop();
+   // tween1.stop();
+    //tween2.stop();
     tween3.stop();
   }
 
   function resume (hare) {
     // console.log("hare[" + getHareID(hare) + "]    resume ");
     tween3.start();
-    tween2.start();
-    tween1.start();
+    //tween1.stop();
+    //tween2.stop();
+
   }
   var treePos;
   var movingToTree = false;
   // var savedTween3;
+  let isMoveToTree = false;
   function moveToPosition (hare, newPos) {
-    var harePos = hare.position;
 
-    // I'm guessing that this works like this
+    const harePos = hare.position;
+    const a = new THREE.Vector3( hareMesh.position.x, hareMesh.position.y, hareMesh.position.z );
+    const b = new THREE.Vector3(newPos.x, newPos.y, newPos.z );
+    const d = a.distanceTo( b );
+    let adjustX = 10;
+    const adjustZ = 10;
+    if(hareMesh.position.x <newPos.x){
+      adjustX =  -10;
+    }
+    if(hareMesh.position.z < newPos.z){
+      adjustX =  -10;
+    }
     treePos = newPos;
     movingToTree = true;
     // console.log("hare[" + getHareID(hare) + "]    set movingToTree ");
-
     // this doesn't work
     // savedTween3 = tween3; // seems to keep this target position
+    if(tween3 != null){
+      tween3.stop();
+      //tween2.stop();
+      //tween1.stop();
+    }
 
-    tween3 = new TWEEN.Tween(harePos).to(
+    const moveToTree = new TWEEN.Tween(hareMesh.position).to(
       {
-        x: newPos.x,
+        x: newPos.x + adjustX,
         y: newPos.y,
-        z: newPos.z
+        z: newPos.z  + adjustZ
       },
-      // 1000 // speed?
-      500
+
+      d/0.03
     );
-    tween2.chain(tween3);
-    tween3.chain(tween1);
+    if(!isMoveToTree){
+      moveToTree.start();
+      isMoveToTree = true;
+    }
+    //this get called when hare stop at a tree
+    moveToTree.onComplete(function () {
+      isMoveToTree = false;
+      moveToTree.stop();
+      console.log("have reach the tree");
+      const distanceFromHawk = closestDistanceFromHawk();
+      console.log("Closest distance " + distanceFromHawk);
+      if(distanceFromHawk > dangerRange){
+        tween3.start();
+      }
+
+    });
+
   }
 
   createTween();
-
-  tween1.chain(tween2);
-  tween2.chain(tween3);
-  tween3.chain(tween1);
-  // tween4.chain(tween1);
 
   var waitForHawksToFlyAway = true;
   var eating_pace = 20;

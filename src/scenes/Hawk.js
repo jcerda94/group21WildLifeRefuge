@@ -86,8 +86,8 @@ function Hawk (config) {
       const hares = SceneManager.getSceneObjectsOf({ types: ["Hare"] });
       const hareIndex = randomInt(0, hares.length - 1);
       const randomHare = hares[hareIndex];
-      //console.log("moving hawk["+myHawkID+"] towards hare: " + hawk.position.x.toFixed() + ":" + hawk.position.y.toFixed());
-      //console.log("           hare["+getHareID(randomHare)+"] position: " + randomHare.position.x.toFixed() + ":" + randomHare.position.y.toFixed());
+      // console.log("moving hawk["+myHawkID+"] towards hare: " + hawk.position.x.toFixed() + ":" + hawk.position.y.toFixed());
+      // console.log("           hare["+getHareID(randomHare)+"] position: " + randomHare.position.x.toFixed() + ":" + randomHare.position.y.toFixed());
       if (!randomHare) return;
       tween3 = new TWEEN.Tween(hawk.position).to(
         {
@@ -205,7 +205,7 @@ function Hawk (config) {
       }
     }
   }
-  
+
   return {
     update,
     setLabelTo,
@@ -217,7 +217,7 @@ function Hawk (config) {
   };
 }
 export var getHawks = function () {
-  return getSceneManager().getSceneObjectsOf({types: ["Hawk"]});
+  return getSceneManager().getSceneObjectsOf({ types: ["Hawk"] });
 };
 
 export default Hawk;
