@@ -4,6 +4,7 @@ import { getHareID } from "./Hare.js";
 import { random, randomInt } from "../utils/helpers";
 import { hunger, label, pauseResume } from "../utils/behavior";
 import { getCapiInstance } from "../utils/CAPI/capi";
+import FindDistance from "../utils/Findistance";
 
 const THREE = require("three");
 
@@ -14,6 +15,8 @@ var numberHawks = 0;
 let TWEEN = require("@tweenjs/tween.js");
 
 function Hawk (config) {
+  let routineTweenStop = true;
+  let sameTween = true;
   let isEating = false;
   let deathDelta = 0;
   const deathTimer = 60 * 60 * 24; // Eat within a day at max hunger or die
@@ -59,53 +62,107 @@ function Hawk (config) {
   hawk.position.x = randomX();
   hawk.position.z = randomZ();
   hawk.position.y = 100;
+  const distance = 1000;
 
+  let random_X = randomX();
+  let random_Z = randomZ();
+  let a = new THREE.Vector3(hawk.position.x,hawk.position.y, hawk.position.z );
+  let b = new THREE.Vector3(random_X, 100, random_Z);
+  let d = a.distanceTo(b);
   const tween1 = new TWEEN.Tween(hawk.position).to(
-    { x: randomX(), y: 100, z: randomZ() },
-    10000
+    { x: random_X, y: 100, z: random_Z},
+    d/0.05
   );
+  random_X = randomX();
+  random_Z =randomZ();
+  a = new THREE.Vector3(hawk.position.x,hawk.position.y, hawk.position.z );
+  b = new THREE.Vector3(random_X, 100, random_Z);
+  d = a.distanceTo(b);
 
   const tween2 = new TWEEN.Tween(hawk.position).to(
-    { x: randomX(), y: 100, z: randomZ() },
-    10000
+    { x:  random_X, y: 100, z:  random_Z },
+      d/0.05
   );
-
+  random_X = randomX();
+  random_Z =randomZ();
+  a = new THREE.Vector3(hawk.position.x,hawk.position.y, hawk.position.z );
+  b = new THREE.Vector3(random_X, 100, random_Z);
+  d = a.distanceTo(b);
   var tween3 = new TWEEN.Tween(hawk.position)
-    .to({ x: randomX(), y: 50, z: randomZ() }, 10000)
-    .start();
+    .to({ x:  random_X, y: 100, z:  random_Z }, d/0.05);
+    tween3.start();
 
   // hawk must track it's position and look for hares nearby as it flys
   getHawkObserver().subscribe(position => {
     // console.log("hawkObserver method called for Hawk: ");
   });
-
+  let tweenChase = null;
+  let chase = false;
+  let newCycleChase = false;
   var myHawkID = numberHawks++;
-
+  let selectedHareIndex = 0;
+  let chaseSelectedHare = false;
   function checkForHare () {
     if (!isEating) {
       const hares = SceneManager.getSceneObjectsOf({ types: ["Hare"] });
-      const hareIndex = randomInt(0, hares.length - 1);
-      const randomHare = hares[hareIndex];
-      // console.log("moving hawk["+myHawkID+"] towards hare: " + hawk.position.x.toFixed() + ":" + hawk.position.y.toFixed());
-      // console.log("           hare["+getHareID(randomHare)+"] position: " + randomHare.position.x.toFixed() + ":" + randomHare.position.y.toFixed());
-      if (!randomHare) return;
-      tween3 = new TWEEN.Tween(hawk.position).to(
+      if(!chaseSelectedHare){
+        const hareIndex = randomInt(0, hares.length - 1);
+        const randomHare = hares[hareIndex];
+        selectedHareIndex = hareIndex;
+        chaseSelectedHare = true;
+      }
+      if (!hares[selectedHareIndex]) {
+         chaseSelectedHare = false;
+        if (tweenChase != null) {
+          tweenChase.stop();
+        }
+        routineFlying();
+        return;
+      }
+      const selectedHare = hares[selectedHareIndex];
+
+      tween3.stop();
+      routineTweenStop = true;
+      const a = new THREE.Vector3( hawk.position.x, hawk.position.y, hawk.position.z );
+      const b = new THREE.Vector3(selectedHare.position.x, selectedHare.position.y, selectedHare.position.z );
+      const d = a.distanceTo( b );
+       tweenChase = new TWEEN.Tween(hawk.position).to(
+
         {
-          x: randomHare.position.x,
-          y: randomHare.position.y,
-          z: randomHare.position.z
+          x: selectedHare.position.x,
+          y: selectedHare.position.y,
+          z: selectedHare.position.z
         },
-        10000
+        d/0.06
       );
-      tween2.chain(tween3);
-      tween3.chain(tween1);
+
+      if(!chase){
+        tweenChase.start();
+        chase = true;
+      }
+      tweenChase.onComplete(function() {
+        if(isEating){
+          console.log("got hare");
+          chase = false;
+          tweenChase.stop();
+          routineFlying();
+        }
+        if(!isEating){
+          chase = false;
+        }
+      });
+    }
+  }
+  function routineFlying(){
+    if(routineTweenStop){
+      tween3.start();
+      routineTweenStop = false;
     }
   }
   tween1.chain(tween2);
   tween2.chain(tween3);
-  tween3.chain(tween1);
+  tween3.chain(tween2);
   var count = 1;
-
   const hawkHunger = hunger({
     maxHunger,
     minHunger,
@@ -152,16 +209,12 @@ function Hawk (config) {
   function resumeHawk () {
     tween3.start();
   }
+  routineFlying();
 
   let lastSimTime = 0;
 
   function update (elapsedTime, simulationTime) {
-    // console.log("call hawk");
     count++;
-    // const position = get2DPosition();
-    // hawkHunger.update(simulationTime);
-    // hungerValue.update(position.x, position.y, hawkHunger.get().toFixed(1));
-
     if (deathDelta > deathTimer) {
       SceneManager.removeObject(hawk);
       hungerLabel.destroy();
@@ -178,10 +231,10 @@ function Hawk (config) {
     // hungerLabel.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
     if (hawkHunger.get() >= maxHunger * 0.75) {
-      // Go get a rabbit
       checkForHare();
     } else if (hawkHunger.get() <= minHunger) {
       hawk.remove(hareMesh);
+      chase = false;
       isEating = false;
     }
     if (count % 30 === 0) {

@@ -129,13 +129,9 @@ function Tree (config) {
 
   let lastSimTime = 0;
   function update (elapsedTime, simulationTime) {
-    if (!treeDeath) {
+    if (true) {
       if (deathDelta > deathTimer) {
-        if (!removeLabel) {
-          thirstyLabel.destroy();
-          removeLabel = true;
-          treeDeath = true;
-        }
+        SceneManager.removeObject(tree);
       }
       if (treeThirsty.get() >= maxThirsty) {
         deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
@@ -176,6 +172,7 @@ function Tree (config) {
 
   function onDestroy () {
     thirstyLabel.destroy();
+
   }
 
   function updateLabelPosition () {
