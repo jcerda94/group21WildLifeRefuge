@@ -114,7 +114,14 @@ class EnvironmentManager {
     initializeEnvironmentWithParams(environmentObject) {
 
         this.defaultEnvironment = environmentObject;
-        
+
+        //TODO: Explain object creation here
+        //Includes any parameters that we want in every environment tile,
+        //other object values will simply be made available under the defaultEnvironment object
+        const fillObject = environmentObject.envKeys.reduce(
+            (o, key) => ({...o, [key]: environmentObject[key]}),
+            {}
+        );
 
         this.sceneManager = getSceneManager();
 
@@ -238,7 +245,7 @@ class EnvironmentManager {
         let neighbors = [this.localEnv(envArrX, envArrY)];
 
         if (object.type === 'Tree'){
-           neighbors.push(...this.getAdjacentTiles(envArrX, envArrY));
+            neighbors.push(...this.getAdjacentTiles(envArrX, envArrY));
         }
 
         for (var i=0; i < this.defaultEnvironment.envConsumeKeys.length; i++){
