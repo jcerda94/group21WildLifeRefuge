@@ -2,11 +2,14 @@ import { getValue, random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { findRemoveIfNear } from "./GrassField";
+
+import { pauseResume } from "../utils/behavior";
 import { hunger, label } from "../utils/behavior";
 import { getHawks } from "./Hawk.js";
 import { getTrees } from "./Tree.js";
 import { get2DPosition } from "../utils/helpers";
 import { getCapiInstance } from "../utils/CAPI/capi";
+
 import FindDistance from "../utils/Findistance";
 
 const THREE = require("three");
@@ -42,6 +45,17 @@ function Hare (config) {
   const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
   const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
 
+
+  // console.log("SceneManager: " + JSON.stringify(SceneManager) );
+  //console.log("=======================================================: ");
+  for (let s_idx = 0; s_idx < SceneManager.scene.length; s_idx++) {
+    // console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
+    for (let i = 0; i < SceneManager.scene[s_idx].children.length; i++) {
+      console.log(
+        "SceneManager.scene: " + SceneManager.scene[s_idx].children[i].name
+      );
+    }
+  }
   const x = random(-widthBound, widthBound);
   const y = 2;
   const z = random(-heightBound, heightBound);
@@ -82,7 +96,82 @@ function Hare (config) {
     const groundX = SceneManager.groundSize.x / 2;
     return random(-groundX, groundX);
   };
+/*
+<<<<<<< HEAD
+  // TODO: when hare finds hawk hide under a bush
+  function checkForHawks () {
+    const hawks = SceneManager.getSceneObjectsOf({ types: ["Hawk"] });
+    if(hawks.length > 0){
+      const nearestHawk = nearestHawkPosition(hawks);
+      const distanceFromHawk = FindDistance(hareMesh, hawks[nearestHawk]);
+      //console.log("Position form hawk + " + FindDistance(hareMesh, hawks[nearestHawk]));
+      if(distanceFromHawk < 50){
+        chaseScene();
 
+      }
+    }
+
+  }
+
+  function nearestHawkPosition(hawks) {
+    let nearestPosition = 1000;
+    let nearestPosition2 = 0.0;
+    let position = 0;
+    for(let i = 0 ; i < hawks.length; i++){
+      nearestPosition2 = FindDistance(hareMesh, hawks[i]);
+      if(nearestPosition2 < nearestPosition){
+        nearestPosition = nearestPosition2;
+        position = i;
+      }
+    }
+    return position;
+  }
+  function chaseScene() {
+    tween1.stop();
+    tween2.stop();
+    const a = new THREE.Vector3( hareMesh.position.x, hareMesh.position.y, hareMesh.position.z );
+    const b = new THREE.Vector3(hareMesh.position.x +50, hareMesh.position.y, hareMesh.position.z +25 );
+    const d = a.distanceTo( b );
+
+    const tween3 = new TWEEN.Tween(hareMesh.position)
+        .to(
+            { x: hareMesh.position.x + 50, y: 10, z: hareMesh.position.z + 25 },
+            d/ 0.05
+        )
+        .start();
+  }
+  function escapeFormHawk () {}
+  // looking for closest grass potion
+  // function getGrassPosition() {
+  //  const grassPosition ={};
+  //  return grassPosition;
+  // }
+
+  myHareID = numberOfHares++;
+  const distance = 100;
+  //console.log("hare created: hare__" + myHareID);
+  const tween1 = new TWEEN.Tween(hareMesh.position).to(
+    { x: hareMesh.position.x + 5, y: 10, z: hareMesh.position.z + 5 },
+     distance/0.05
+  );
+
+  const tween2 = new TWEEN.Tween(hareMesh.position).to(
+    { x: hareMesh.position.x + 10, y: 0, z: hareMesh.position.z + 15 },
+      distance/0.05
+  );
+
+  const tween3 = new TWEEN.Tween(hareMesh.position)
+    .to(
+      { x: hareMesh.position.x + 25, y: 10, z: hareMesh.position.z + 25 },
+        distance/0.05
+    )
+    .start();
+  //tween1.chain(tween2);
+  tween2.chain(tween3);
+  tween3.chain(tween1);
+  // tween4.chain(tween1);
+=======
+  */
   const randomZ = () => {
     const groundZ = SceneManager.groundSize.y / 2;
     return random(-groundZ, groundZ);
@@ -170,6 +259,7 @@ function Hare (config) {
     var harePos = hare.position;
     // console.log("hare[" + getHareID(hare) + "] hideFromHawk: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
 
+
     // find the closest hawk and stay hidden until they fly away
     const hawks = SceneManager.getSceneObjectsOf({ types: ["Hawk"] });
     var shortestDist = 1000000.1;
@@ -223,13 +313,8 @@ function Hare (config) {
     }
     treePos = newPos;
     movingToTree = true;
-    // console.log("hare[" + getHareID(hare) + "]    set movingToTree ");
-    // this doesn't work
-    // savedTween3 = tween3; // seems to keep this target position
     if(tween3 != null){
       tween3.stop();
-      //tween2.stop();
-      //tween1.stop();
     }
 
     const moveToTree = new TWEEN.Tween(hareMesh.position).to(
@@ -249,9 +334,7 @@ function Hare (config) {
     moveToTree.onComplete(function () {
       isMoveToTree = false;
       moveToTree.stop();
-      console.log("have reach the tree");
       const distanceFromHawk = closestDistanceFromHawk();
-      console.log("Closest distance " + distanceFromHawk);
       if(distanceFromHawk > dangerRange){
         tween3.start();
       }
