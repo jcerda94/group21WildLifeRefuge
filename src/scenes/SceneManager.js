@@ -464,6 +464,11 @@ class SceneManager {
     }
   }
 
+  getPositionById ({ id }) {
+    const target = this.scene.children.find(child => child.uuid === id);
+    return target.position;
+  }
+
   convertClickToVector = event => {
     const vector = new THREE.Vector3();
     const canvasTopOffset = this.canvas.getBoundingClientRect().top;

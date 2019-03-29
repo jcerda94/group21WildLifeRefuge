@@ -50,18 +50,48 @@ export const pauseResume = (pauseHandler, resumeHandler) => {
 };
 
 export const breed = ({ gender, type, breedingHandler, id }) => {
+  const femaleEvent = `${type}_ovulation`;
+  const maleEvent = `${type}_unload`;
+
   if (gender === "male") {
-    Subject.subscribe("hare_ovulation", breedingHandler);
+    let hasBred = false;
+    const breedWrapper = (...args) => {
+      breedingHandler(...args);
+      Subject.next(maleEvent);
+    };
+    Subject.subscribe(femaleEvent, breedWrapper);
+
     return {
-      cleanup: () => Subject.unsubscribe("hare_ovulation", breedingHandler)
+      signal: () => {
+        Subject.next(maleEvent);
+      },
+      cleanup: () => Subject.unsubscribe(femaleEvent, breedWrapper),
+      reset: () => {
+        hasBred = false;
+      }
+    };
+  } else {
+    let hasBred = false;
+    const breedWrapper = (...args) => {
+      if (!hasBred) {
+        breedingHandler(...args);
+        hasBred = true;
+      }
+    };
+    Subject.subscribe(maleEvent, breedWrapper);
+
+    return {
+      signal: () => {
+        Subject.next(femaleEvent, { id });
+      },
+      cleanup: () => {
+        Subject.unsubscribe(maleEvent, breedWrapper);
+      },
+      reset: () => {
+        hasBred = false;
+      }
     };
   }
-
-  return {
-    signal: () => {
-      Subject.next("hare_ovulation", { id });
-    }
-  };
 };
 
 export const gender = ({ bias } = { bias: 50 }) => {

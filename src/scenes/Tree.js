@@ -95,7 +95,7 @@ function Tree (config) {
   }
 
   let env = getEnvironmentManager();
-  env.toggleEnvironmentViewOnCanvas();
+
   env.registerTrackedObject(tree);
 
   const treeThirsty = waterLevel({

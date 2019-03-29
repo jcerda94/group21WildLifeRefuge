@@ -8,6 +8,8 @@ import { getTrees } from "./Tree.js";
 import { get2DPosition } from "../utils/helpers";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import FindDistance from "../utils/Findistance";
+import Subject from "../utils/subject";
+import ModelFactory from "./ModelFactory";
 
 const THREE = require("three");
 
@@ -26,7 +28,10 @@ function Hare (config) {
     hungerTickRate
   });
 
-  const color = "#db7093";
+  const genderBias = getCapiInstance().getValue({ key: "Hare.maleBias" }) || 50;
+  const hareGender = gender({ bias: genderBias });
+
+  const color = hareGender === "female" ? "#db7093" : "#407093";
   let tween1 = {};
   let tween2 = {};
   let tween3 = {};
@@ -37,6 +42,13 @@ function Hare (config) {
   var sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
   var hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
   hareMesh.name = "hare";
+
+  const breedBehavior = breed({
+    gender: hareGender,
+    type: TYPE,
+    id: hareMesh.uuid,
+    breedingHandler
+  });
 
   const SceneManager = getSceneManager();
   const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
@@ -70,15 +82,6 @@ function Hare (config) {
   const shouldShowLabel = getCapiInstance().getValue({ key: "Hare.label" });
   if (shouldShowLabel) hareLabel.showLabel();
 
-  const genderBias = getCapiInstance().getValue({ key: "Hare.maleBias" }) || 50;
-  const hareGender = gender({ bias: genderBias });
-  const breedBehavior = breed({
-    gender: hareGender,
-    type: TYPE,
-    id: hareMesh.uuid,
-    breedingHandler
-  });
-
   getHawkObserver().subscribe(position => {
     // this gets sent for every hawk, so shouldn't have to use the list thing
     checkForHawks(hareMesh, position, dangerRange);
@@ -96,12 +99,11 @@ function Hare (config) {
     return random(-groundZ, groundZ);
   };
 
-  let seekingMate = null;
-
-  function breedingHandler ({ id }) {
-    if (seekingMate === null) {
-      seekingMate = { id };
-      // TODO: Send one hare to the other hare
+  let lastBreedTime = 0;
+  function breedingHandler () {
+    if (hareGender === "female") {
+      const babyHare = ModelFactory.makeSceneObject({ type: "hare" });
+      SceneManager.addObject(babyHare);
     }
   }
 
@@ -263,7 +265,6 @@ function Hare (config) {
         y: newPos.y,
         z: newPos.z + adjustZ
       },
-
       d / 0.03
     );
     if (!isMoveToTree) {
@@ -293,7 +294,13 @@ function Hare (config) {
     // if(eating_paceCntr-- == 0)
     updateLabelPosition();
     hareHunger.update(simulationTime);
-    if (simulationTime >= 86000) breedBehavior.signal && breedBehavior.signal();
+    if (
+      simulationTime - lastBreedTime > 60 * 60 * 24 &&
+      hareGender === "female"
+    ) {
+      breedBehavior.signal();
+      lastBreedTime = simulationTime;
+    }
     eating_paceCntr = eating_pace;
     var deltaDistance = 500;
     findRemoveIfNear(hareMesh.position, deltaDistance);
