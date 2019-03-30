@@ -24,7 +24,8 @@ function Hawk (config) {
   const maxHunger = 10;
   const minHunger = 1;
   const size = 3;
-  const color = "#db7093";
+  let color = "";
+  setGender();
 
   // create a sphere or a hare
   const sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
@@ -37,7 +38,7 @@ function Hawk (config) {
   const hawk = new THREE.Mesh(geometry, material);
 
   const SceneManager = getSceneManager();
-  setGender();
+
   hawk.userData = {
     selectable: true,
     gender: gender,
@@ -120,6 +121,8 @@ function Hawk (config) {
       }
       const selectedHare = hares[selectedHareIndex];
       tween3.stop();
+      tween2.stop();
+      tween1.stop();
       routineTweenStop = true;
       const a = new THREE.Vector3( hawk.position.x, hawk.position.y, hawk.position.z );
       const b = new THREE.Vector3(selectedHare.position.x, selectedHare.position.y, selectedHare.position.z );
@@ -161,8 +164,8 @@ function Hawk (config) {
       tween3.start();
       routineTweenStop = false;
     }
-    tween1.chain(tween2);
-    tween2.chain(tween3);
+    tween1.chain(tween3);
+    tween2.chain(tween1);
     tween3.chain(tween2);
   }
 
@@ -170,8 +173,10 @@ function Hawk (config) {
     let index = Math.floor(Math.random() * 2);
     if(index == 0){
       gender = "male";
+      color = "#db7093"
     }else {
       gender = "female";
+      color = "#2a21db"
     }
   }
 
