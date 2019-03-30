@@ -99,12 +99,15 @@ function Hare (config) {
     return random(-groundZ, groundZ);
   };
 
-  let lastBreedTime = 0;
+  let lastBreedTime = null;
+  let canBreed = false;
   function breedingHandler () {
-    if (hareGender === "female") {
+    if (hareGender === "female" && canBreed) {
       const babyHare = ModelFactory.makeSceneObject({ type: "hare" });
       SceneManager.addObject(babyHare);
+      console.log(`Make Baby: ${hareMesh.uuid}`);
     }
+    canBreed = false;
   }
 
   function createTween () {
@@ -294,10 +297,13 @@ function Hare (config) {
     // if(eating_paceCntr-- == 0)
     updateLabelPosition();
     hareHunger.update(simulationTime);
+    if (!lastBreedTime) lastBreedTime = simulationTime;
     if (
-      simulationTime - lastBreedTime > 60 * 60 * 24 &&
+      simulationTime - lastBreedTime > 60 * 60 * 8 &&
       hareGender === "female"
     ) {
+      canBreed = true;
+      breedBehavior.reset();
       breedBehavior.signal();
       lastBreedTime = simulationTime;
     }
