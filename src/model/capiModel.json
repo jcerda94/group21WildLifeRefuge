@@ -5,6 +5,7 @@
   "SimCount.westernCedarCount": 4,
   "Hare.label": true,
   "Hare.maleBias": 50,
+  "Hare.ovulationTime": 86400,
   "toggleContext": true,
   "studentMode": true,
   "authorMode": false,

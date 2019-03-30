@@ -99,15 +99,12 @@ function Hare (config) {
     return random(-groundZ, groundZ);
   };
 
-  let lastBreedTime = null;
-  let canBreed = false;
   function breedingHandler () {
-    if (hareGender === "female" && canBreed) {
+    if (hareGender === "female") {
       const babyHare = ModelFactory.makeSceneObject({ type: "hare" });
       SceneManager.addObject(babyHare);
       console.log(`Make Baby: ${hareMesh.uuid}`);
     }
-    canBreed = false;
   }
 
   function createTween () {
@@ -297,16 +294,11 @@ function Hare (config) {
     // if(eating_paceCntr-- == 0)
     updateLabelPosition();
     hareHunger.update(simulationTime);
-    if (!lastBreedTime) lastBreedTime = simulationTime;
-    if (
-      simulationTime - lastBreedTime > 60 * 60 * 8 &&
-      hareGender === "female"
-    ) {
-      canBreed = true;
-      breedBehavior.reset();
-      breedBehavior.signal();
-      lastBreedTime = simulationTime;
+
+    if (hareGender === "female") {
+      breedBehavior.signal(simulationTime);
     }
+
     eating_paceCntr = eating_pace;
     var deltaDistance = 500;
     findRemoveIfNear(hareMesh.position, deltaDistance);

@@ -1,5 +1,9 @@
 import Subject from "../utils/subject";
+import { getCapiInstance } from "./CAPI/capi";
 import { random } from "../utils/helpers";
+
+const CAPI = getCapiInstance();
+
 export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
   const max = maxHunger || 20;
   const min = minHunger || 1;
@@ -49,14 +53,21 @@ export const pauseResume = (pauseHandler, resumeHandler) => {
   };
 };
 
-export const breed = ({ gender, type, breedingHandler, id }) => {
+export const breed = ({ gender, type, breedingHandler, simulationTime }) => {
   const femaleEvent = `${type}_ovulation`;
   const maleEvent = `${type}_unload`;
+  let lastBreedTime = null;
+  let ovulationTime = CAPI.getValue({ key: "Hare.ovulationTime" });
+  CAPI.addListenerFor({
+    key: "Hare.ovulationTime",
+    callback: capiModel => {
+      ovulationTime = capiModel.get("Hare.ovulationTime");
+    }
+  });
 
   if (gender === "male") {
-    let hasBred = false;
     const breedWrapper = (...args) => {
-      breedingHandler(...args);
+      // Can optionally call a handler for male hares here
       Subject.next(maleEvent);
     };
     Subject.subscribe(femaleEvent, breedWrapper);
@@ -65,30 +76,37 @@ export const breed = ({ gender, type, breedingHandler, id }) => {
       signal: () => {
         Subject.next(maleEvent);
       },
-      cleanup: () => Subject.unsubscribe(femaleEvent, breedWrapper),
-      reset: () => {
-        hasBred = false;
-      }
+      cleanup: () => Subject.unsubscribe(femaleEvent, breedWrapper)
     };
   } else {
     let hasBred = false;
+    let canBreed = false;
     const breedWrapper = (...args) => {
-      if (!hasBred) {
+      if (!hasBred && canBreed) {
         breedingHandler(...args);
         hasBred = true;
+        canBreed = false;
       }
     };
     Subject.subscribe(maleEvent, breedWrapper);
 
     return {
-      signal: () => {
-        Subject.next(femaleEvent, { id });
+      signal: simulationTime => {
+        if (!lastBreedTime) lastBreedTime = simulationTime;
+        const elapsedTime = simulationTime - lastBreedTime;
+
+        if (elapsedTime > ovulationTime) {
+          canBreed = true;
+          hasBred = false;
+          lastBreedTime = simulationTime;
+          Subject.next(femaleEvent);
+        }
       },
       cleanup: () => {
         Subject.unsubscribe(maleEvent, breedWrapper);
       },
-      reset: () => {
-        hasBred = false;
+      isReady: simulationTime => {
+        return simulationTime - lastBreedTime > ovulationTime;
       }
     };
   }
