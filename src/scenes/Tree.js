@@ -72,6 +72,7 @@ function Tree (config) {
   tree.position.set(position.x, position.y, position.z);
   tree.userData = {
     selectable: true,
+    gender: "not available",
     color: {
       highlight: "#ff6039",
       selected: "#808080"

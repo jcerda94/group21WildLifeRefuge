@@ -65,6 +65,7 @@ function Hare (config) {
   hareMesh.castShadow = true;
   hareMesh.userData = {
     selectable: true,
+    gender: "not available",
     color: {
       original: color,
       highlight: "#f7ff6d",

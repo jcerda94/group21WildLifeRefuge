@@ -103,7 +103,6 @@ class SceneManager {
     );
 
     if (modelIndex >= 0) {
-      console.log("Clicked on grass");
       const modelToRemove = this.selected[modelIndex];
       const originalColor = getValue("userData.color.original", modelToRemove);
       const color = getValue("material.color", modelToRemove);
@@ -455,12 +454,12 @@ class SceneManager {
     const model = intersects[0] || {};
     const isSelectable = !!getValue("object.userData.selectable", model);
     if (intersects.length > 1 && model.object.name !== "LowPolyGrass") {
-      getPopUpInfo().popUpInfo("tree", event);
+      getPopUpInfo().popUpInfo("tree",model.object.userData.gender, event);
     }
     if (isSelectable) {
       this.toggleSelected(model.object);
       const popUpInfo = getPopUpInfo();
-      popUpInfo.popUpInfo(model.object.name, event);
+      popUpInfo.popUpInfo(model.object.name, model.object.userData.gender, event);
     }
   }
 

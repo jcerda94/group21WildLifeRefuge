@@ -37,6 +37,7 @@ async function GrassField (config) {
     const grass = originalGrass.clone();
     grass.children[0].children[0].userData = {
       selectable: true,
+      gender: "not available",
       eatable: true,
       color: {
         highlight: "#FFF",
