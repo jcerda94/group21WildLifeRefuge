@@ -172,10 +172,10 @@ function Hawk (config) {
   function setGender() {
     let index = Math.floor(Math.random() * 2);
     if(index == 0){
-      gender = "male";
+      gender = "female";
       color = "#db7093"
     }else {
-      gender = "female";
+      gender = "male";
       color = "#2a21db"
     }
   }
