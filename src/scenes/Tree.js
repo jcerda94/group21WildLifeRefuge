@@ -72,6 +72,7 @@ function Tree (config) {
   tree.position.set(position.x, position.y, position.z);
   tree.userData = {
     selectable: true,
+    gender: "not available",
     color: {
       highlight: "#ff6039",
       selected: "#808080"
@@ -129,13 +130,9 @@ function Tree (config) {
 
   let lastSimTime = 0;
   function update (elapsedTime, simulationTime) {
-    if (!treeDeath) {
+    if (true) {
       if (deathDelta > deathTimer) {
-        if (!removeLabel) {
-          thirstyLabel.destroy();
-          removeLabel = true;
-          treeDeath = true;
-        }
+        SceneManager.removeObject(tree);
       }
       if (treeThirsty.get() >= maxThirsty) {
         deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
@@ -175,6 +172,7 @@ function Tree (config) {
 
   function onDestroy () {
     thirstyLabel.destroy();
+
   }
 
   function updateLabelPosition () {

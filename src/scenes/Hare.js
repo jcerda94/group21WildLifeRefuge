@@ -1,15 +1,15 @@
 import { getValue, random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
+import ModelFactory from "./ModelFactory";
 import { getHawkObserver } from "./observer.js";
 import { findRemoveIfNear } from "./GrassField";
-import { hunger, label, gender, breed } from "../utils/behavior";
+import { hunger, label, gender, breed, pauseResume } from "../utils/behavior";
 import { getHawks } from "./Hawk.js";
 import { getTrees } from "./Tree.js";
 import { get2DPosition } from "../utils/helpers";
 import { getCapiInstance } from "../utils/CAPI/capi";
+
 import FindDistance from "../utils/Findistance";
-import Subject from "../utils/subject";
-import ModelFactory from "./ModelFactory";
 
 const THREE = require("three");
 
@@ -27,7 +27,6 @@ function Hare (config) {
     minHunger,
     hungerTickRate
   });
-
   const genderBias = getCapiInstance().getValue({ key: "Hare.maleBias" }) || 50;
   const hareGender = gender({ bias: genderBias });
 
@@ -50,10 +49,28 @@ function Hare (config) {
     breedingHandler
   });
 
+  function breedingHandler () {
+    if (hareGender === "female") {
+      const babyHare = ModelFactory.makeSceneObject({ type: "hare" });
+      SceneManager.addObject(babyHare);
+      console.log(`Make Baby: ${hareMesh.uuid}`);
+    }
+  }
+
   const SceneManager = getSceneManager();
   const widthBound = (0.95 * SceneManager.groundSize.x) / 2;
   const heightBound = (0.95 * SceneManager.groundSize.y) / 2;
 
+  // console.log("SceneManager: " + JSON.stringify(SceneManager) );
+  // console.log("=======================================================: ");
+  for (let s_idx = 0; s_idx < SceneManager.scene.length; s_idx++) {
+    // console.log("SceneManager.subjects[" + i + "]: " + SceneManager.subjects[i].model.name );
+    for (let i = 0; i < SceneManager.scene[s_idx].children.length; i++) {
+      console.log(
+        "SceneManager.scene: " + SceneManager.scene[s_idx].children[i].name
+      );
+    }
+  }
   const x = random(-widthBound, widthBound);
   const y = 2;
   const z = random(-heightBound, heightBound);
@@ -63,6 +80,7 @@ function Hare (config) {
   hareMesh.castShadow = true;
   hareMesh.userData = {
     selectable: true,
+    gender: "not available",
     color: {
       original: color,
       highlight: "#f7ff6d",
@@ -98,15 +116,6 @@ function Hare (config) {
     const groundZ = SceneManager.groundSize.y / 2;
     return random(-groundZ, groundZ);
   };
-
-  function breedingHandler () {
-    if (hareGender === "female") {
-      const babyHare = ModelFactory.makeSceneObject({ type: "hare" });
-      SceneManager.addObject(babyHare);
-      console.log(`Make Baby: ${hareMesh.uuid}`);
-    }
-  }
-
   function createTween () {
     // console.log("hare in create tween");
     tween1 = new TWEEN.Tween(hareMesh.position).to(
@@ -250,13 +259,8 @@ function Hare (config) {
     }
     treePos = newPos;
     movingToTree = true;
-    // console.log("hare[" + getHareID(hare) + "]    set movingToTree ");
-    // this doesn't work
-    // savedTween3 = tween3; // seems to keep this target position
     if (tween3 != null) {
       tween3.stop();
-      // tween2.stop();
-      // tween1.stop();
     }
 
     const moveToTree = new TWEEN.Tween(hareMesh.position).to(
@@ -265,6 +269,7 @@ function Hare (config) {
         y: newPos.y,
         z: newPos.z + adjustZ
       },
+
       d / 0.03
     );
     if (!isMoveToTree) {
@@ -294,11 +299,9 @@ function Hare (config) {
     // if(eating_paceCntr-- == 0)
     updateLabelPosition();
     hareHunger.update(simulationTime);
-
     if (hareGender === "female") {
       breedBehavior.signal(simulationTime);
     }
-
     eating_paceCntr = eating_pace;
     var deltaDistance = 500;
     findRemoveIfNear(hareMesh.position, deltaDistance);
@@ -332,6 +335,7 @@ function Hare (config) {
   function handleCollision (targets) {
     for (let i = 0; i < targets.length; i++) {
       if (targets[i].object.type === "Grass") {
+        console.log("Collision occur between grass and hare");
         SceneManager.removeObject(targets[i].object);
       }
     }
@@ -343,7 +347,6 @@ function Hare (config) {
   }
 
   function onDestroy () {
-    breedBehavior.cleanup && breedBehavior.cleanup();
     hareLabel.destroy();
   }
 
