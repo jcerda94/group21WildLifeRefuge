@@ -288,6 +288,7 @@ class EnvironmentManager {
         }
 
         //TODO: Break out into separate function
+        //TODO: Change to use consume
         let envTile = this.getEnvByXYPos(object.position.x, object.position.z);
         envTile.water -= object.water;
 
