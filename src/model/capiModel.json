@@ -21,6 +21,11 @@
   "env.waterBalanceThreshold" : 0.5,
   "env.nutrients": 1.0,
   "env.ConsumeKeys": ["water", "nutrients"],
+  "env.weather": {
+    "normal": 1.0,
+    "rain": 1.5,
+    "drought": 0.5
+  },
   "westernCedarLabel": true,
   "inputTable": []
 }
