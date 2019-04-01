@@ -1,4 +1,8 @@
 import Subject from "../utils/subject";
+import { getCapiInstance } from "./CAPI/capi";
+import { random } from "../utils/helpers";
+
+const CAPI = getCapiInstance();
 
 export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
   const max = maxHunger || 20;
@@ -47,6 +51,70 @@ export const pauseResume = (pauseHandler, resumeHandler) => {
     Subject.unsubscribe("simulation_paused", pauseHandler);
     Subject.unsubscribe("simulation_resumed", resumeHandler);
   };
+};
+
+export const breed = ({ gender, type, breedingHandler, simulationTime }) => {
+  const femaleEvent = `${type}_ovulation`;
+  const maleEvent = `${type}_unload`;
+  let lastBreedTime = null;
+  let ovulationTime = CAPI.getValue({ key: "Hare.ovulationTime" });
+  CAPI.addListenerFor({
+    key: "Hare.ovulationTime",
+    callback: capiModel => {
+      ovulationTime = capiModel.get("Hare.ovulationTime");
+    }
+  });
+
+  if (gender === "male") {
+    const breedWrapper = (...args) => {
+      // Can optionally call a handler for male hares here
+      Subject.next(maleEvent);
+    };
+    Subject.subscribe(femaleEvent, breedWrapper);
+
+    return {
+      signal: () => {
+        Subject.next(maleEvent);
+      },
+      cleanup: () => Subject.unsubscribe(femaleEvent, breedWrapper)
+    };
+  } else {
+    let hasBred = false;
+    let canBreed = false;
+    const breedWrapper = (...args) => {
+      if (!hasBred && canBreed) {
+        breedingHandler(...args);
+        hasBred = true;
+        canBreed = false;
+      }
+    };
+    Subject.subscribe(maleEvent, breedWrapper);
+
+    return {
+      signal: simulationTime => {
+        if (!lastBreedTime) lastBreedTime = simulationTime;
+        const elapsedTime = simulationTime - lastBreedTime;
+
+        if (elapsedTime > ovulationTime) {
+          canBreed = true;
+          hasBred = false;
+          lastBreedTime = simulationTime;
+          Subject.next(femaleEvent);
+        }
+      },
+      cleanup: () => {
+        Subject.unsubscribe(maleEvent, breedWrapper);
+      },
+      isReady: simulationTime => {
+        return simulationTime - lastBreedTime > ovulationTime;
+      }
+    };
+  }
+};
+
+export const gender = ({ bias } = { bias: 50 }) => {
+  const assignment = random(0, 100);
+  return assignment >= bias ? "female" : "male";
 };
 
 export const label = ({ text, initialValue, x, y }) => {

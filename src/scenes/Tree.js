@@ -96,7 +96,7 @@ function Tree (config) {
   }
 
   let env = getEnvironmentManager();
-  // env.toggleEnvironmentViewOnCanvas();
+
   env.registerTrackedObject(tree);
 
   const treeThirsty = waterLevel({
@@ -146,19 +146,18 @@ function Tree (config) {
 
       if (treeThirsty.get() >= maxThirsty * 0.75 && !isConsuming) {
         env.getEnvByXYPos(tree.position.x, tree.position.z).water -= tree.water;
-        if(env.getEnvByXYPos(tree.position.x, tree.position.z).water > 0){
+        if (env.getEnvByXYPos(tree.position.x, tree.position.z).water > 0) {
           isConsuming = true;
         } else if (
-            env.getEnvByXYPos(tree.position.x, tree.position.z).water < 0 &&
-            env.getEnvByXYPos(tree.position.x, tree.position.z).water > -1
+          env.getEnvByXYPos(tree.position.x, tree.position.z).water < 0 &&
+          env.getEnvByXYPos(tree.position.x, tree.position.z).water > -1
         ) {
           isConsuming = false;
           setTreeToBrownColor();
           setTreeTo45Degree();
-
-        }else if(
-            env.getEnvByXYPos(tree.position.x, tree.position.z).water < -15
-        ){
+        } else if (
+          env.getEnvByXYPos(tree.position.x, tree.position.z).water < -15
+        ) {
           setTreeToBrownColor();
           setTreeLayFlat();
           isConsuming = false;
@@ -192,6 +191,6 @@ function Tree (config) {
 }
 
 export var getTrees = function () {
-  return getSceneManager().getSceneObjectsOf({types: ["Tree"]});
+  return getSceneManager().getSceneObjectsOf({ types: ["Tree"] });
 };
 export default Tree;
