@@ -16,6 +16,7 @@ function Cube (config) {
   cube.position.set(position.x, position.y, position.z);
   cube.userData = {
     selectable: true,
+    gender: "not available",
     color: {
       original: color,
       highlight: "#f7ff6d",
