@@ -86,15 +86,20 @@ class EnvironmentManager {
     localEnv = null;
     trackedObjects = [];
 
-    //CAUTION! Object will only be shallow copied
+    //CAUTION! consumeKey objects will only be shallow copied
     defaultEnvironment = {
         water: 1.0,
-        treeThirst: 0.025,
-        grassThirst: 0.01,
         waterRegen: 0.001,
         waterBalanceThreshold : 0.5,
         nutrients: 1.0,
-        envConsumeKeys: ['water', 'nutrients']
+        treeConsumeParams: [0.125, 0.125],
+        grassConsumeParams: [0.01, 0.01],
+        envConsumeKeys: ['water', 'nutrients'],
+        weather: {
+            normal: 1.0,
+            rain: 1.5,
+            drought: 0.5
+        }
     };
 
     constructor(){
@@ -118,7 +123,7 @@ class EnvironmentManager {
         //TODO: Explain object creation here
         //Includes any parameters that we want in every environment tile,
         //other object values will simply be made available under the defaultEnvironment object
-        const fillObject = environmentObject.envKeys.reduce(
+        const fillObject = environmentObject.envConsumeKeys.reduce(
             (o, key) => ({...o, [key]: environmentObject[key]}),
             {}
         );
@@ -271,28 +276,36 @@ class EnvironmentManager {
     //TODO: Tree water radius
     //TODO: Add raindrops on environment
     //TODO: Change ground tile darkness based on water saturation
-    registerTrackedObject(object) {
+    registerTrackedObject(envObject) {
 
-        //TODO: Add object type for bushes
-        //TODO: Add nutrients
-        switch (object.type) {
-            case "Tree":
-                object.water = this.defaultEnvironment.treeThirst;
-                //object.nutrients = this.defaultEnvironment.treeNutrients;
-                break;
-            case "Grass":
-                object.water = this.defaultEnvironment.grassThirst;
-                break;
-            default:
-                console.warn("Object type: " + object.type + " not currently supported by EnvironmentManger")
+
+        var objectKey = this.getObjectParamKeyFromType(envObject.type);
+
+        //Checks that a match was found and that the array of parameters has the same length as our consumption keys
+        if (objectKey.length > 0 && this.defaultEnvironment[objectKey].length === this.defaultEnvironment.envConsumeKeys.length){
+
+            //Assigns consume key values from the object's capi Parameters. This assumes that the object parameters
+            //and consume keys are in the same order.
+            for (var i = 0; i < this.defaultEnvironment.envConsumeKeys.length; i++) {
+                envObject[this.defaultEnvironment.envConsumeKeys[i]] = this.defaultEnvironment[objectKey][i];
+            }
+
+            this.consume(envObject);
+
+            this.trackedObjects.push(envObject);
+        } else {
+            console.warn("Object type: " + envObject.type + "is not currently supported by EnvironmentManger or\n" +
+                "Object model parameters do not match environmentConsumeKeys length")
         }
 
-        //TODO: Break out into separate function
-        //TODO: Change to use consume
-        let envTile = this.getEnvByXYPos(object.position.x, object.position.z);
-        envTile.water -= object.water;
 
-        this.trackedObjects.push(object);
+    }
+
+    getObjectParamKeyFromType(type){
+
+        var findKey = this.defaultEnvironment.keys.find(key => key.includes(type.toLowerCase()));
+
+        return typeof myVar !== 'undefined' ? findKey : '';
     }
 
     //TODO add function for nutrient addition that can be called in onDestroy

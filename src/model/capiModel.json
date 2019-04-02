@@ -15,17 +15,18 @@
   "sageBushSelected": 0,
   "westernCedarSelected": 0,
   "env.water": 1.0,
-  "env.treeThirst": 0.125,
-  "env.grassThirst": 0.01,
   "env.waterRegen": 0.001,
   "env.waterBalanceThreshold" : 0.5,
   "env.nutrients": 1.0,
   "env.ConsumeKeys": ["water", "nutrients"],
+  "env.treeConsumeParams": [0.125, 0.125],
+  "env.grassConsumeParams": [0.01, 0.01],
   "env.weather": {
     "normal": 1.0,
     "rain": 1.5,
     "drought": 0.5
   },
+  "env.weatherKeys" : ["normal", "rain", "drought"],
   "westernCedarLabel": true,
   "inputTable": []
 }
