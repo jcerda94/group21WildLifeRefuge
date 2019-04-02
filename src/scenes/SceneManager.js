@@ -31,7 +31,6 @@ class SceneManager {
   intersected = null
   defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
-  hawkLabelOn = false
   ready = false
 
   isPaused = false
@@ -365,8 +364,8 @@ class SceneManager {
     );
 
     capi.addListenerFor({
-      key: "hawkLabel",
-      callback: this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })
+      key: "Hawk.label",
+      callback: this.toggleLabelFor({ type: "Hawk", labelName: "Hawk.label" })
     });
 
     capi.addListenerFor({
@@ -454,12 +453,16 @@ class SceneManager {
     const model = intersects[0] || {};
     const isSelectable = !!getValue("object.userData.selectable", model);
     if (intersects.length > 1 && model.object.name !== "LowPolyGrass") {
-      getPopUpInfo().popUpInfo("tree",model.object.userData.gender, event);
+      getPopUpInfo().popUpInfo("tree", model.object.userData.gender, event);
     }
     if (isSelectable) {
       this.toggleSelected(model.object);
       const popUpInfo = getPopUpInfo();
-      popUpInfo.popUpInfo(model.object.name, model.object.userData.gender, event);
+      popUpInfo.popUpInfo(
+        model.object.name,
+        model.object.userData.gender,
+        event
+      );
     }
   }
 

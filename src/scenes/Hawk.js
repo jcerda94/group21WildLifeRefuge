@@ -200,7 +200,7 @@ function Hawk (config) {
     initialValue: hawkHunger.get().toFixed(1),
     ...get2DPosition()
   });
-  const shouldShowLabel = getCapiInstance().getValue({ key: "hawkLabel" });
+  const shouldShowLabel = getCapiInstance().getValue({ key: "Hawk.label" });
   if (shouldShowLabel) hungerLabel.showLabel();
 
   const pauseResumeCleanup = pauseResume(pauseHawk, resumeHawk);
