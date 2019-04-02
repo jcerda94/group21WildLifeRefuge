@@ -6,13 +6,13 @@
   "Hare.label": true,
   "Hare.maleBias": 50,
   "Hare.ovulationTime": 86400,
+  "WesternCedar.label": true,
   "Hawk.label": true,
   "Hawk.metabolism": 1,
   "toggleContext": true,
   "studentMode": true,
   "authorMode": false,
   "reviewMode": false,
-  "hawkLabel": true,
   "redtailHawkSelected": 0,
   "showshoeHareSelected": 0,
   "sageBushSelected": 0,
@@ -20,6 +20,5 @@
   "env.water": 1.0,
   "env.treeThirst": 0.125,
   "env.grassThirst": 0.01,
-  "westernCedarLabel": true,
   "inputTable": []
 }

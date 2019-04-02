@@ -66,31 +66,33 @@ function Hawk (config) {
 
   let random_X = randomX();
   let random_Z = randomZ();
-  let a = new THREE.Vector3(hawk.position.x,hawk.position.y, hawk.position.z );
+  let a = new THREE.Vector3(hawk.position.x, hawk.position.y, hawk.position.z);
   let b = new THREE.Vector3(random_X, 100, random_Z);
   let d = a.distanceTo(b);
   const tween1 = new TWEEN.Tween(hawk.position).to(
-    { x: random_X, y: 100, z: random_Z},
-    d/0.05
+    { x: random_X, y: 100, z: random_Z },
+    d / 0.05
   );
   random_X = randomX();
-  random_Z =randomZ();
-  a = new THREE.Vector3(hawk.position.x,hawk.position.y, hawk.position.z );
+  random_Z = randomZ();
+  a = new THREE.Vector3(hawk.position.x, hawk.position.y, hawk.position.z);
   b = new THREE.Vector3(random_X, 100, random_Z);
   d = a.distanceTo(b);
 
   const tween2 = new TWEEN.Tween(hawk.position).to(
-    { x:  random_X, y: 100, z:  random_Z },
-      d/hawkSpeed
+    { x: random_X, y: 100, z: random_Z },
+    d / hawkSpeed
   );
   random_X = randomX();
-  random_Z =randomZ();
-  a = new THREE.Vector3(hawk.position.x,hawk.position.y, hawk.position.z );
+  random_Z = randomZ();
+  a = new THREE.Vector3(hawk.position.x, hawk.position.y, hawk.position.z);
   b = new THREE.Vector3(random_X, 100, random_Z);
   d = a.distanceTo(b);
-  var tween3 = new TWEEN.Tween(hawk.position)
-    .to({ x:  random_X, y: 100, z:  random_Z }, d/hawkSpeed);
-   // tween3.start();
+  var tween3 = new TWEEN.Tween(hawk.position).to(
+    { x: random_X, y: 100, z: random_Z },
+    d / hawkSpeed
+  );
+  // tween3.start();
 
   // hawk must track it's position and look for hares nearby as it flys
   getHawkObserver().subscribe(position => {
@@ -105,14 +107,14 @@ function Hawk (config) {
   function checkForHare () {
     if (!isEating) {
       const hares = SceneManager.getSceneObjectsOf({ types: ["Hare"] });
-      if(!chaseSelectedHare){
+      if (!chaseSelectedHare) {
         const hareIndex = randomInt(0, hares.length - 1);
         const randomHare = hares[hareIndex];
         selectedHareIndex = hareIndex;
         chaseSelectedHare = true;
       }
       if (!hares[selectedHareIndex]) {
-         chaseSelectedHare = false;
+        chaseSelectedHare = false;
         if (tweenChase != null) {
           tweenChase.stop();
         }
@@ -124,43 +126,52 @@ function Hawk (config) {
       tween2.stop();
       tween1.stop();
       routineTweenStop = true;
-      const a = new THREE.Vector3( hawk.position.x, hawk.position.y, hawk.position.z );
-      const b = new THREE.Vector3(selectedHare.position.x, selectedHare.position.y, selectedHare.position.z );
-      const d = a.distanceTo( b );
-       tweenChase = new TWEEN.Tween(hawk.position).to(
-
+      const a = new THREE.Vector3(
+        hawk.position.x,
+        hawk.position.y,
+        hawk.position.z
+      );
+      const b = new THREE.Vector3(
+        selectedHare.position.x,
+        selectedHare.position.y,
+        selectedHare.position.z
+      );
+      const d = a.distanceTo(b);
+      tweenChase = new TWEEN.Tween(hawk.position).to(
         {
           x: selectedHare.position.x,
           y: selectedHare.position.y,
           z: selectedHare.position.z
         },
-        d/0.06
+        d / 0.06
       );
 
-      if(!chase){
+      if (!chase) {
         tweenChase.start();
         chase = true;
       }
-      tweenChase.onComplete(function() {
-        if(isEating){
+      tweenChase.onComplete(function () {
+        if (isEating) {
           console.log("got hare");
           chase = false;
           tweenChase.stop();
           routineFlying();
         }
-        if(!isEating){
+        if (!isEating) {
           chase = false;
         }
       });
     }
   }
-  function routineFlying(){
-    a = new THREE.Vector3(hawk.position.x,hawk.position.y, hawk.position.z );
+  function routineFlying () {
+    a = new THREE.Vector3(hawk.position.x, hawk.position.y, hawk.position.z);
     b = new THREE.Vector3(random_X, 100, random_Z);
     d = a.distanceTo(b);
-    tween3 = new TWEEN.Tween(hawk.position)
-        .to({ x:  random_X, y: 100, z:  random_Z }, d/hawkSpeed);
-    if(routineTweenStop){
+    tween3 = new TWEEN.Tween(hawk.position).to(
+      { x: random_X, y: 100, z: random_Z },
+      d / hawkSpeed
+    );
+    if (routineTweenStop) {
       tween3.start();
       routineTweenStop = false;
     }
@@ -169,14 +180,14 @@ function Hawk (config) {
     tween3.chain(tween2);
   }
 
-  function setGender() {
+  function setGender () {
     let index = Math.floor(Math.random() * 2);
-    if(index == 0){
+    if (index == 0) {
       gender = "female";
-      color = "#db7093"
-    }else {
+      color = "#db7093";
+    } else {
       gender = "male";
-      color = "#2a21db"
+      color = "#2a21db";
     }
   }
 
@@ -198,6 +209,7 @@ function Hawk (config) {
   const hungerLabel = label({
     text: "Hunger\n",
     initialValue: hawkHunger.get().toFixed(1),
+    type: TYPE,
     ...get2DPosition()
   });
   const shouldShowLabel = getCapiInstance().getValue({ key: "Hawk.label" });

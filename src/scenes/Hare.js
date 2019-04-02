@@ -92,6 +92,7 @@ function Hare (config) {
   const currentPosition = get2DPosition(hareMesh);
   const hareLabel = label({
     text: "Hunger\n",
+    type: "Hare",
     initialValue: hareHunger.get().toFixed(1),
     x: currentPosition.x,
     y: currentPosition.y

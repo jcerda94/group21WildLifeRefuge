@@ -10,7 +10,8 @@
 
 import { getSceneManager } from "./SceneManager";
 import { random, randomInt } from "../utils/helpers";
-import { label, waterLevel } from "../utils/treeBehavior";
+import { waterLevel } from "../utils/treeBehavior";
+import { label } from "../utils/behavior";
 import { getEnvironmentManager } from "./EnvironmentManager";
 import { getCapiInstance } from "../utils/CAPI/capi";
 
@@ -114,11 +115,12 @@ function Tree (config) {
   }
   const thirstyLabel = label({
     text: "Thirsty\n",
+    type: "WesternCedar",
     initialValue: treeThirsty.get().toFixed(1),
     ...get2DPosition()
   });
   const shouldShowLabel = getCapiInstance().getValue({
-    key: "westernCedarLabel"
+    key: "WesternCedar.label"
   });
 
   function setLabelTo ({ visible }) {
@@ -172,7 +174,6 @@ function Tree (config) {
 
   function onDestroy () {
     thirstyLabel.destroy();
-
   }
 
   function updateLabelPosition () {
