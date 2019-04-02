@@ -57,11 +57,11 @@ export const breed = ({ gender, type, breedingHandler, simulationTime }) => {
   const femaleEvent = `${type}_ovulation`;
   const maleEvent = `${type}_unload`;
   let lastBreedTime = null;
-  let ovulationTime = CAPI.getValue({ key: "Hare.ovulationTime" });
+  let ovulationTime = CAPI.getValue({ key: `${type}.ovulationTime` });
   CAPI.addListenerFor({
-    key: "Hare.ovulationTime",
+    key: `${type}.ovulationTime`,
     callback: capiModel => {
-      ovulationTime = capiModel.get("Hare.ovulationTime");
+      ovulationTime = capiModel.get(`${type}.ovulationTime`);
     }
   });
 
@@ -117,8 +117,9 @@ export const gender = ({ bias } = { bias: 50 }) => {
   return assignment >= bias ? "female" : "male";
 };
 
-export const label = ({ text, initialValue, x, y }) => {
+export const label = ({ text, initialValue, x, y, type }) => {
   const label = document.createElement("div");
+  const labelName = `${type}.label`;
   label.style.position = "absolute";
   label.style.width = "60px";
 
@@ -140,19 +141,29 @@ export const label = ({ text, initialValue, x, y }) => {
     label.innerHTML = `${text}${value}`;
   }
 
-  function hideLabel () {
+  const hideLabel = () => {
     label.style.display = "none";
-  }
+  };
 
-  function showLabel () {
+  const showLabel = () => {
     label.style.display = "flex";
-  }
+  };
 
   function destroy () {
     if (label.parentElement && label.parentElement.hasChildNodes()) {
       label.parentElement.removeChild(label);
     }
   }
+
+  const toggleLabel = capiModel => {
+    if (capiModel.get(labelName)) {
+      showLabel();
+    } else {
+      hideLabel();
+    }
+  };
+
+  CAPI.addListenerFor({ key: labelName, callback: toggleLabel });
 
   return {
     update,

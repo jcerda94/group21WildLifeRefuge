@@ -53,7 +53,6 @@ function Hare (config) {
     if (hareGender === "female") {
       const babyHare = ModelFactory.makeSceneObject({ type: "hare" });
       SceneManager.addObject(babyHare);
-      console.log(`Make Baby: ${hareMesh.uuid}`);
     }
   }
 
@@ -92,6 +91,7 @@ function Hare (config) {
   const currentPosition = get2DPosition(hareMesh);
   const hareLabel = label({
     text: "Hunger\n",
+    type: "Hare",
     initialValue: hareHunger.get().toFixed(1),
     x: currentPosition.x,
     y: currentPosition.y
