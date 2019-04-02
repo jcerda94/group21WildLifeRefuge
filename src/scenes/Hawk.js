@@ -2,9 +2,10 @@ import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { getHareID } from "./Hare.js";
 import { random, randomInt } from "../utils/helpers";
-import { hunger, label, pauseResume } from "../utils/behavior";
+import { hunger, gender, breed, label, pauseResume } from "../utils/behavior";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import FindDistance from "../utils/Findistance";
+import ModelFactory from "./ModelFactory";
 
 const THREE = require("three");
 
@@ -19,17 +20,18 @@ function Hawk (config) {
   let hawkSpeed = 0.05;
   let isEating = false;
   let deathDelta = 0;
-  let gender = "not selected";
   const deathTimer = 60 * 60 * 24; // Eat within a day at max hunger or die
   const maxHunger = 10;
   const minHunger = 1;
   const size = 3;
-  let color = "";
-  setGender();
+
+  const genderBias = getCapiInstance().getValue({ key: "Hawk.maleBias" }) || 50;
+  const hawkGender = gender({ bias: genderBias });
+  const color = hawkGender === "female" ? "#db7093" : "#407093";
 
   // create a sphere or a hare
   const sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
-  const sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
+  const sphereMaterial = new THREE.MeshPhongMaterial({ color });
   const hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
   hareMesh.name = "attachedHare";
 
@@ -41,7 +43,7 @@ function Hawk (config) {
 
   hawk.userData = {
     selectable: true,
-    gender: gender,
+    gender: hawkGender,
     color: {
       original: color,
       highlight: "#f7ff6d",
@@ -51,6 +53,21 @@ function Hawk (config) {
   };
   hawk.name = NAME;
   hawk.type = TYPE;
+
+  const breedBehavior = breed({
+    gender: hawkGender,
+    type: TYPE,
+    id: hawk.uuid,
+    breedingHandler
+  });
+
+  function breedingHandler () {
+    if (hawkGender === "female") {
+      const babyHawk = ModelFactory.makeSceneObject({ type: "hawk" });
+      SceneManager.addObject(babyHawk);
+    }
+  }
+
   const randomX = () => {
     const groundX = SceneManager.groundSize.x / 2;
     return random(-groundX, groundX);
@@ -180,17 +197,6 @@ function Hawk (config) {
     tween3.chain(tween2);
   }
 
-  function setGender () {
-    let index = Math.floor(Math.random() * 2);
-    if (index == 0) {
-      gender = "female";
-      color = "#db7093";
-    } else {
-      gender = "male";
-      color = "#2a21db";
-    }
-  }
-
   var count = 1;
   const hawkHunger = hunger({
     maxHunger,
@@ -244,6 +250,9 @@ function Hawk (config) {
 
   function update (elapsedTime, simulationTime) {
     count++;
+    if (hawkGender === "female") {
+      breedBehavior.signal(simulationTime);
+    }
     if (deathDelta > deathTimer) {
       SceneManager.removeObject(hawk);
       hungerLabel.destroy();

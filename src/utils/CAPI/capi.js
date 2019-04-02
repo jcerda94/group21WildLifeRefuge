@@ -49,7 +49,6 @@ class CAPI {
   }
 
   addListenerFor = ({ key, callback }) => {
-    if (key === "Hawk.label") console.log(callback);
     addListenerFor({ key, action: callback, capiModel: this.capiModel });
   }
 }

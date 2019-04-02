@@ -57,11 +57,11 @@ export const breed = ({ gender, type, breedingHandler, simulationTime }) => {
   const femaleEvent = `${type}_ovulation`;
   const maleEvent = `${type}_unload`;
   let lastBreedTime = null;
-  let ovulationTime = CAPI.getValue({ key: "Hare.ovulationTime" });
+  let ovulationTime = CAPI.getValue({ key: `${type}.ovulationTime` });
   CAPI.addListenerFor({
-    key: "Hare.ovulationTime",
+    key: `${type}.ovulationTime`,
     callback: capiModel => {
-      ovulationTime = capiModel.get("Hare.ovulationTime");
+      ovulationTime = capiModel.get(`${type}.ovulationTime`);
     }
   });
 

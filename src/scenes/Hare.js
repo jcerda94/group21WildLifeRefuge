@@ -53,7 +53,6 @@ function Hare (config) {
     if (hareGender === "female") {
       const babyHare = ModelFactory.makeSceneObject({ type: "hare" });
       SceneManager.addObject(babyHare);
-      console.log(`Make Baby: ${hareMesh.uuid}`);
     }
   }
 
