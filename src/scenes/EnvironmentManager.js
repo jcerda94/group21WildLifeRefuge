@@ -1,4 +1,5 @@
 import {getSceneManager} from "./SceneManager";
+import {getCapiInstance} from "../utils/CAPI/capi";
 
 // From: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
 // Used to support Internet Explorer
@@ -85,6 +86,7 @@ class EnvironmentManager {
     sceneManager = null;
     localEnv = null;
     trackedObjects = [];
+    weatherVal = 1.0;
 
     //CAUTION! consumeKey objects will only be shallow copied
     defaultEnvironment = {
@@ -94,12 +96,13 @@ class EnvironmentManager {
         nutrients: 1.0,
         treeConsumeParams: [0.125, 0.125],
         grassConsumeParams: [0.01, 0.01],
-        envConsumeKeys: ['water', 'nutrients'],
-        weather: {
+        envConsumeKeys: ["water", "nutrients"],
+        weatherModifiers: {
             normal: 1.0,
             rain: 1.5,
             drought: 0.5
-        }
+        },
+        weather: "normal"
     };
 
     constructor(){
@@ -113,6 +116,16 @@ class EnvironmentManager {
 
         this.textureCanvas = drawingCanvas;
         this.drawingContext = drawingContext;
+
+        const capi = getCapiInstance();
+
+        capi.getCapiAdapter().expose('env.weather', capi.getCapiModel(),
+            {allowedValues: capi.getValue('env.weatherModifiers').keys});
+
+        capi.addListenerFor({
+            key: "env.weather",
+            callback: () => {this.weatherVal = this.defaultEnvironment.weatherModifiers[capi.getValue('env.weather')]}
+        })
 
     }
 
@@ -267,7 +280,6 @@ class EnvironmentManager {
 
     }
 
-    //TODO: Add dynamic updating of the tree/grass thirstyness, add a listener on the appropriate values
     //TODO: Add nutrient values to CAPI/SPR
     //TODO: Add nutrientParams and env params by type
     //TODO: Add germination stats/params
