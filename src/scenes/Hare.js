@@ -172,16 +172,11 @@ function Hare (config) {
     return true;
   }
 
-  let paused = false;
-  function pause (hare) {
-    tweens[0].stop();
-    paused = true;
-  }
+  function pause (hare) {}
 
-  function resume (hare) {
-    tweens[0].start();
-    paused = false;
-  }
+  function resume (hare) {}
+
+  pauseResume(pause, resume);
 
   var treePos;
   var movingToTree = false;
@@ -194,17 +189,15 @@ function Hare (config) {
   let animating = false;
   function update (elapsedTime, simulationTime) {
     updateLabelPosition();
-    if (paused) return;
     if (!animating) {
       const { x, y, z } = hareMesh.position;
       animating = true;
-      const start = elapsedTime;
       tweens.push(
         animate({
           model: hareMesh,
-          to: { x: x + 100, y: y + 25, z: z + 100 },
+          to: { dx: 100, dy: 25, dz: 100 },
           options: {
-            duration: 10000,
+            duration: 2000,
             update: d => console.log("updating: ", d),
             callback: () => {
               console.log("done");
@@ -214,9 +207,7 @@ function Hare (config) {
       );
     }
 
-    if (!paused) {
-      TWEEN.update();
-    }
+    TWEEN.update();
 
     hareHunger.update(simulationTime);
     if (hareGender === "female") {
