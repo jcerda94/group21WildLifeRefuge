@@ -26,7 +26,7 @@
     "rain": 1.5,
     "drought": 0.5
   },
-  "env.weather": "normal",
+  "env.weatherType": "normal",
   "westernCedarLabel": true,
   "inputTable": []
 }

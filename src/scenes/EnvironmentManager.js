@@ -86,7 +86,7 @@ class EnvironmentManager {
     sceneManager = null;
     localEnv = null;
     trackedObjects = [];
-    weatherVal = 1.0;
+    weatherMod = 1.0;
 
     //CAUTION! consumeKey objects will only be shallow copied
     defaultEnvironment = {
@@ -102,7 +102,7 @@ class EnvironmentManager {
             rain: 1.5,
             drought: 0.5
         },
-        weather: "normal"
+        weatherType: "normal"
     };
 
     constructor(){
@@ -119,12 +119,15 @@ class EnvironmentManager {
 
         const capi = getCapiInstance();
 
-        capi.getCapiAdapter().expose('env.weather', capi.getCapiModel(),
+        capi.getCapiAdapter().expose('env.weatherType', capi.getCapiModel(),
             {allowedValues: capi.getValue('env.weatherModifiers').keys});
 
         capi.addListenerFor({
-            key: "env.weather",
-            callback: () => {this.weatherVal = this.defaultEnvironment.weatherModifiers[capi.getValue('env.weather')]}
+            key: "env.weatherType",
+            callback: () => {
+                this.weatherMod = this.defaultEnvironment.weatherModifiers[capi.getValue('env.weatherType')];
+                this.defaultEnvironment.weather = capi.getValue('env.weatherType');
+            }
         })
 
     }
@@ -132,6 +135,8 @@ class EnvironmentManager {
     initializeEnvironmentWithParams(environmentObject) {
 
         this.defaultEnvironment = environmentObject;
+
+        this.weatherMod = environmentObject.weatherModifiers[environmentObject.weatherType];
 
         //TODO: Explain object creation here
         //Includes any parameters that we want in every environment tile,
@@ -369,7 +374,7 @@ class EnvironmentManager {
                     neighborsWithWater[j].water -= waterBalanced;
                 }
 
-                lowWater[i].water += this.defaultEnvironment.waterRegen;
+                lowWater[i].water += this.weatherMod * this.defaultEnvironment.waterRegen;
             }
 
         }
