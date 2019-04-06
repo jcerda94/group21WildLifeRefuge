@@ -54,12 +54,8 @@ const Ground = config => {
   };
 };
 const Grass = async config => {
-  const { model, created, update } = await GrassField(config);
-  return {
-    model,
-    created,
-    update
-  };
+  const grassModels = await GrassField(config);
+  return grassModels;
 };
 const Ambient = () => {
   const { light, update } = AmbientLight();

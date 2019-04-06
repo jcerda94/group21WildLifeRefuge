@@ -14,7 +14,7 @@ async function GrassField (config) {
 
   const loader = new THREE.GLTFLoader(loadingManager);
 
-  const { count = 100 } = config;
+  const { grasses: count } = config;
 
   const originalGrass = await new Promise((resolve, reject) => {
     loader.load(
@@ -31,9 +31,9 @@ async function GrassField (config) {
     y: bounds.y * 0.95
   };
 
-  for (let i = 0; i < count; i++) {
-    // for (let i = 0; i < 15; i++) { // testing
+  const grassModels = [];
 
+  for (let i = 0; i < count; i++) {
     const grass = originalGrass.clone();
     grass.children[0].children[0].userData = {
       selectable: true,
@@ -55,36 +55,27 @@ async function GrassField (config) {
     grass.scale.set(size, size, size);
 
     grass.position.set(x, 0, z);
-    // grass.position.set(3*i, 0, 0); // testing
 
     grass.rotation.y = rotation;
     const grassMesh = grass.children[0].children[0].material;
     grassMesh.color.set(grass.children[0].children[0].userData.color.original);
     grass.children[0].children[0].material = grassMesh.clone();
+    grass.type = TYPE;
+    grass.name = "grass";
     grasses.add(grass);
-
-    // the grasses has both an add and remove that work.
-    // the plan is to store the grass objects in a linked list since we can't seem to access 'grasses'
-    // as a list or array.
-    // maybe it's possible but haven't been able to.
-    // should be able to create a linked list containing the grass objects.
-    // Can then search this list to find the grass closest, or the right kind of grass, and move to it and eat it.
-    // Then, since the grass object is on the list, we should be able to call grasses.remove(eaten_grass)
-
-    // getGrassLinkedList().Append(new Node(grass));
-    // console.log(" grasses length: " + grasses.children.length);
+    grassModels.push({
+      update,
+      model: grass,
+      created: new Date(0)
+    });
   }
 
-  grasses.type = TYPE;
-  grasses.name = "grass";
+  // grasses.type = TYPE;
+  // grasses.name = "grass";
 
   function update () {}
 
-  return {
-    update,
-    model: grasses,
-    created: new Date()
-  };
+  return grassModels;
 }
 var inPos;
 var theRange;

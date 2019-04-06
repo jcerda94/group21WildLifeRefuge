@@ -163,7 +163,7 @@ function Hare (config) {
     hareHunger.update(simulationTime);
 
     if (hareHunger.get() > maxHunger * 0.75 && !gettingFood) {
-      targettedFoodId = getFood({ type: "grass", quantity: 1 });
+      targettedFoodId = getFood({ type: "Grass", quantity: 1 });
     }
 
     if (hareGender === "female") {
@@ -171,7 +171,18 @@ function Hare (config) {
     }
   }
 
-  function handleCollision (targets) {}
+  function handleCollision (targets) {
+    targets.forEach &&
+      targets.forEach(target => {
+        let parent = target.object.parent;
+        while (parent) {
+          if (parent.uuid === targettedFoodId) {
+            console.log("grass hit");
+          }
+          parent = parent.parent;
+        }
+      });
+  }
 
   function setLabelTo ({ visible }) {
     if (visible) hareLabel.showLabel();

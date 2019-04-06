@@ -96,7 +96,6 @@ class SceneManager {
   }
 
   toggleSelected (model) {
-    // console.log("Clicked on grass");
     const modelIndex = this.selected.findIndex(
       selectedModel => model === selectedModel
     );
@@ -221,7 +220,7 @@ class SceneManager {
   async createSceneSubjects () {
     const grassField = await ModelFactory.makeSceneObject({
       type: "grassField",
-      config: { onLoad: this.onLoad }
+      config: { onLoad: this.onLoad, grasses: 100 }
     });
 
     this.subjects = [
@@ -232,7 +231,7 @@ class SceneManager {
         type: "ground",
         config: { size: this.groundSize, color: "#996600" }
       }),
-      grassField,
+      ...grassField,
       ...this.subjects
     ];
 
