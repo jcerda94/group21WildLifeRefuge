@@ -1,6 +1,7 @@
 import Subject from "../utils/subject";
 import { getCapiInstance } from "./CAPI/capi";
 import { random } from "../utils/helpers";
+import { getHawkObserver } from "../scenes/observer.js";
 
 const CAPI = getCapiInstance();
 
@@ -171,4 +172,12 @@ export const label = ({ text, initialValue, x, y, type }) => {
     showLabel,
     destroy
   };
+};
+
+export const watchAnimal = (observer, callback) => {
+  const CAPI = getCapiInstance();
+
+  observer.subscribe(callback);
+
+  return () => observer.unsubscribe(callback);
 };

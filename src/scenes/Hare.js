@@ -3,7 +3,14 @@ import { getSceneManager } from "./SceneManager";
 import ModelFactory from "./ModelFactory";
 import { getHawkObserver } from "./observer.js";
 import { findRemoveIfNear } from "./GrassField";
-import { hunger, label, gender, breed, pauseResume } from "../utils/behavior";
+import {
+  hunger,
+  label,
+  watchAnimal,
+  gender,
+  breed,
+  pauseResume
+} from "../utils/behavior";
 import { getHawks } from "./Hawk.js";
 import { getTrees } from "./Tree.js";
 import { get2DPosition } from "../utils/helpers";
@@ -91,25 +98,42 @@ function Hare (config) {
     y: currentPosition.y
   });
 
-  const shouldShowLabel = getCapiInstance().getValue({ key: "Hare.label" });
+  const CAPI = getCapiInstance();
+  const shouldShowLabel = CAPI.getValue({ key: "Hare.label" });
   if (shouldShowLabel) hareLabel.showLabel();
 
-  getHawkObserver().subscribe(position => {
-    checkForHawks(hareMesh, position, dangerRange);
-  });
+  const checkHawkDanger = hawkPosition => {
+    const sightRange = CAPI.getValue({ key: "Hare.sightRange" });
+    const harePos = hareMesh.position;
+    const distance = harePos.distanceTo(hawkPosition);
+    if (distance < sightRange) {
+      const trees = SceneManager.getSceneObjectsOf({ types: ["Tree"] });
+
+      if (!Array.isArray(trees)) return;
+      const closest = trees.reduce(
+        (acc, tree, index) => {
+          const distance = harePos.distanceTo(tree.position);
+          if (distance > acc.distance) {
+            acc.distance = distance;
+            acc.tree = tree;
+          }
+          return acc;
+        },
+        { distance: 0, tree: null }
+      );
+
+      if (!closest.tree) return;
+
+      // TODO: Hare moves to tree here
+    }
+  };
+
+  const hawkObserver = watchAnimal(getHawkObserver(), checkHawkDanger);
 
   hareMesh.type = TYPE;
 
   const hareTweens = createHareTweens(hareMesh);
   tweens.push(...hareTweens);
-
-  var checkForHawks = function (hare, hawkPos, range) {
-    var harePos = hare.position;
-    var distance = getDistance(hare.position, hawkPos);
-    if (distance < range) {
-      escapeFromHawk(hare);
-    }
-  };
 
   function closestDistanceFromHawk () {
     const hawks = SceneManager.getSceneObjectsOf({ types: ["Hawk"] });
@@ -126,26 +150,6 @@ function Hare (config) {
     return nearestPosition;
   }
 
-  function escapeFromHawk (hare) {
-    var harePos = hare.position;
-
-    const trees = SceneManager.getSceneObjectsOf({ types: ["Tree"] });
-
-    var shortestDist = 1000000.1;
-    var tree;
-    for (var idx = 0; idx < trees.length; idx++) {
-      var x = trees[idx];
-      var distance = getDistance(hare.position, x.position);
-      if (shortestDist > distance) {
-        shortestDist = distance;
-        tree = trees[idx];
-      }
-    }
-
-    const numberOfTrees = SceneManager.getSceneObjectsOf({ types: ["Tree"] });
-    if (numberOfTrees.length > 0) {
-    }
-  }
   function hideFromHawk (hare) {
     var harePos = hare.position;
 
@@ -230,6 +234,7 @@ function Hare (config) {
   }
 
   function onDestroy () {
+    hawkObserver();
     hareLabel.destroy();
   }
 

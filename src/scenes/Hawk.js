@@ -246,6 +246,8 @@ function Hawk (config) {
   }
   routineFlying();
   let lastSimTime = 0;
+  let lastPositionBroadcast = null;
+  const hawkObserver = getHawkObserver();
 
   function update (elapsedTime, simulationTime) {
     count++;
@@ -274,13 +276,11 @@ function Hawk (config) {
       chase = false;
       isEating = false;
     }
-    if (count % 30 === 0) {
-      // The updates happen very often for small position changes
-      // This made the hawk behave erratically.
-      // The observers probably don't care if the hawk moves a small distance
-      // May want to make this delta-position based.
-      // for now just scale back the number of times the position is reported to the other animals.
-      getHawkObserver().broadcast(hawk.position);
+
+    if (lastPositionBroadcast === null) lastPositionBroadcast = elapsedTime;
+    if (elapsedTime - lastPositionBroadcast > 1) {
+      lastPositionBroadcast = elapsedTime;
+      hawkObserver.broadcast(hawk.position);
     }
     TWEEN.update();
   }

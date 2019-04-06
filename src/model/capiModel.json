@@ -6,6 +6,7 @@
   "Hare.label": false,
   "Hare.maleBias": 50,
   "Hare.ovulationTime": 86400,
+  "Hare.sightRange": 170,
   "WesternCedar.label": false,
   "Hawk.label": false,
   "Hawk.metabolism": 1,
