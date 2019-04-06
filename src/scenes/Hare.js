@@ -136,14 +136,6 @@ function Hare (config) {
     tweens.forEach(tween => tween.start && tween.start());
   }
 
-  pauseResume(pause, resume);
-
-  var treePos;
-  let isMoveToTree = false;
-
-  var waitForHawksToFlyAway = true;
-  var eating_pace = 20;
-  var eating_paceCntr = eating_pace;
   function update (elapsedTime, simulationTime) {
     updateLabelPosition();
     TWEEN.update();
@@ -168,7 +160,10 @@ function Hare (config) {
     else hareLabel.hideLabel();
   }
 
+  const pauseResumeBehavior = pauseResume(pause, resume);
+
   function onDestroy () {
+    pauseResumeBehavior();
     hawkObserver();
     hareLabel.destroy();
   }
