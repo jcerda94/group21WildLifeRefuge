@@ -167,7 +167,8 @@ function Hare (config) {
   };
 
   const resume = () => {
-    tweens[lastTweenIndex].start();
+    const tween = tweens[lastTweenIndex];
+    if (tween) tween.start();
   };
 
   const checkIfDoneEating = currentHunger => {

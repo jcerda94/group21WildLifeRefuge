@@ -239,6 +239,8 @@ export const moveToFood = (
     );
 
     normalMovementTweens.forEach(tween => tween.stop());
+    normalMovementTweens.length = 0;
+    normalMovementTweens.push(foodPositionTween);
     foodPositionTween.start();
     gettingFood = true;
 
