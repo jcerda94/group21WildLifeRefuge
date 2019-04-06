@@ -24,7 +24,7 @@ At update function, tree object is called constantly, so within update function,
 
 # Main Interaction Point
 
-Tree.js is used at Hare.js. For instance, when a hare dectect a hawk is close by, hare is searching for nearest tree for hiding place.
+Tree.js is used at Hare.js. For instance, when a hare detect a hawk is close by, hare is searching for nearest tree for hiding place.
 
 See Hare.js
 

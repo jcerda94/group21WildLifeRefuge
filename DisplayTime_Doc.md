@@ -13,10 +13,10 @@ DisplayTime.js is an user interface for display simulation concept time. it disp
 
 
 
-# Additonal Complexity
+# Additional Complexity
 
-DisplayTime.js receives elapasedTime and simTim from SceneManager; it could be used to display  simulation time or elapsed time concept.
+DisplayTime.js receives elapsedTime and simTim from SceneManager; it could be used to display  simulation time or elapsed time concept.
 
 # Main Interaction Point
 
-DisplayTime.js displays time on main screen; it displays days, weeks, and months. 
+DisplayTime.js displays time on main screen; it displays days, weeks, and months; thus, it is used by users who want to keep to know how long they have interact with the simulation.
