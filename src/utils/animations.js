@@ -4,51 +4,69 @@ import { random } from "./helpers";
 const THREE = require("three");
 const TWEEN = require("@tweenjs/tween.js");
 
-const randomX = SceneManager => {
-  const groundX = SceneManager.groundSize.x / 2;
+const randomX = groundSize => {
+  const groundX = groundSize.x / 2;
   return random(-groundX, groundX);
 };
 
-const randomZ = SceneManager => {
-  const groundZ = SceneManager.groundSize.y / 2;
+const randomZ = groundSize => {
+  const groundZ = groundSize.y / 2;
   return random(-groundZ, groundZ);
+};
+
+const randomPositionOn = ground => {
+  return {
+    x: randomX(ground),
+    y: 2,
+    z: randomZ(ground)
+  };
+};
+
+const getPositionBasedDelay = (start, end) => {
+  const initial = new THREE.Vector3(...Object.values(start));
+  const target = new THREE.Vector3(...Object.values(end));
+  return initial.distanceTo(target) * 30;
 };
 
 export const createHareTweens = hareMesh => {
   const SceneManager = getSceneManager();
   const { x, y, z } = hareMesh.position;
-  const tweenPositionOne = new TWEEN.Tween(hareMesh.position).to(
-    { x: x + 5, y, z: z + 5 },
-    1500
+  const positionOne = randomPositionOn(SceneManager.groundSize);
+  const positionTwo = randomPositionOn(SceneManager.groundSize);
+  const positionThree = randomPositionOn(SceneManager.groundSize);
+
+  const harePosition = hareMesh.position;
+
+  const initialHareMovement = new TWEEN.Tween(harePosition).to(
+    positionOne,
+    getPositionBasedDelay({ x, y, z }, positionOne)
   );
 
-  let firstRandomX = randomX(SceneManager);
-  let firstRandomZ = randomZ(SceneManager);
-
-  let randomSpot = new THREE.Vector3(firstRandomX, 0, firstRandomZ);
-  let randomDistance = hareMesh.position.distanceTo(randomSpot);
-
-  const tweenPositionTwo = new TWEEN.Tween(hareMesh.position).to(
-    { x: firstRandomX, y, z: firstRandomZ },
-    randomDistance * 30
+  const hareMovementOne = new TWEEN.Tween(harePosition).to(
+    positionOne,
+    getPositionBasedDelay(positionThree, positionOne)
+  );
+  const hareMovementTwo = new TWEEN.Tween(harePosition).to(
+    positionTwo,
+    getPositionBasedDelay(positionOne, positionTwo)
+  );
+  const hareMovementThree = new TWEEN.Tween(harePosition).to(
+    positionThree,
+    getPositionBasedDelay(positionTwo, positionThree)
   );
 
-  const secondRandomX = randomX(SceneManager);
-  const secondRandomZ = randomZ(SceneManager);
+  initialHareMovement.chain(hareMovementOne);
 
-  const nextRandomSpot = new THREE.Vector3(secondRandomX, 0, secondRandomZ);
-  const nextRandomDistance = hareMesh.position.distanceTo(nextRandomSpot);
+  hareMovementOne.chain(hareMovementTwo);
+  hareMovementTwo.chain(hareMovementThree);
+  hareMovementThree.chain(hareMovementOne);
 
-  const tweenPositionThree = new TWEEN.Tween(hareMesh.position).to(
-    { x: secondRandomX, y, z: secondRandomZ },
-    nextRandomDistance * 30
-  );
+  hareMovementOne.start();
 
-  tweenPositionOne.chain(tweenPositionTwo);
-  tweenPositionTwo.chain(tweenPositionThree);
-  tweenPositionThree.chain(tweenPositionOne);
-
-  tweenPositionOne.start();
-
-  return [tweenPositionOne, tweenPositionTwo, tweenPositionThree];
+  return [
+    initialHareMovement,
+    hareMovementOne,
+    hareMovementTwo,
+    hareMovementThree
+  ];
 };
