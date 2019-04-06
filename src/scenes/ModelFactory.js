@@ -9,6 +9,7 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import SpotLight from "./SpotLight";
+import { clamp } from "../utils/helpers";
 
 const Hawk = config => {
   if (config && config.useCollision) {
@@ -54,6 +55,7 @@ const Ground = config => {
   };
 };
 const Grass = async config => {
+  config.grasses = clamp(config.grasses)({ min: 1, max: 500 });
   const grassModels = await GrassField(config);
   return grassModels;
 };

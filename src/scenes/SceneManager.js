@@ -220,7 +220,7 @@ class SceneManager {
   async createSceneSubjects () {
     const grassField = await ModelFactory.makeSceneObject({
       type: "grassField",
-      config: { onLoad: this.onLoad, grasses: 100 }
+      config: { onLoad: this.onLoad, grasses: 5000 }
     });
 
     this.subjects = [
