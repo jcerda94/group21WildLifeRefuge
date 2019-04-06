@@ -18,6 +18,24 @@ export const get2DPosition = model => {
   return vector;
 };
 
+export const findClosestModel = (type, currentPosition) => {
+  const SceneManager = getSceneManager();
+  const models = SceneManager.getSceneObjectsOf({ types: [type] });
+
+  if (!Array.isArray(models)) return {};
+  return models.reduce(
+    (acc, model, index) => {
+      const distance = currentPosition.distanceTo(model.position);
+      if (distance < acc.distance) {
+        acc.distance = distance;
+        acc.model = model;
+      }
+      return acc;
+    },
+    { distance: Number.MAX_VALUE, tree: null }
+  );
+};
+
 export const getValue = (accessor = "", initial = {}) => {
   if (initial === null) {
     throw new Error(`Cannot access ${accessor} on null initial value`);

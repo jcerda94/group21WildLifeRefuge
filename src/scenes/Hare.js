@@ -9,19 +9,20 @@ import {
   watchAnimal,
   gender,
   breed,
-  pauseResume
+  pauseResume,
+  fleeToPosition
 } from "../utils/behavior";
 import { getHawks } from "./Hawk.js";
 import { getTrees } from "./Tree.js";
-import { get2DPosition } from "../utils/helpers";
+import { get2DPosition, findClosestModel } from "../utils/helpers";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { createHareTweens } from "../utils/animations";
 
 const THREE = require("three");
+const TWEEN = require("@tweenjs/tween.js");
 
 export const NAME = "hare";
 export const TYPE = "Hare";
-let TWEEN = require("@tweenjs/tween.js");
 
 function Hare (config) {
   const dangerRange = 170;
@@ -107,83 +108,37 @@ function Hare (config) {
     const harePos = hareMesh.position;
     const distance = harePos.distanceTo(hawkPosition);
     if (distance < sightRange) {
-      const trees = SceneManager.getSceneObjectsOf({ types: ["Tree"] });
+      const closest = findClosestModel("Tree", harePos);
 
-      if (!Array.isArray(trees)) return;
-      const closest = trees.reduce(
-        (acc, tree, index) => {
-          const distance = harePos.distanceTo(tree.position);
-          if (distance > acc.distance) {
-            acc.distance = distance;
-            acc.tree = tree;
-          }
-          return acc;
-        },
-        { distance: 0, tree: null }
-      );
+      if (!closest.model) return;
 
-      if (!closest.tree) return;
-
-      // TODO: Hare moves to tree here
+      fleeToPosition(hareMesh, closest.model.position, tweens, createHareTweens);
     }
   };
 
   const hawkObserver = watchAnimal(getHawkObserver(), checkHawkDanger);
+
+  let movingToTree = false;
 
   hareMesh.type = TYPE;
 
   const hareTweens = createHareTweens(hareMesh);
   tweens.push(...hareTweens);
 
-  function closestDistanceFromHawk () {
-    const hawks = SceneManager.getSceneObjectsOf({ types: ["Hawk"] });
-    let nearestPosition = 900;
-    if (hawks.length > 0) {
-      let nearestPosition2 = 0.0;
-      for (let i = 0; i < hawks.length; i++) {
-        nearestPosition2 = hareMesh.position.distanceTo(hawks[i].position);
-        if (nearestPosition2 < nearestPosition) {
-          nearestPosition = nearestPosition2;
-        }
-      }
-    }
-    return nearestPosition;
-  }
-
-  function hideFromHawk (hare) {
-    var harePos = hare.position;
-
-    const hawks = SceneManager.getSceneObjectsOf({ types: ["Hawk"] });
-    var shortestDist = 1000000.1;
-    for (var idx = 0; idx < hawks.length; idx++) {
-      var x = hawks[idx];
-      var distance = getDistance(hare.position, x.position);
-      if (shortestDist > distance) {
-        shortestDist = distance;
-      }
-    }
-    var range = dangerRange;
-    if (shortestDist > range) {
-      return false;
-    }
-    return true;
-  }
-
-  let isPaused = false;
-  function pause (hare) {
-    isPaused = true;
+  let isNormalMovementPaused = false;
+  function pause () {
+    isNormalMovementPaused = true;
     tweens.forEach(tween => tween.stop && tween.start());
   }
 
-  function resume (hare) {
-    isPaused = false;
+  function resume () {
+    isNormalMovementPaused = false;
     tweens.forEach(tween => tween.start && tween.start());
   }
 
   pauseResume(pause, resume);
 
   var treePos;
-  var movingToTree = false;
   let isMoveToTree = false;
 
   var waitForHawksToFlyAway = true;
@@ -197,28 +152,8 @@ function Hare (config) {
     if (hareGender === "female") {
       breedBehavior.signal(simulationTime);
     }
-    // eating_paceCntr = eating_pace;
-    // var deltaDistance = 500;
-    // findRemoveIfNear(hareMesh.position, deltaDistance);
-
-    // if (movingToTree) {
-    //   var id = getHareID(hareMesh);
-    //   var distance = getDistance(hareMesh.position, treePos).toFixed();
-
-    //   if (parseInt(distance) < 30) {
-    //     pause(hareMesh);
-    //     waitForHawksToFlyAway = true;
-    //     movingToTree = false;
-    //   }
-    // }
-    // if (waitForHawksToFlyAway) {
-    //   var ret = hideFromHawk(hareMesh);
-    //   if (!ret) {
-    //     waitForHawksToFlyAway = false;
-    //     resume(hareMesh);
-    //   }
-    // }
   }
+
   function handleCollision (targets) {
     for (let i = 0; i < targets.length; i++) {
       if (targets[i].object.type === "Grass") {

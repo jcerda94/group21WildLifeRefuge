@@ -2,7 +2,9 @@ import Subject from "../utils/subject";
 import { getCapiInstance } from "./CAPI/capi";
 import { random } from "../utils/helpers";
 import { getHawkObserver } from "../scenes/observer.js";
+import { createHareTweens } from "../utils/animations";
 
+const TWEEN = require("@tweenjs/tween.js");
 const CAPI = getCapiInstance();
 
 export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
@@ -172,6 +174,38 @@ export const label = ({ text, initialValue, x, y, type }) => {
     showLabel,
     destroy
   };
+};
+
+export const fleeToPosition = (
+  model,
+  targetPosition,
+  normalMovementTweens,
+  createTweens
+) => {
+  let movingToTree = false;
+
+  if (!movingToTree) {
+    const currentPosition = model.position;
+    const distance = currentPosition.distanceTo(targetPosition);
+
+    const { x, y, z } = targetPosition;
+    const moveToTree = new TWEEN.Tween(currentPosition).to(
+      { x, y, z },
+      distance * 30
+    );
+
+    normalMovementTweens.forEach(tween => tween.stop());
+    moveToTree.start();
+    movingToTree = true;
+
+    moveToTree.onComplete(() => {
+      movingToTree = false;
+      moveToTree.stop();
+      const newTweens = createTweens(model);
+      normalMovementTweens.length = 0;
+      normalMovementTweens.push(...newTweens);
+    });
+  }
 };
 
 export const watchAnimal = (observer, callback) => {

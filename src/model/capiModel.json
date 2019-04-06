@@ -1,8 +1,8 @@
 {
-  "SimCount.redtailHawkCount": 0,
-  "SimCount.snowshoeHareCount": 5,
+  "SimCount.redtailHawkCount": 2,
+  "SimCount.snowshoeHareCount": 2,
   "SimCount.sageBushCount": 0,
-  "SimCount.westernCedarCount": 0,
+  "SimCount.westernCedarCount": 5,
   "Hare.label": false,
   "Hare.maleBias": 50,
   "Hare.ovulationTime": 86400,
