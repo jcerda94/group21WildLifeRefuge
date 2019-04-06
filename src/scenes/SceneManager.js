@@ -263,6 +263,16 @@ class SceneManager {
     return this.scene.children.filter(child => types.includes(child.type));
   }
 
+  hasSceneObject ({ id }) {
+    return this.subjects.some(subject => subject.model.uuid === id);
+  }
+
+  removeObjectByUUID (id) {
+    const target = this.subjects.find(subject => subject.model.uuid === id);
+    if (!target) return;
+    this.removeObject(target.model);
+  }
+
   removeObject (sceneObject) {
     this.subjects = this.subjects.filter(subject => {
       const targetSubject = subject.model.uuid === sceneObject.uuid;

@@ -3,6 +3,12 @@ export const random = (min, max) => {
   return Math.random() * (max - min) + min;
 };
 
+export const clamp = value => ({ min, max }) => {
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
+};
+
 export const randomInt = (min, max) => {
   min = parseInt(min);
   max = parseInt(max);

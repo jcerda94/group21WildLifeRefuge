@@ -25,7 +25,7 @@ const randomPositionOn = ground => {
 const getPositionBasedDelay = (start, end) => {
   const initial = new THREE.Vector3(...Object.values(start));
   const target = new THREE.Vector3(...Object.values(end));
-  return initial.distanceTo(target) * 30;
+  return initial.distanceTo(target) * random(30, 50);
 };
 
 export const createHareTweens = hareMesh => {

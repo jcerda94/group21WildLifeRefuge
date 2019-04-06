@@ -11,7 +11,8 @@ import {
   breed,
   pauseResume,
   fleeToPosition,
-  moveToPosition
+  moveToFood,
+  death
 } from "../utils/behavior";
 import { getHawks } from "./Hawk.js";
 import { getTrees } from "./Tree.js";
@@ -29,7 +30,7 @@ function Hare (config) {
   const dangerRange = 170;
   const maxHunger = 20;
   const minHunger = 1;
-  const hungerTickRate = 0.0001;
+  const hungerTickRate = 0.001;
   const hareHunger = hunger({
     maxHunger,
     minHunger,
@@ -55,7 +56,15 @@ function Hare (config) {
 
   function breedingHandler () {
     if (hareGender === "female") {
-      const babyHare = ModelFactory.makeSceneObject({ type: "hare" });
+      const babyHare = ModelFactory.makeSceneObject({
+        type: "hare",
+        config: {
+          useCollision: true,
+          collision: {
+            targets: ["Grass"]
+          }
+        }
+      });
       SceneManager.addObject(babyHare);
     }
   }
@@ -124,14 +133,17 @@ function Hare (config) {
 
   let gettingFood = false;
   let targettedFoodId = null;
-  const getFood = ({ type, quantity }) => {
+  let eatingFood = false;
+
+  const getFood = ({ type }) => {
     const closestFood = findClosestModel(type, hareMesh.position);
 
-    if (!closestFood.model) return;
+    if (!closestFood.model) {
+      return null;
+    }
     const foodLocation = closestFood.model.position;
     const foodID = closestFood.model.uuid;
-    gettingFood = true;
-    moveToPosition(hareMesh, foodLocation, tweens, createHareTweens);
+    moveToFood(hareMesh, foodLocation, tweens, createHareTweens);
     return foodID;
   };
 
@@ -157,27 +169,53 @@ function Hare (config) {
     tweens[lastTweenIndex].start();
   };
 
+  const checkIfDoneEating = currentHunger => {
+    const wasEatingAndFoodIsGone =
+      (gettingFood || eatingFood) &&
+      targettedFoodId !== null &&
+      !SceneManager.hasSceneObject({ id: targettedFoodId });
+    const doneEating = currentHunger <= minHunger && eatingFood;
+
+    if (wasEatingAndFoodIsGone || doneEating) {
+      eatingFood = false;
+      gettingFood = false;
+      SceneManager.removeObjectByUUID(targettedFoodId);
+      targettedFoodId = null;
+      tweens.forEach(tween => {
+        tween.stop && tween.stop();
+        TWEEN.remove(tween);
+      });
+      tweens.length = 0;
+      tweens.push(...createHareTweens(hareMesh));
+    }
+  };
+
   function update (elapsedTime, simulationTime) {
     updateLabelPosition();
+    const currentHunger = hareHunger.update(simulationTime, eatingFood);
 
-    hareHunger.update(simulationTime);
-
-    if (hareHunger.get() > maxHunger * 0.75 && !gettingFood) {
-      targettedFoodId = getFood({ type: "Grass", quantity: 1 });
+    if (currentHunger > maxHunger * 0.75 && !gettingFood) {
+      targettedFoodId = getFood({ type: "Grass" });
+      gettingFood = true;
     }
+
+    checkIfDoneEating(currentHunger);
 
     if (hareGender === "female") {
       breedBehavior.signal(simulationTime);
     }
   }
 
+  let timesCollided = 0;
+
   function handleCollision (targets) {
+    timesCollided += 1;
     targets.forEach &&
       targets.forEach(target => {
         let parent = target.object.parent;
         while (parent) {
           if (parent.uuid === targettedFoodId) {
-            console.log("grass hit");
+            eatingFood = true;
           }
           parent = parent.parent;
         }

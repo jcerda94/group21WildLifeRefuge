@@ -1,6 +1,6 @@
 import Subject from "../utils/subject";
 import { getCapiInstance } from "./CAPI/capi";
-import { random } from "../utils/helpers";
+import { random, clamp } from "../utils/helpers";
 import { getHawkObserver } from "../scenes/observer.js";
 import { createHareTweens } from "../utils/animations";
 
@@ -10,7 +10,7 @@ const CAPI = getCapiInstance();
 export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
   const max = maxHunger || 20;
   const min = minHunger || 1;
-  const tickRate = hungerTickRate || 0.0001; // hunger units per second
+  let tickRate = hungerTickRate || 0.0001; // hunger units per second
   if (min < 1) {
     throw new Error("Minimum hunger value must be >= 1");
   }
@@ -21,6 +21,14 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
 
   let currentHunger = 0.5 * max;
   let lastUpdateTime = null;
+
+  const updateTickRate = capiModel => {
+    let exponent = capiModel.get("Hare.metabolism");
+    clamp(exponent)({ min: 2, max: 4 });
+    tickRate = Math.pow(10, -Number(exponent));
+  };
+
+  CAPI.addListenerFor({ key: "Hare.metabolism", callback: updateTickRate });
 
   function update (elapsedTime, isEating) {
     if (lastUpdateTime === null) lastUpdateTime = elapsedTime;
@@ -35,6 +43,7 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
     if (currentHunger > max) currentHunger = max;
     if (currentHunger < min) currentHunger = min;
     lastUpdateTime = elapsedTime;
+    return currentHunger;
   }
 
   function get () {
@@ -56,6 +65,8 @@ export const pauseResume = (pauseHandler, resumeHandler) => {
     Subject.unsubscribe("simulation_resumed", resumeHandler);
   };
 };
+
+export const death = () => {};
 
 export const breed = ({ gender, type, breedingHandler, simulationTime }) => {
   const femaleEvent = `${type}_ovulation`;
@@ -187,7 +198,7 @@ export const fleeToPosition = (model, targetPosition, tweens, createTweens) => {
     const { x, y, z } = targetPosition;
     const moveToPosition = new TWEEN.Tween(currentPosition).to(
       { x, y, z },
-      distance * 30
+      distance * random(10, 30)
     );
     tweens.forEach(tween => {
       if (tween.isPlaying()) tween.stop();
@@ -199,6 +210,7 @@ export const fleeToPosition = (model, targetPosition, tweens, createTweens) => {
     moveToPosition.onComplete(() => {
       fleeing = false;
       moveToPosition.stop();
+      tweens.forEach(tween => TWEEN.remove(tween));
       tweens.length = 0;
       tweens.push(...createTweens(model));
     });
@@ -206,7 +218,7 @@ export const fleeToPosition = (model, targetPosition, tweens, createTweens) => {
   }
 };
 
-export const moveToPosition = (
+export const moveToFood = (
   model,
   targetPosition,
   normalMovementTweens,
@@ -219,21 +231,22 @@ export const moveToPosition = (
     const distance = currentPosition.distanceTo(targetPosition);
 
     const { x, y, z } = targetPosition;
-    const moveToFood = new TWEEN.Tween(currentPosition).to(
+    const foodPositionTween = new TWEEN.Tween(currentPosition).to(
       { x, y, z },
-      distance * 30
+      distance * random(10, 30)
     );
 
     normalMovementTweens.forEach(tween => tween.stop());
-    moveToFood.start();
+    foodPositionTween.start();
     gettingFood = true;
 
-    moveToFood.onComplete(() => {
+    const finishFoodMovement = () => {
       gettingFood = false;
-      moveToFood.stop();
-      const newTweens = createTweens(model);
-      normalMovementTweens.length = 0;
-      normalMovementTweens.push(...newTweens);
+      foodPositionTween.stop();
+    };
+
+    foodPositionTween.onComplete(() => {
+      finishFoodMovement();
     });
   }
 };
