@@ -1,13 +1,16 @@
 import Subject from "../utils/subject";
 import { getCapiInstance } from "./CAPI/capi";
-import { random } from "../utils/helpers";
+import { random, clamp } from "../utils/helpers";
+import { getHawkObserver } from "../scenes/observer.js";
+import { createHareTweens } from "../utils/animations";
 
+const TWEEN = require("@tweenjs/tween.js");
 const CAPI = getCapiInstance();
 
-export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
+export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
   const max = maxHunger || 20;
   const min = minHunger || 1;
-  const tickRate = hungerTickRate || 0.0001; // hunger units per second
+  let tickRate = hungerTickRate || 0.0001; // hunger units per second
   if (min < 1) {
     throw new Error("Minimum hunger value must be >= 1");
   }
@@ -16,10 +19,21 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
     throw new Error("Maximum hunger value must be > minimum hunger value");
   }
 
-  let currentHunger = max * 0.5;
-  let lastUpdateTime = 0;
+  let currentHunger = 0.5 * max;
+  let lastUpdateTime = null;
+
+  if (type) {
+    const updateTickRate = capiModel => {
+      let exponent = capiModel.get(`${type}.metabolism`);
+      clamp(exponent)({ min: 2, max: 4 });
+      tickRate = Math.pow(10, -Number(exponent));
+    };
+
+    CAPI.addListenerFor({ key: "Hare.metabolism", callback: updateTickRate });
+  }
 
   function update (elapsedTime, isEating) {
+    if (lastUpdateTime === null) lastUpdateTime = elapsedTime;
     const delta = elapsedTime - lastUpdateTime;
 
     if (isEating) {
@@ -31,6 +45,7 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
     if (currentHunger > max) currentHunger = max;
     if (currentHunger < min) currentHunger = min;
     lastUpdateTime = elapsedTime;
+    return currentHunger;
   }
 
   function get () {
@@ -52,6 +67,8 @@ export const pauseResume = (pauseHandler, resumeHandler) => {
     Subject.unsubscribe("simulation_resumed", resumeHandler);
   };
 };
+
+export const death = () => {};
 
 export const breed = ({ gender, type, breedingHandler, simulationTime }) => {
   const femaleEvent = `${type}_ovulation`;
@@ -171,4 +188,77 @@ export const label = ({ text, initialValue, x, y, type }) => {
     showLabel,
     destroy
   };
+};
+
+export const fleeToPosition = (model, targetPosition, tweens, createTweens) => {
+  let fleeing = false;
+
+  if (!fleeing) {
+    const currentPosition = model.position;
+    const distance = currentPosition.distanceTo(targetPosition);
+
+    const { x, y, z } = targetPosition;
+    const moveToPosition = new TWEEN.Tween(currentPosition).to(
+      { x, y, z },
+      distance * random(10, 30)
+    );
+    tweens.forEach(tween => {
+      if (tween.isPlaying()) tween.stop();
+    });
+
+    moveToPosition.start();
+    fleeing = true;
+
+    moveToPosition.onComplete(() => {
+      fleeing = false;
+      moveToPosition.stop();
+      tweens.forEach(tween => TWEEN.remove(tween));
+      tweens.length = 0;
+      tweens.push(...createTweens(model));
+    });
+    return moveToPosition;
+  }
+};
+
+export const moveToFood = (
+  model,
+  targetPosition,
+  normalMovementTweens,
+  createTweens
+) => {
+  let gettingFood = false;
+
+  if (!gettingFood) {
+    const currentPosition = model.position;
+    const distance = currentPosition.distanceTo(targetPosition);
+
+    const { x, y, z } = targetPosition;
+    const foodPositionTween = new TWEEN.Tween(currentPosition).to(
+      { x, y, z },
+      distance * random(10, 30)
+    );
+
+    normalMovementTweens.forEach(tween => tween.stop());
+    normalMovementTweens.length = 0;
+    normalMovementTweens.push(foodPositionTween);
+    foodPositionTween.start();
+    gettingFood = true;
+
+    const finishFoodMovement = () => {
+      gettingFood = false;
+      foodPositionTween.stop();
+    };
+
+    foodPositionTween.onComplete(() => {
+      finishFoodMovement();
+    });
+  }
+};
+
+export const watchAnimal = (observer, callback) => {
+  const CAPI = getCapiInstance();
+
+  observer.subscribe(callback);
+
+  return () => observer.unsubscribe(callback);
 };

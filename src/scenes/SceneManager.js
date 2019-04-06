@@ -96,7 +96,6 @@ class SceneManager {
   }
 
   toggleSelected (model) {
-    // console.log("Clicked on grass");
     const modelIndex = this.selected.findIndex(
       selectedModel => model === selectedModel
     );
@@ -221,7 +220,7 @@ class SceneManager {
   async createSceneSubjects () {
     const grassField = await ModelFactory.makeSceneObject({
       type: "grassField",
-      config: { onLoad: this.onLoad }
+      config: { onLoad: this.onLoad, grasses: 5000 }
     });
 
     this.subjects = [
@@ -232,7 +231,7 @@ class SceneManager {
         type: "ground",
         config: { size: this.groundSize, color: "#996600" }
       }),
-      grassField,
+      ...grassField,
       ...this.subjects
     ];
 
@@ -262,6 +261,16 @@ class SceneManager {
 
   getSceneObjectsOf ({ types }) {
     return this.scene.children.filter(child => types.includes(child.type));
+  }
+
+  hasSceneObject ({ id }) {
+    return this.subjects.some(subject => subject.model.uuid === id);
+  }
+
+  removeObjectByUUID (id) {
+    const target = this.subjects.find(subject => subject.model.uuid === id);
+    if (!target) return;
+    this.removeObject(target.model);
   }
 
   removeObject (sceneObject) {

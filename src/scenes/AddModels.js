@@ -25,7 +25,17 @@ function AddModels (type) {
       SceneManager.addObject(ModelFactory.makeSceneObject({ type: "bush" }));
       break;
     case "hare":
-      SceneManager.addObject(ModelFactory.makeSceneObject({ type: "hare" }));
+      SceneManager.addObject(
+        ModelFactory.makeSceneObject({
+          type,
+          config: {
+            useCollision: true,
+            collision: {
+              targets: ["Grass"]
+            }
+          }
+        })
+      );
       break;
     default:
   }
