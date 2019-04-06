@@ -34,6 +34,7 @@ function Hare (config) {
   const hareHunger = hunger({
     maxHunger,
     minHunger,
+    type: TYPE,
     hungerTickRate
   });
   const genderBias = getCapiInstance().getValue({ key: "Hare.maleBias" }) || 50;

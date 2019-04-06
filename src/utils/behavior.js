@@ -7,7 +7,7 @@ import { createHareTweens } from "../utils/animations";
 const TWEEN = require("@tweenjs/tween.js");
 const CAPI = getCapiInstance();
 
-export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
+export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
   const max = maxHunger || 20;
   const min = minHunger || 1;
   let tickRate = hungerTickRate || 0.0001; // hunger units per second
@@ -22,13 +22,15 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
   let currentHunger = 0.5 * max;
   let lastUpdateTime = null;
 
-  const updateTickRate = capiModel => {
-    let exponent = capiModel.get("Hare.metabolism");
-    clamp(exponent)({ min: 2, max: 4 });
-    tickRate = Math.pow(10, -Number(exponent));
-  };
+  if (type) {
+    const updateTickRate = capiModel => {
+      let exponent = capiModel.get(`${type}.metabolism`);
+      clamp(exponent)({ min: 2, max: 4 });
+      tickRate = Math.pow(10, -Number(exponent));
+    };
 
-  CAPI.addListenerFor({ key: "Hare.metabolism", callback: updateTickRate });
+    CAPI.addListenerFor({ key: "Hare.metabolism", callback: updateTickRate });
+  }
 
   function update (elapsedTime, isEating) {
     if (lastUpdateTime === null) lastUpdateTime = elapsedTime;
