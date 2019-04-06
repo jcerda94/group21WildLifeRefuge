@@ -8,9 +8,9 @@ Trees are parts of our simulation models, and Trees play an important role in th
 
 | Function            | Async? | Param                       | Description                                                  |
 | ------------------- | ------ | --------------------------- | ------------------------------------------------------------ |
-| update()            | N      | elapsedTime, simulationTime | can be use to update itself, and called from sceneManager about 60 frame per second |
-| setLabelto          | N      | object                      | To display thirsty label to indicate water consumption       |
-| setTreeLayFlate     | N      | None                        | To lay tree flat on the grond to indicate that tree is daying |
+| update()            | N      | elapsedTime, simulationTime | can be use to update itself, and called from sceneManager about 60 frames per second |
+| setLabelTo          | N      | object                      | To display thirsty label to indicate water consumption       |
+| setTreeLayFlat    | N      | None                        | To lay tree flat on the ground to indicate that tree is dying |
 | setTreeTo45Degree   | N      | None                        | To angle tree at 45 degree to indicate that tree is not healthy |
 | setTreeToGreen      | N      | None                        | To set tree back to healthy level                            |
 | upDateLabelPosition | N      | None                        | position thirsty label according new tree's position         |
