@@ -32,7 +32,7 @@ export const findClosestModel = (type, currentPosition) => {
       }
       return acc;
     },
-    { distance: Number.MAX_VALUE, tree: null }
+    { distance: Number.MAX_VALUE, model: null }
   );
 };
 

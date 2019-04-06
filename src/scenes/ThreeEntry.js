@@ -1,5 +1,6 @@
 import SceneManager from "./SceneManager";
 import EnvironmentManager from "./EnvironmentManager";
+import TWEEN from "@tweenjs/tween.js";
 
 function createCanvas (document, containerElement) {
   const canvas = document.createElement("canvas");
@@ -47,6 +48,7 @@ class ThreeEntry {
 
   render = () => {
     requestAnimationFrame(this.render);
+    TWEEN.update();
     this.sceneManager.update();
     this.frames++;
   }

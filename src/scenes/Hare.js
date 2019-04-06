@@ -10,7 +10,8 @@ import {
   gender,
   breed,
   pauseResume,
-  fleeToPosition
+  fleeToPosition,
+  moveToPosition
 } from "../utils/behavior";
 import { getHawks } from "./Hawk.js";
 import { getTrees } from "./Tree.js";
@@ -38,12 +39,11 @@ function Hare (config) {
   const hareGender = gender({ bias: genderBias });
   const tweens = [];
   const color = hareGender === "female" ? "#db7093" : "#407093";
+  const HareTweenGroup = new TWEEN.Group();
 
-  let distanceFromHawk = 0.0;
-
-  var sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
-  var sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
-  var hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  const sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
+  const sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
+  const hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
   hareMesh.name = "hare";
 
   const breedBehavior = breed({
@@ -110,10 +110,29 @@ function Hare (config) {
     if (distance < sightRange) {
       const closest = findClosestModel("Tree", harePos);
 
-      if (!closest.model) return;
+      if (!closest.model || gettingFood) return;
 
-      fleeToPosition(hareMesh, closest.model.position, tweens, createHareTweens);
+      const moveTween = fleeToPosition(
+        hareMesh,
+        closest.model.position,
+        tweens,
+        createHareTweens
+      );
+      if (moveTween) tweens.push(moveTween);
     }
+  };
+
+  let gettingFood = false;
+  let targettedFoodId = null;
+  const getFood = ({ type, quantity }) => {
+    const closestFood = findClosestModel(type, hareMesh.position);
+
+    if (!closestFood.model) return;
+    const foodLocation = closestFood.model.position;
+    const foodID = closestFood.model.uuid;
+    gettingFood = true;
+    moveToPosition(hareMesh, foodLocation, tweens, createHareTweens);
+    return foodID;
   };
 
   const hawkObserver = watchAnimal(getHawkObserver(), checkHawkDanger);
@@ -122,38 +141,37 @@ function Hare (config) {
 
   hareMesh.type = TYPE;
 
-  const hareTweens = createHareTweens(hareMesh);
-  tweens.push(...hareTweens);
+  tweens.push(...createHareTweens(hareMesh));
 
-  let isNormalMovementPaused = false;
-  function pause () {
-    isNormalMovementPaused = true;
-    tweens.forEach(tween => tween.stop && tween.start());
-  }
+  let lastTweenIndex = null;
+  const pause = () => {
+    tweens.forEach((tween, i) => {
+      if (tween.isPlaying()) {
+        tween.stop();
+        lastTweenIndex = i;
+      }
+    });
+  };
 
-  function resume () {
-    isNormalMovementPaused = false;
-    tweens.forEach(tween => tween.start && tween.start());
-  }
+  const resume = () => {
+    tweens[lastTweenIndex].start();
+  };
 
   function update (elapsedTime, simulationTime) {
     updateLabelPosition();
-    TWEEN.update();
 
     hareHunger.update(simulationTime);
+
+    if (hareHunger.get() > maxHunger * 0.75 && !gettingFood) {
+      targettedFoodId = getFood({ type: "grass", quantity: 1 });
+    }
+
     if (hareGender === "female") {
       breedBehavior.signal(simulationTime);
     }
   }
 
-  function handleCollision (targets) {
-    for (let i = 0; i < targets.length; i++) {
-      if (targets[i].object.type === "Grass") {
-        console.log("Collision occur between grass and hare");
-        SceneManager.removeObject(targets[i].object);
-      }
-    }
-  }
+  function handleCollision (targets) {}
 
   function setLabelTo ({ visible }) {
     if (visible) hareLabel.showLabel();

@@ -19,7 +19,12 @@ const Hawk = config => {
   }
 };
 const Hare = config => {
-  return HareModel(config);
+  if (config && config.useCollision) {
+    const hare = HareModel(config);
+    return CollisionSphereModel(hare)(config.collision);
+  } else {
+    return HareModel(config);
+  }
 };
 const Bush = () => {
   const { model, created, update } = BushModel();
@@ -131,7 +136,7 @@ class modelFactory {
       case MODEL_TYPES.Hawk.type:
         return MODEL_TYPES.Hawk.model(config);
       case MODEL_TYPES.Hare.type:
-        return MODEL_TYPES.Hare.model();
+        return MODEL_TYPES.Hare.model(config);
       case MODEL_TYPES.Bush.type:
         return MODEL_TYPES.Bush.model();
       case MODEL_TYPES.Tree.type:

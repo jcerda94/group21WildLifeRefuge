@@ -177,31 +177,60 @@ export const label = ({ text, initialValue, x, y, type }) => {
   };
 };
 
-export const fleeToPosition = (
+export const fleeToPosition = (model, targetPosition, tweens, createTweens) => {
+  let fleeing = false;
+
+  if (!fleeing) {
+    const currentPosition = model.position;
+    const distance = currentPosition.distanceTo(targetPosition);
+
+    const { x, y, z } = targetPosition;
+    const moveToPosition = new TWEEN.Tween(currentPosition).to(
+      { x, y, z },
+      distance * 30
+    );
+    tweens.forEach(tween => {
+      if (tween.isPlaying()) tween.stop();
+    });
+
+    moveToPosition.start();
+    fleeing = true;
+
+    moveToPosition.onComplete(() => {
+      fleeing = false;
+      moveToPosition.stop();
+      tweens.length = 0;
+      tweens.push(...createTweens(model));
+    });
+    return moveToPosition;
+  }
+};
+
+export const moveToPosition = (
   model,
   targetPosition,
   normalMovementTweens,
   createTweens
 ) => {
-  let movingToTree = false;
+  let gettingFood = false;
 
-  if (!movingToTree) {
+  if (!gettingFood) {
     const currentPosition = model.position;
     const distance = currentPosition.distanceTo(targetPosition);
 
     const { x, y, z } = targetPosition;
-    const moveToTree = new TWEEN.Tween(currentPosition).to(
+    const moveToFood = new TWEEN.Tween(currentPosition).to(
       { x, y, z },
       distance * 30
     );
 
     normalMovementTweens.forEach(tween => tween.stop());
-    moveToTree.start();
-    movingToTree = true;
+    moveToFood.start();
+    gettingFood = true;
 
-    moveToTree.onComplete(() => {
-      movingToTree = false;
-      moveToTree.stop();
+    moveToFood.onComplete(() => {
+      gettingFood = false;
+      moveToFood.stop();
       const newTweens = createTweens(model);
       normalMovementTweens.length = 0;
       normalMovementTweens.push(...newTweens);

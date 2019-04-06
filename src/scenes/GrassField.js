@@ -14,7 +14,7 @@ async function GrassField (config) {
 
   const loader = new THREE.GLTFLoader(loadingManager);
 
-  const { count = 5000 } = config;
+  const { count = 100 } = config;
 
   const originalGrass = await new Promise((resolve, reject) => {
     loader.load(
@@ -45,7 +45,7 @@ async function GrassField (config) {
         selected: "#FF00FF"
       }
     };
-    const size = random(1, 2);
+    const size = random(2, 5);
 
     const x = random(-positionBound.x / 2, positionBound.x / 2);
     const z = random(-positionBound.y / 2, positionBound.y / 2);
@@ -97,30 +97,30 @@ export var findRemoveIfNear = function (animalPos, range) {
 
   const my_grasses = myGrasses();
   var eatingRange = 100;
-  //var shortestDist = 1000000.1;
+  // var shortestDist = 1000000.1;
   var shortestDist_node = null;
-  //var shortestDist_node_i = 0;
+  // var shortestDist_node_i = 0;
 
   for (var idx = 0; idx < my_grasses.children.length; idx++) {
     var node = my_grasses.children[idx];
     var distance = getDistance(animalPos, node.position);
 
-    if(distance < eatingRange) { // get all the grass inside a range
+    if (distance < eatingRange) {
+      // get all the grass inside a range
       // Since the grass field is greated randomly, the first one we find is pretty random
       // so we'll use it
       grasses.remove(node);
       // console.log("new count of grass list: " +  ll.length);
       getGrassLinkedList().Append(new Node(node));
-  
-      //console.log("eaten grass count: " + getGrassLinkedList().length);
-      if(getGrassLinkedList().length > 100) {
-        //console.log("put grass back");
+
+      // console.log("eaten grass count: " + getGrassLinkedList().length);
+      if (getGrassLinkedList().length > 100) {
+        // console.log("put grass back");
         var grass_node = getGrassLinkedList().First();
         grasses.add(grass_node.data);
         getGrassLinkedList().Remove(grass_node);
       }
       break;
-  
     }
   }
 };
