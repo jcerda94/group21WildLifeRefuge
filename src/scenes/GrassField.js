@@ -7,7 +7,6 @@ const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
 export const TYPE = "Grass";
-const grasses = new THREE.Object3D();
 async function GrassField (config) {
   const loadingManager = new THREE.LoadingManager();
   loadingManager.onLoad = config.onLoad || (() => null);
@@ -62,7 +61,6 @@ async function GrassField (config) {
     grass.children[0].children[0].material = grassMesh.clone();
     grass.type = TYPE;
     grass.name = "grass";
-    grasses.add(grass);
     grassModels.push({
       update,
       model: grass,
@@ -70,56 +68,9 @@ async function GrassField (config) {
     });
   }
 
-  // grasses.type = TYPE;
-  // grasses.name = "grass";
-
   function update () {}
 
   return grassModels;
 }
-var inPos;
-var theRange;
-export var myGrasses = function () {
-  return grasses;
-};
-export var findRemoveIfNear = function (animalPos, range) {
-  inPos = animalPos;
-  theRange = range;
 
-  const my_grasses = myGrasses();
-  var eatingRange = 100;
-  // var shortestDist = 1000000.1;
-  var shortestDist_node = null;
-  // var shortestDist_node_i = 0;
-
-  for (var idx = 0; idx < my_grasses.children.length; idx++) {
-    var node = my_grasses.children[idx];
-    var distance = getDistance(animalPos, node.position);
-
-    if (distance < eatingRange) {
-      // get all the grass inside a range
-      // Since the grass field is greated randomly, the first one we find is pretty random
-      // so we'll use it
-      grasses.remove(node);
-      // console.log("new count of grass list: " +  ll.length);
-      getGrassLinkedList().Append(new Node(node));
-
-      // console.log("eaten grass count: " + getGrassLinkedList().length);
-      if (getGrassLinkedList().length > 100) {
-        // console.log("put grass back");
-        var grass_node = getGrassLinkedList().First();
-        grasses.add(grass_node.data);
-        getGrassLinkedList().Remove(grass_node);
-      }
-      break;
-    }
-  }
-};
-
-function isGreaterThan (n1, n2) {
-  return parseInt(n1) > parseInt(n2);
-}
-function getDistance (pos1, pos2) {
-  return pos1.distanceTo(pos2);
-}
 export default GrassField;
