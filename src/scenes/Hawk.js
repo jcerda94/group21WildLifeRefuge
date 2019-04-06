@@ -4,7 +4,6 @@ import { getHareID } from "./Hare.js";
 import { random, randomInt } from "../utils/helpers";
 import { hunger, gender, breed, label, pauseResume } from "../utils/behavior";
 import { getCapiInstance } from "../utils/CAPI/capi";
-import FindDistance from "../utils/Findistance";
 import ModelFactory from "./ModelFactory";
 
 const THREE = require("three");
