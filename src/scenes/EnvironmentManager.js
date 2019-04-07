@@ -86,6 +86,8 @@ class EnvironmentManager {
     sceneManager = null;
     localEnv = null;
     trackedObjects = [];
+    //TODO Consider how to adapt for nutrients on weather type?
+    //TODO Maybe create two separate tables or a nested set of ordered values similar to the consumeParams?
     weatherMod = 1.0;
 
     //CAUTION! consumeKey objects will only be shallow copied
