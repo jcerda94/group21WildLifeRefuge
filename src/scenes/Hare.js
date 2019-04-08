@@ -19,6 +19,7 @@ import { getTrees } from "./Tree.js";
 import { get2DPosition, findClosestModel } from "../utils/helpers";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { createHareTweens } from "../utils/animations";
+import { ExpansionPanelSummary } from "@material-ui/core";
 
 const THREE = require("three");
 const TWEEN = require("@tweenjs/tween.js");
@@ -192,6 +193,8 @@ function Hare (config) {
     }
   };
 
+  const hareDeathBehavior = death("Hare");
+
   function update (elapsedTime, simulationTime) {
     updateLabelPosition();
     const currentHunger = hareHunger.update(simulationTime, eatingFood);
@@ -199,6 +202,10 @@ function Hare (config) {
     if (currentHunger > maxHunger * 0.75 && !gettingFood) {
       targettedFoodId = getFood({ type: "Grass" });
       gettingFood = true;
+    }
+
+    if (hareDeathBehavior.isDead(simulationTime, hareHunger, eatingFood)) {
+      SceneManager.removeObject(hareMesh);
     }
 
     checkIfDoneEating(currentHunger);
