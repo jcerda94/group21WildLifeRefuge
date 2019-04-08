@@ -218,9 +218,14 @@ class SceneManager {
   }
 
   async createSceneSubjects () {
+    let grassCount = getCapiInstance().getValue({ key: "SimCount.grass" });
+    if (grassCount === null || grassCount === undefined) grassCount = 100;
     const grassField = await ModelFactory.makeSceneObject({
       type: "grassField",
-      config: { onLoad: this.onLoad, grasses: 5000 }
+      config: {
+        onLoad: this.onLoad,
+        grasses: grassCount
+      }
     });
 
     this.subjects = [
