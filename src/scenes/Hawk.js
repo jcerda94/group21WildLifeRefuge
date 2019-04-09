@@ -102,7 +102,7 @@ function Hawk (config) {
   let isChasingHare = false;
   let tweenChase = new TWEEN.Tween(hawk.position);
 
-  const onChaseEnd = () => {
+  const endChase = () => {
     tweens.forEach(tween => {
       tween.stop && tween.stop();
       TWEEN.remove(tween);
@@ -112,12 +112,13 @@ function Hawk (config) {
     isChasingHare = false;
   };
 
-  const chaseSpeed = random(3000, 8000);
   const checkForHare = () => {
     let hareTarget = null;
     if (targettedHareId === null) {
       const closestHare = findClosestModel("Hare", hawk.position);
-      if (!closestHare.model) return;
+      if (!closestHare.model) {
+        return;
+      }
       hareTarget = closestHare.model;
       targettedHareId = hareTarget.uuid;
     }
@@ -126,18 +127,18 @@ function Hawk (config) {
       const hare = SceneManager.getSceneObjectByID({ id: targettedHareId });
       if (!hare) {
         targettedHareId = null;
-        onChaseEnd();
+        endChase();
         return;
       }
       hareTarget = hare.model;
     }
 
-    const d = hawk.position.distanceTo(hareTarget.position);
-
     // Apply chase speed only when not already chasing
     if (isChasingHare) {
       tweenChase.to(hareTarget.position);
     } else {
+      const distance = hawk.position.distanceTo(hareTarget.position);
+      const chaseSpeed = distance * random(10, 20);
       tweenChase.to(hareTarget.position, chaseSpeed);
     }
 
@@ -149,7 +150,7 @@ function Hawk (config) {
     tweens.length = 0;
     tweens.push(tweenChase);
     tweenChase.start();
-    tweenChase.onComplete(onChaseEnd);
+    tweenChase.onComplete(endChase);
     isChasingHare = true;
   };
 
@@ -249,16 +250,16 @@ function Hawk (config) {
   }
 
   function handleCollision (targets) {
+    if (targettedHareId === null) return;
     const hare = targets.find(target => target.object.uuid === targettedHareId);
     if (!hare) {
       // Didn't collide with target
-      isEating = false;
       return;
     }
     hareMesh.material.color = hare.object.material.color;
     hawk.add(hareMesh);
+    endChase();
     isEating = true;
-    onChaseEnd();
     SceneManager.removeObject(hare.object);
   }
 
