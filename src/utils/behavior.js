@@ -54,7 +54,9 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
 
   return {
     update,
-    get
+    get,
+    max,
+    min
   };
 };
 
@@ -68,7 +70,30 @@ export const pauseResume = (pauseHandler, resumeHandler) => {
   };
 };
 
-export const death = () => {};
+export const death = type => {
+  const CAPI = getCapiInstance();
+  let lastSimTime = null;
+  let deathDelta = 0;
+  const starvationTime =
+    CAPI.getValue({ key: `${type}.starvationTime` }) || 86400;
+
+  const isDead = (simulationTime, hunger, isEating) => {
+    if (lastSimTime === null) lastSimTime = simulationTime;
+    if (hunger.get() >= hunger.max) {
+      deathDelta += lastSimTime === null ? 0 : simulationTime - lastSimTime;
+    } else if (isEating) {
+      deathDelta = 0;
+    }
+    lastSimTime = simulationTime;
+
+    const isDead = deathDelta > starvationTime;
+    return isDead;
+  };
+
+  return {
+    isDead
+  };
+};
 
 export const breed = ({ gender, type, breedingHandler, simulationTime }) => {
   const femaleEvent = `${type}_ovulation`;

@@ -2,7 +2,14 @@ import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { getHareID } from "./Hare.js";
 import { random, randomInt } from "../utils/helpers";
-import { hunger, gender, breed, label, pauseResume } from "../utils/behavior";
+import {
+  hunger,
+  gender,
+  breed,
+  label,
+  pauseResume,
+  death
+} from "../utils/behavior";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import ModelFactory from "./ModelFactory";
 
@@ -245,27 +252,23 @@ function Hawk (config) {
     tween3.start();
   }
   routineFlying();
-  let lastSimTime = 0;
   let lastPositionBroadcast = null;
   const hawkObserver = getHawkObserver();
+
+  const hawkDeathBehavior = death("Hawk");
 
   function update (elapsedTime, simulationTime) {
     count++;
     if (hawkGender === "female") {
       breedBehavior.signal(simulationTime);
     }
-    if (deathDelta > deathTimer) {
+
+    hawkHunger.update(simulationTime, isEating);
+
+    if (hawkDeathBehavior.isDead(simulationTime, hawkHunger, isEating)) {
       SceneManager.removeObject(hawk);
-      hungerLabel.destroy();
-    }
-    if (hawkHunger.get() >= maxHunger) {
-      deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
-    } else if (isEating) {
-      deathDelta = 0;
     }
 
-    lastSimTime = simulationTime;
-    hawkHunger.update(simulationTime, isEating);
     updateLabelPosition();
     // hungerLabel.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
