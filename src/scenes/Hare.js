@@ -28,15 +28,15 @@ export const NAME = "hare";
 export const TYPE = "Hare";
 
 function Hare (config) {
+  const CAPI = getCapiInstance();
+
   const dangerRange = 170;
   const maxHunger = 20;
   const minHunger = 1;
-  const hungerTickRate = 0.001;
   const hareHunger = hunger({
     maxHunger,
     minHunger,
-    type: TYPE,
-    hungerTickRate
+    type: TYPE
   });
   const genderBias = getCapiInstance().getValue({ key: "Hare.maleBias" }) || 50;
   const hareGender = gender({ bias: genderBias });
@@ -110,7 +110,6 @@ function Hare (config) {
     y: currentPosition.y
   });
 
-  const CAPI = getCapiInstance();
   const shouldShowLabel = CAPI.getValue({ key: "Hare.label" });
   if (shouldShowLabel) hareLabel.showLabel();
 
@@ -157,19 +156,23 @@ function Hare (config) {
 
   tweens.push(...createHareTweens(hareMesh));
 
-  let lastTweenIndex = null;
+  let pausedTweens = [];
   const pause = () => {
+    pausedTweens.length = 0;
     tweens.forEach((tween, i) => {
       if (tween.isPlaying()) {
         tween.stop();
-        lastTweenIndex = i;
+        pausedTweens.push(i);
       }
     });
   };
 
   const resume = () => {
-    const tween = tweens[lastTweenIndex];
-    if (tween) tween.start();
+    pausedTweens.forEach(i => {
+      if (tweens[i]) {
+        tweens[i].start && tweens[i].start();
+      }
+    });
   };
 
   const checkIfDoneEating = currentHunger => {
@@ -239,6 +242,7 @@ function Hare (config) {
   const pauseResumeBehavior = pauseResume(pause, resume);
 
   function onDestroy () {
+    tweens.forEach(tween => TWEEN.remove(tween));
     pauseResumeBehavior();
     hawkObserver();
     hareLabel.destroy();

@@ -4,8 +4,8 @@ export const random = (min, max) => {
 };
 
 export const clamp = value => ({ min, max }) => {
-  if (value < min) return min;
-  if (value > max) return max;
+  if (min && min !== 0 && value < min) return min;
+  if (max && max !== 0 && value > max) return max;
   return value;
 };
 

@@ -264,6 +264,10 @@ class SceneManager {
     }
   }
 
+  getSceneObjectByID ({ id }) {
+    return this.subjects.find(child => child.model.uuid === id);
+  }
+
   getSceneObjectsOf ({ types }) {
     return this.scene.children.filter(child => types.includes(child.type));
   }

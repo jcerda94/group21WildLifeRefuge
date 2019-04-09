@@ -10,7 +10,13 @@ const CAPI = getCapiInstance();
 export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
   const max = maxHunger || 20;
   const min = minHunger || 1;
-  let tickRate = hungerTickRate || 0.0001; // hunger units per second
+  let tickRate = 0.0001; // hunger units per second
+  if (!hungerTickRate) {
+    let metabolism = CAPI.getValue({ key: `${type}.metabolism` });
+    metabolism = clamp(metabolism)({ min: 2, max: 5 });
+    tickRate = Math.pow(10, -Number(metabolism));
+  }
+
   if (min < 1) {
     throw new Error("Minimum hunger value must be >= 1");
   }
@@ -25,7 +31,7 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
   if (type) {
     const updateTickRate = capiModel => {
       let exponent = capiModel.get(`${type}.metabolism`);
-      clamp(exponent)({ min: 2, max: 4 });
+      exponent = clamp(exponent)({ min: 2, max: 5 });
       tickRate = Math.pow(10, -Number(exponent));
     };
 
