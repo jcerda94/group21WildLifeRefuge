@@ -134,7 +134,12 @@ function Hawk (config) {
 
     const d = hawk.position.distanceTo(hareTarget.position);
 
-    tweenChase.to(hareTarget.position, chaseSpeed);
+    // Apply chase speed only when not already chasing
+    if (isChasingHare) {
+      tweenChase.to(hareTarget.position);
+    } else {
+      tweenChase.to(hareTarget.position, chaseSpeed);
+    }
 
     if (isChasingHare) return;
     tweens.forEach(tween => {
@@ -253,6 +258,7 @@ function Hawk (config) {
     hareMesh.material.color = hare.object.material.color;
     hawk.add(hareMesh);
     isEating = true;
+    onChaseEnd();
     SceneManager.removeObject(hare.object);
   }
 
