@@ -1,7 +1,6 @@
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
-import { getHareID } from "./Hare.js";
-import { random, randomInt, findClosestModel } from "../utils/helpers";
+import { random, findClosestModel } from "../utils/helpers";
 import { createHawkTweens } from "../utils/animations";
 import {
   hunger,
@@ -19,14 +18,10 @@ const THREE = require("three");
 export const NAME = "redtailHawk";
 export const TYPE = "Hawk";
 
-var numberHawks = 0;
 let TWEEN = require("@tweenjs/tween.js");
 
 function Hawk (config) {
-  let routineTweenStop = true;
-  let hawkSpeed = 0.05;
   let isEating = false;
-  let deathDelta = 0;
   const maxHunger = 10;
   const minHunger = 1;
   const size = 3;
@@ -89,12 +84,7 @@ function Hawk (config) {
   hawk.position.z = randomZ();
   hawk.position.y = 100;
 
-  let chase = false;
-  let newCycleChase = false;
-  var myHawkID = numberHawks++;
-  let selectedHareIndex = 0;
-  let chaseSelectedHare = false;
-
+  
   const hawkTweens = createHawkTweens(hawk);
   tweens.push(...hawkTweens);
 

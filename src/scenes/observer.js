@@ -1,11 +1,9 @@
-//var count = 0;
 class EventObserver {
   constructor() {
     this.observers = [];
   }
  
   subscribe(fn) {
-    //console.log("Subscribe count = " + count++);
     this.observers.push(fn);
   }
 
@@ -19,7 +17,6 @@ class EventObserver {
 }
 
 const hawkObserver = new EventObserver();
-//export default hawkObserver;
 export const getHawkObserver = () => {
     return hawkObserver;
   };

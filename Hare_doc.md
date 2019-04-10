@@ -18,7 +18,7 @@ Function List:
 |         resume          | n/a                  | Resumes the hare’s movements if paused.                      |
 |         update          | simulationTime       | Updates various attributes of the objects (hiding, hunger, etc). |
 |     handleCollision     | n/a                  | Callback used to process the results of a collision.         |
-|       setLabelTo        |                      | Sets the label to visible or invisible                       |
+|       setLabelTo        | Visible              | Sets the label to visible or invisible                       |
 |        onDestroy        | n/a                  | When a hare gets eaten or dies, the hare will be removed from the simulation. |
 |   updateLabelPosition   | n/a                  | Follows the position of an object and makes sure that updates its position when the object is hovered over. |
 |       getDistance       | pos1, pos2           | Returns the distance between 2 points.                       |
