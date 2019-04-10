@@ -1,4 +1,4 @@
-import {getEnvironmentManager} from "./EnvironmentManager";
+import { getEnvironmentManager } from "./EnvironmentManager";
 const THREE = require("three");
 
 export const TYPE = "Ground";
@@ -15,11 +15,11 @@ function Ground (config) {
     new THREE.MeshLambertMaterial({
       color
     }),
-      new THREE.MeshLambertMaterial({
-        color
-      }),
     new THREE.MeshLambertMaterial({
-      map: new THREE.CanvasTexture( textureCanvas )
+      color
+    }),
+    new THREE.MeshLambertMaterial({
+      map: new THREE.CanvasTexture(textureCanvas)
     }),
     new THREE.MeshLambertMaterial({
       color

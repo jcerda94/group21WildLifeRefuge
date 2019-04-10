@@ -31,8 +31,8 @@ class SceneManager {
   intersected = null
   defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
-  hawkLabelOn = false
   ready = false
+  modelsPreloaded = false
 
   isPaused = false
   simulationElapsedTime = 0
@@ -53,7 +53,7 @@ class SceneManager {
     this.initializeCamera();
     this.initializeSimEvents();
 
-    this.createSceneSubjects();
+    // this.createSceneSubjects();
   }
 
   initializeSimEvents () {
@@ -97,13 +97,11 @@ class SceneManager {
   }
 
   toggleSelected (model) {
-    // console.log("Clicked on grass");
     const modelIndex = this.selected.findIndex(
       selectedModel => model === selectedModel
     );
 
     if (modelIndex >= 0) {
-      console.log("Clicked on grass");
       const modelToRemove = this.selected[modelIndex];
       const originalColor = getValue("userData.color.original", modelToRemove);
       const color = getValue("material.color", modelToRemove);
@@ -175,9 +173,24 @@ class SceneManager {
       this.renderer.render(this.loadingScreen.scene, this.loadingScreen.camera);
       return;
     }
+
     this.renderer.render(this.scene, this.camera);
     this.checkIntersects();
     AddModelsBasedOnSimTime();
+
+    if (!this.modelsPreloaded) {
+      this.modelsPreloaded = true;
+      const capi = getCapiInstance();
+      const [hawks, hares, cedars, bushes] = capi.getValues({
+        keys: [
+          "SimCount.redtailHawkCount",
+          "SimCount.snowshoeHareCount",
+          "SimCount.westernCedarCount",
+          "SimCount.sageBushCount"
+        ]
+      });
+      PreLoadModels({ hawks, hares, cedars, bushes });
+    }
   }
 
   checkIntersects = () => {
@@ -221,9 +234,14 @@ class SceneManager {
   }
 
   async createSceneSubjects () {
+    let grassCount = getCapiInstance().getValue({ key: "SimCount.grass" });
+    if (grassCount === null || grassCount === undefined) grassCount = 100;
     const grassField = await ModelFactory.makeSceneObject({
       type: "grassField",
-      config: { onLoad: this.onLoad }
+      config: {
+        onLoad: this.onLoad,
+        grasses: grassCount
+      }
     });
 
     this.subjects = [
@@ -234,7 +252,7 @@ class SceneManager {
         type: "ground",
         config: { size: this.groundSize, color: "#996600" }
       }),
-      grassField,
+      ...grassField,
       ...this.subjects
     ];
 
@@ -262,8 +280,22 @@ class SceneManager {
     }
   }
 
+  getSceneObjectByID ({ id }) {
+    return this.subjects.find(child => child.model.uuid === id);
+  }
+
   getSceneObjectsOf ({ types }) {
     return this.scene.children.filter(child => types.includes(child.type));
+  }
+
+  hasSceneObject ({ id }) {
+    return this.subjects.some(subject => subject.model.uuid === id);
+  }
+
+  removeObjectByUUID (id) {
+    const target = this.subjects.find(subject => subject.model.uuid === id);
+    if (!target) return;
+    this.removeObject(target.model);
   }
 
   removeObject (sceneObject) {
@@ -345,6 +377,7 @@ class SceneManager {
 
   onTransporterReady () {
     const capi = getCapiInstance();
+    this.createSceneSubjects();
 
     // Finds keys in our capiModel.json file that are prefixed with 'env.'
     const envKeys = Object.keys(capiModel).filter(key => key.includes("env."));
@@ -364,72 +397,6 @@ class SceneManager {
         {}
       )
     );
-
-    capi.addListenerFor({
-      key: "hawkLabel",
-      callback: this.toggleLabelFor({ type: "Hawk", labelName: "hawkLabel" })
-    });
-
-    capi.addListenerFor({
-      key: "Hare.label",
-      callback: this.toggleLabelFor({ type: "Hare", labelName: "Hare.label" })
-    });
-
-    capi.addListenerFor({
-      key: "westernCedarLabel",
-      callback: this.toggleLabelFor({
-        type: "Tree",
-        labelName: "westernCedarLabel"
-      })
-    });
-
-    const [hawks, hares, cedars, bushes] = capi.getValues({
-      keys: [
-        "SimCount.redtailHawkCount",
-        "SimCount.snowshoeHareCount",
-        "SimCount.westernCedarCount",
-        "SimCount.sageBushCount"
-      ]
-    });
-    PreLoadModels({ hawks, hares, cedars, bushes });
-
-    capi.addListenerFor({
-      key: "redtailHawkCount",
-      callback: this.handleModelCountChange({
-        type: "Hawk",
-        key: "redtailHawkCount"
-      })
-    });
-
-    capi.addListenerFor({
-      key: "snowshoeHareCount",
-      callback: this.handleModelCountChange({
-        type: "Hare",
-        key: "snowshoeHareCount"
-      })
-    });
-
-    capi.addListenerFor({
-      key: "westernCedarCount",
-      callback: this.handleModelCountChange({
-        type: "Tree",
-        key: "westernCedarCount"
-      })
-    });
-
-    capi.addListenerFor({
-      key: "sageBushCount",
-      callback: this.handleModelCountChange({
-        type: "Bush",
-        key: "sageBushCount"
-      })
-    });
-  }
-
-  handleModelCountChange = ({ type, key }) => capiModel => {
-    this.removeAllModelsByType({ type });
-    const count = capiModel.get(key);
-    this.addObjects({ type, count });
   }
 
   onWindowResize () {
@@ -455,13 +422,22 @@ class SceneManager {
     const model = intersects[0] || {};
     const isSelectable = !!getValue("object.userData.selectable", model);
     if (intersects.length > 1 && model.object.name !== "LowPolyGrass") {
-      getPopUpInfo().popUpInfo("tree", event);
+      getPopUpInfo().popUpInfo("tree", model.object.userData.gender, event);
     }
     if (isSelectable) {
       this.toggleSelected(model.object);
       const popUpInfo = getPopUpInfo();
-      popUpInfo.popUpInfo(model.object.name, event);
+      popUpInfo.popUpInfo(
+        model.object.name,
+        model.object.userData.gender,
+        event
+      );
     }
+  }
+
+  getPositionById ({ id }) {
+    const target = this.scene.children.find(child => child.uuid === id);
+    return target.position;
   }
 
   convertClickToVector = event => {

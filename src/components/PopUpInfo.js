@@ -30,7 +30,8 @@ const hawk = (
     Red-tailed Hawks are large, sharp-taloned birds <br />
     that can be aggressive when defending nests or territories.
     <br />
-    They frequently chase off other hawks, eagles, and Great Horned Owls.
+    They frequently chase off other hawks, eagles, and Great Horned Owls.<br/>
+
   </div>
 );
 
@@ -73,30 +74,35 @@ class PopUpInfo extends React.Component {
     });
   }
 
-  popUpInfo (name, event) {
+  popUpInfo (name,gender, event) {
     if (name === "hare") {
       this.setState({
         info: hare,
+        gender: gender,
         anchorEl: event.currentTarget
       });
     } else if (name === "redtailHawk") {
       this.setState({
         info: hawk,
+        gender: gender,
         anchorEl: event.currentTarget
       });
     } else if (name === "bush") {
       this.setState({
         info: bush,
+        gender: gender,
         anchorEl: event.currentTarget
       });
     } else if (name === "grass" || name === "LowPolyGrass") {
       this.setState({
         info: grass,
+        gender: gender,
         anchorEl: event.currentTarget
       });
     } else if (name === "tree") {
       this.setState({
         info: tree,
+        gender: gender,
         anchorEl: event.currentTarget
       });
     }
@@ -105,6 +111,7 @@ class PopUpInfo extends React.Component {
   render () {
     const { anchorEl } = this.state;
     const { info } = this.state;
+    const {gender} = this.state;
     const open = Boolean(anchorEl);
 
     return (
@@ -123,6 +130,7 @@ class PopUpInfo extends React.Component {
           }}
         >
           {info}
+          <div>  <strong>Gender: </strong>{gender}</div>
         </Popover>
       </div>
     );

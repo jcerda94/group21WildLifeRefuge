@@ -1,5 +1,6 @@
 import SceneManager from "./SceneManager";
 import EnvironmentManager from "./EnvironmentManager";
+import TWEEN from "@tweenjs/tween.js";
 
 function createCanvas (document, containerElement) {
   const canvas = document.createElement("canvas");
@@ -14,7 +15,7 @@ class ThreeEntry {
     this.environmentManager = EnvironmentManager();
     this.frames = 0;
     this.fpsCounter = setInterval(() => {
-      //console.log(this.frames);
+      // console.log(this.frames);
       this.resizeCanvas();
       this.frames = 0;
     }, 1000);
@@ -40,13 +41,14 @@ class ThreeEntry {
   resizeCanvas = () => {
     this.canvas.style.width = "100%";
     this.canvas.style.height = "100%";
-    this.canvas.width = this.canvas.offsetWidth;
-    this.canvas.height = this.canvas.offsetHeight;
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
     this.sceneManager.onWindowResize();
   }
 
   render = () => {
     requestAnimationFrame(this.render);
+    TWEEN.update();
     this.sceneManager.update();
     this.frames++;
   }

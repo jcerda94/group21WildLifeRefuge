@@ -10,7 +10,8 @@
 
 import { getSceneManager } from "./SceneManager";
 import { random, randomInt } from "../utils/helpers";
-import { label, waterLevel } from "../utils/treeBehavior";
+import { waterLevel } from "../utils/treeBehavior";
+import { label } from "../utils/behavior";
 import { getEnvironmentManager } from "./EnvironmentManager";
 import { getCapiInstance } from "../utils/CAPI/capi";
 
@@ -72,6 +73,7 @@ function Tree (config) {
   tree.position.set(position.x, position.y, position.z);
   tree.userData = {
     selectable: true,
+    gender: "not available",
     color: {
       highlight: "#ff6039",
       selected: "#808080"
@@ -95,7 +97,7 @@ function Tree (config) {
   }
 
   let env = getEnvironmentManager();
-  // env.toggleEnvironmentViewOnCanvas();
+
   env.registerTrackedObject(tree);
 
   const treeThirsty = waterLevel({
@@ -113,11 +115,12 @@ function Tree (config) {
   }
   const thirstyLabel = label({
     text: "Thirsty\n",
+    type: "WesternCedar",
     initialValue: treeThirsty.get().toFixed(1),
     ...get2DPosition()
   });
   const shouldShowLabel = getCapiInstance().getValue({
-    key: "westernCedarLabel"
+    key: "WesternCedar.label"
   });
 
   function setLabelTo ({ visible }) {
@@ -145,19 +148,18 @@ function Tree (config) {
 
       if (treeThirsty.get() >= maxThirsty * 0.75 && !isConsuming) {
         env.getEnvByXYPos(tree.position.x, tree.position.z).water -= tree.water;
-        if(env.getEnvByXYPos(tree.position.x, tree.position.z).water > 0){
+        if (env.getEnvByXYPos(tree.position.x, tree.position.z).water > 0) {
           isConsuming = true;
         } else if (
-            env.getEnvByXYPos(tree.position.x, tree.position.z).water < 0 &&
-            env.getEnvByXYPos(tree.position.x, tree.position.z).water > -1
+          env.getEnvByXYPos(tree.position.x, tree.position.z).water < 0 &&
+          env.getEnvByXYPos(tree.position.x, tree.position.z).water > -1
         ) {
           isConsuming = false;
           setTreeToBrownColor();
           setTreeTo45Degree();
-
-        }else if(
-            env.getEnvByXYPos(tree.position.x, tree.position.z).water < -15
-        ){
+        } else if (
+          env.getEnvByXYPos(tree.position.x, tree.position.z).water < -15
+        ) {
           setTreeToBrownColor();
           setTreeLayFlat();
           isConsuming = false;
@@ -172,7 +174,6 @@ function Tree (config) {
 
   function onDestroy () {
     thirstyLabel.destroy();
-
   }
 
   function updateLabelPosition () {
@@ -191,6 +192,6 @@ function Tree (config) {
 }
 
 export var getTrees = function () {
-  return getSceneManager().getSceneObjectsOf({types: ["Tree"]});
+  return getSceneManager().getSceneObjectsOf({ types: ["Tree"] });
 };
 export default Tree;

@@ -9,6 +9,7 @@ import GrassField from "./GrassField";
 import AmbientLight from "./AmbientLight";
 import DirectionalLight from "./DirectionalLight";
 import SpotLight from "./SpotLight";
+import { clamp } from "../utils/helpers";
 
 const Hawk = config => {
   if (config && config.useCollision) {
@@ -19,7 +20,12 @@ const Hawk = config => {
   }
 };
 const Hare = config => {
-  return HareModel(config);
+  if (config && config.useCollision) {
+    const hare = HareModel(config);
+    return CollisionSphereModel(hare)(config.collision);
+  } else {
+    return HareModel(config);
+  }
 };
 const Bush = () => {
   const { model, created, update } = BushModel();
@@ -49,12 +55,9 @@ const Ground = config => {
   };
 };
 const Grass = async config => {
-  const { model, created, update } = await GrassField(config);
-  return {
-    model,
-    created,
-    update
-  };
+  config.grasses = clamp(config.grasses)({ min: 1, max: 500 });
+  const grassModels = await GrassField(config);
+  return grassModels;
 };
 const Ambient = () => {
   const { light, update } = AmbientLight();
@@ -131,7 +134,7 @@ class modelFactory {
       case MODEL_TYPES.Hawk.type:
         return MODEL_TYPES.Hawk.model(config);
       case MODEL_TYPES.Hare.type:
-        return MODEL_TYPES.Hare.model();
+        return MODEL_TYPES.Hare.model(config);
       case MODEL_TYPES.Bush.type:
         return MODEL_TYPES.Bush.model();
       case MODEL_TYPES.Tree.type:

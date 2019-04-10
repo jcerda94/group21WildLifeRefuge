@@ -1,10 +1,18 @@
 import { getSceneManager } from "./SceneManager";
 import { getHawkObserver } from "./observer.js";
 import { getHareID } from "./Hare.js";
-import { random, randomInt } from "../utils/helpers";
-import { hunger, label, pauseResume } from "../utils/behavior";
+import { random, randomInt, findClosestModel } from "../utils/helpers";
+import { createHawkTweens } from "../utils/animations";
+import {
+  hunger,
+  gender,
+  breed,
+  label,
+  pauseResume,
+  death
+} from "../utils/behavior";
 import { getCapiInstance } from "../utils/CAPI/capi";
-import FindDistance from "../utils/Findistance";
+import ModelFactory from "./ModelFactory";
 
 const THREE = require("three");
 
@@ -16,18 +24,21 @@ let TWEEN = require("@tweenjs/tween.js");
 
 function Hawk (config) {
   let routineTweenStop = true;
-  let sameTween = true;
+  let hawkSpeed = 0.05;
   let isEating = false;
   let deathDelta = 0;
-  const deathTimer = 60 * 60 * 24; // Eat within a day at max hunger or die
   const maxHunger = 10;
   const minHunger = 1;
   const size = 3;
-  const color = "#db7093";
+  const tweens = [];
+
+  const genderBias = getCapiInstance().getValue({ key: "Hawk.maleBias" }) || 50;
+  const hawkGender = gender({ bias: genderBias });
+  const color = hawkGender === "female" ? "#db7093" : "#407093";
 
   // create a sphere or a hare
   const sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
-  const sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
+  const sphereMaterial = new THREE.MeshPhongMaterial({ color });
   const hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
   hareMesh.name = "attachedHare";
 
@@ -39,6 +50,7 @@ function Hawk (config) {
 
   hawk.userData = {
     selectable: true,
+    gender: hawkGender,
     color: {
       original: color,
       highlight: "#f7ff6d",
@@ -48,6 +60,20 @@ function Hawk (config) {
   };
   hawk.name = NAME;
   hawk.type = TYPE;
+
+  const breedBehavior = breed({
+    gender: hawkGender,
+    type: TYPE,
+    id: hawk.uuid,
+    breedingHandler
+  });
+
+  function breedingHandler () {
+    if (hawkGender === "female") {
+      const babyHawk = ModelFactory.makeSceneObject({ type: "hawk" });
+      SceneManager.addObject(babyHawk);
+    }
+  }
 
   const randomX = () => {
     const groundX = SceneManager.groundSize.x / 2;
@@ -62,111 +88,76 @@ function Hawk (config) {
   hawk.position.x = randomX();
   hawk.position.z = randomZ();
   hawk.position.y = 100;
-  const distance = 1000;
 
-  let random_X = randomX();
-  let random_Z = randomZ();
-  let a = new THREE.Vector3(hawk.position.x,hawk.position.y, hawk.position.z );
-  let b = new THREE.Vector3(random_X, 100, random_Z);
-  let d = a.distanceTo(b);
-  const tween1 = new TWEEN.Tween(hawk.position).to(
-    { x: random_X, y: 100, z: random_Z},
-    d/0.05
-  );
-  random_X = randomX();
-  random_Z =randomZ();
-  a = new THREE.Vector3(hawk.position.x,hawk.position.y, hawk.position.z );
-  b = new THREE.Vector3(random_X, 100, random_Z);
-  d = a.distanceTo(b);
-
-  const tween2 = new TWEEN.Tween(hawk.position).to(
-    { x:  random_X, y: 100, z:  random_Z },
-      d/0.05
-  );
-  random_X = randomX();
-  random_Z =randomZ();
-  a = new THREE.Vector3(hawk.position.x,hawk.position.y, hawk.position.z );
-  b = new THREE.Vector3(random_X, 100, random_Z);
-  d = a.distanceTo(b);
-  var tween3 = new TWEEN.Tween(hawk.position)
-    .to({ x:  random_X, y: 100, z:  random_Z }, d/0.05);
-    tween3.start();
-
-  // hawk must track it's position and look for hares nearby as it flys
-  getHawkObserver().subscribe(position => {
-    // console.log("hawkObserver method called for Hawk: ");
-  });
-  let tweenChase = null;
   let chase = false;
   let newCycleChase = false;
   var myHawkID = numberHawks++;
   let selectedHareIndex = 0;
   let chaseSelectedHare = false;
-  function checkForHare () {
-    if (!isEating) {
-      const hares = SceneManager.getSceneObjectsOf({ types: ["Hare"] });
-      if(!chaseSelectedHare){
-        const hareIndex = randomInt(0, hares.length - 1);
-        const randomHare = hares[hareIndex];
-        selectedHareIndex = hareIndex;
-        chaseSelectedHare = true;
-      }
-      if (!hares[selectedHareIndex]) {
-         chaseSelectedHare = false;
-        if (tweenChase != null) {
-          tweenChase.stop();
-        }
-        routineFlying();
+
+  const hawkTweens = createHawkTweens(hawk);
+  tweens.push(...hawkTweens);
+
+  let targettedHareId = null;
+  let isChasingHare = false;
+  let tweenChase = new TWEEN.Tween(hawk.position);
+
+  const endChase = () => {
+    tweens.forEach(tween => {
+      tween.stop && tween.stop();
+      TWEEN.remove(tween);
+    });
+    tweens.length = 0;
+    tweens.push(...createHawkTweens(hawk));
+    isChasingHare = false;
+  };
+
+  const checkForHare = () => {
+    let hareTarget = null;
+    if (targettedHareId === null) {
+      const closestHare = findClosestModel("Hare", hawk.position);
+      if (!closestHare.model) {
         return;
       }
-      const selectedHare = hares[selectedHareIndex];
+      hareTarget = closestHare.model;
+      targettedHareId = hareTarget.uuid;
+    }
 
-      tween3.stop();
-      routineTweenStop = true;
-      const a = new THREE.Vector3( hawk.position.x, hawk.position.y, hawk.position.z );
-      const b = new THREE.Vector3(selectedHare.position.x, selectedHare.position.y, selectedHare.position.z );
-      const d = a.distanceTo( b );
-       tweenChase = new TWEEN.Tween(hawk.position).to(
-
-        {
-          x: selectedHare.position.x,
-          y: selectedHare.position.y,
-          z: selectedHare.position.z
-        },
-        d/0.06
-      );
-
-      if(!chase){
-        tweenChase.start();
-        chase = true;
+    if (!hareTarget) {
+      const hare = SceneManager.getSceneObjectByID({ id: targettedHareId });
+      if (!hare) {
+        targettedHareId = null;
+        endChase();
+        return;
       }
-      tweenChase.onComplete(function() {
-        if(isEating){
-          console.log("got hare");
-          chase = false;
-          tweenChase.stop();
-          routineFlying();
-        }
-        if(!isEating){
-          chase = false;
-        }
-      });
+      hareTarget = hare.model;
     }
-  }
-  function routineFlying(){
-    if(routineTweenStop){
-      tween3.start();
-      routineTweenStop = false;
+
+    // Apply chase speed only when not already chasing
+    if (isChasingHare) {
+      tweenChase.to(hareTarget.position);
+    } else {
+      const distance = hawk.position.distanceTo(hareTarget.position);
+      const chaseSpeed = distance * random(10, 20);
+      tweenChase.to(hareTarget.position, chaseSpeed);
     }
-  }
-  tween1.chain(tween2);
-  tween2.chain(tween3);
-  tween3.chain(tween2);
-  var count = 1;
+
+    if (isChasingHare) return;
+    tweens.forEach(tween => {
+      tween.stop && tween.stop();
+      TWEEN.remove(tween);
+    });
+    tweens.length = 0;
+    tweens.push(tweenChase);
+    tweenChase.start();
+    tweenChase.onComplete(endChase);
+    isChasingHare = true;
+  };
+
   const hawkHunger = hunger({
     maxHunger,
     minHunger,
-    hungerTickRate: random(0.00001, 0.00005)
+    type: TYPE
   });
 
   function get2DPosition () {
@@ -180,12 +171,11 @@ function Hawk (config) {
   const hungerLabel = label({
     text: "Hunger\n",
     initialValue: hawkHunger.get().toFixed(1),
+    type: TYPE,
     ...get2DPosition()
   });
-  const shouldShowLabel = getCapiInstance().getValue({ key: "hawkLabel" });
+  const shouldShowLabel = getCapiInstance().getValue({ key: "Hawk.label" });
   if (shouldShowLabel) hungerLabel.showLabel();
-
-  const pauseResumeCleanup = pauseResume(pauseHawk, resumeHawk);
 
   function setLabelTo ({ visible }) {
     if (visible) hungerLabel.showLabel();
@@ -193,6 +183,7 @@ function Hawk (config) {
   }
 
   function onDestroy () {
+    tweens.forEach(tween => TWEEN.remove(tween));
     hungerLabel.destroy();
     pauseResumeCleanup();
   }
@@ -202,61 +193,74 @@ function Hawk (config) {
     hungerLabel.update(position.x, position.y, hawkHunger.get().toFixed(1));
   }
 
-  function pauseHawk () {
-    tween3.stop();
-  }
+  let pausedTweens = [];
+  const pauseHawk = () => {
+    pausedTweens.length = 0;
+    tweens.forEach((tween, i) => {
+      if (tween.isPlaying()) {
+        tween.stop();
+        pausedTweens.push(i);
+      }
+    });
+  };
 
-  function resumeHawk () {
-    tween3.start();
-  }
-  routineFlying();
+  const resumeHawk = () => {
+    pausedTweens.forEach(i => {
+      if (tweens[i]) {
+        tweens[i].start && tweens[i].start();
+      }
+    });
+  };
 
-  let lastSimTime = 0;
+  const pauseResumeCleanup = pauseResume(pauseHawk, resumeHawk);
+
+  let lastPositionBroadcast = null;
+  const hawkObserver = getHawkObserver();
+
+  const hawkDeathBehavior = death("Hawk");
 
   function update (elapsedTime, simulationTime) {
-    count++;
-    if (deathDelta > deathTimer) {
-      SceneManager.removeObject(hawk);
-      hungerLabel.destroy();
-    }
-    if (hawkHunger.get() >= maxHunger) {
-      deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
-    } else if (isEating) {
-      deathDelta = 0;
-    }
-
-    lastSimTime = simulationTime;
-    hawkHunger.update(simulationTime, isEating);
     updateLabelPosition();
-    // hungerLabel.update(position.x, position.y, hawkHunger.get().toFixed(1));
 
-    if (hawkHunger.get() >= maxHunger * 0.75) {
+    if (hawkGender === "female") {
+      breedBehavior.signal(simulationTime);
+    }
+
+    hawkHunger.update(simulationTime, isEating);
+    const currentHugner = hawkHunger.get();
+
+    if (hawkDeathBehavior.isDead(simulationTime, hawkHunger, isEating)) {
+      SceneManager.removeObject(hawk);
+    }
+
+    if (currentHugner >= maxHunger * 0.75 && !isEating) {
       checkForHare();
-    } else if (hawkHunger.get() <= minHunger) {
+    }
+    if (currentHugner <= minHunger && isEating) {
       hawk.remove(hareMesh);
       chase = false;
       isEating = false;
     }
-    if (count % 30 === 0) {
-      // The updates happen very often for small position changes
-      // This made the hawk behave erratically.
-      // The observers probably don't care if the hawk moves a small distance
-      // May want to make this delta-position based.
-      // for now just scale back the number of times the position is reported to the other animals.
-      getHawkObserver().broadcast(hawk.position);
+
+    if (lastPositionBroadcast === null) lastPositionBroadcast = elapsedTime;
+    if (elapsedTime - lastPositionBroadcast > 1) {
+      lastPositionBroadcast = elapsedTime;
+      hawkObserver.broadcast(hawk.position);
     }
-    TWEEN.update();
   }
 
   function handleCollision (targets) {
-    for (let i = 0; i < targets.length; i++) {
-      if (targets[i].object.type === "Hare") {
-        // added a hare when collision occur
-        hawk.add(hareMesh);
-        isEating = true;
-        SceneManager.removeObject(targets[i].object);
-      }
+    if (targettedHareId === null) return;
+    const hare = targets.find(target => target.object.uuid === targettedHareId);
+    if (!hare) {
+      // Didn't collide with target
+      return;
     }
+    hareMesh.material.color = hare.object.material.color;
+    hawk.add(hareMesh);
+    endChase();
+    isEating = true;
+    SceneManager.removeObject(hare.object);
   }
 
   return {

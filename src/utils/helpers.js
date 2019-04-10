@@ -3,6 +3,12 @@ export const random = (min, max) => {
   return Math.random() * (max - min) + min;
 };
 
+export const clamp = value => ({ min, max }) => {
+  if (min && min !== 0 && value < min) return min;
+  if (max && max !== 0 && value > max) return max;
+  return value;
+};
+
 export const randomInt = (min, max) => {
   min = parseInt(min);
   max = parseInt(max);
@@ -16,6 +22,24 @@ export const get2DPosition = model => {
   vector.x = ((vector.x + 1) / 2) * SceneManager.screenDimensions.width - 14;
   vector.y = (-(vector.y - 1) / 2) * SceneManager.screenDimensions.height;
   return vector;
+};
+
+export const findClosestModel = (type, currentPosition) => {
+  const SceneManager = getSceneManager();
+  const models = SceneManager.getSceneObjectsOf({ types: [type] });
+
+  if (!Array.isArray(models)) return {};
+  return models.reduce(
+    (acc, model, index) => {
+      const distance = currentPosition.distanceTo(model.position);
+      if (distance < acc.distance) {
+        acc.distance = distance;
+        acc.model = model;
+      }
+      return acc;
+    },
+    { distance: Number.MAX_VALUE, model: null }
+  );
 };
 
 export const getValue = (accessor = "", initial = {}) => {

@@ -1,9 +1,22 @@
 import Subject from "../utils/subject";
+import { getCapiInstance } from "./CAPI/capi";
+import { random, clamp } from "../utils/helpers";
+import { getHawkObserver } from "../scenes/observer.js";
+import { createHareTweens } from "../utils/animations";
 
-export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
+const TWEEN = require("@tweenjs/tween.js");
+const CAPI = getCapiInstance();
+
+export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
   const max = maxHunger || 20;
   const min = minHunger || 1;
-  const tickRate = hungerTickRate || 0.0001; // hunger units per second
+  let tickRate = 0.0001; // hunger units per second
+  if (!hungerTickRate) {
+    let metabolism = CAPI.getValue({ key: `${type}.metabolism` });
+    metabolism = clamp(metabolism)({ min: 2, max: 5 });
+    tickRate = Math.pow(10, -Number(metabolism));
+  }
+
   if (min < 1) {
     throw new Error("Minimum hunger value must be >= 1");
   }
@@ -12,10 +25,21 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
     throw new Error("Maximum hunger value must be > minimum hunger value");
   }
 
-  let currentHunger = max * 0.5;
-  let lastUpdateTime = 0;
+  let currentHunger = 0.5 * max;
+  let lastUpdateTime = null;
 
-  function update (elapsedTime, isEating) {
+  if (type) {
+    const updateTickRate = capiModel => {
+      let exponent = capiModel.get(`${type}.metabolism`);
+      exponent = clamp(exponent)({ min: 2, max: 5 });
+      tickRate = Math.pow(10, -Number(exponent));
+    };
+
+    CAPI.addListenerFor({ key: "Hare.metabolism", callback: updateTickRate });
+  }
+
+  const update = (elapsedTime, isEating) => {
+    if (lastUpdateTime === null) lastUpdateTime = elapsedTime;
     const delta = elapsedTime - lastUpdateTime;
 
     if (isEating) {
@@ -27,15 +51,18 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate }) => {
     if (currentHunger > max) currentHunger = max;
     if (currentHunger < min) currentHunger = min;
     lastUpdateTime = elapsedTime;
-  }
-
-  function get () {
     return currentHunger;
-  }
+  };
+
+  const get = () => {
+    return currentHunger;
+  };
 
   return {
     update,
-    get
+    get,
+    max,
+    min
   };
 };
 
@@ -49,8 +76,98 @@ export const pauseResume = (pauseHandler, resumeHandler) => {
   };
 };
 
-export const label = ({ text, initialValue, x, y }) => {
+export const death = type => {
+  const CAPI = getCapiInstance();
+  let lastSimTime = null;
+  let deathDelta = 0;
+  const starvationTime =
+    CAPI.getValue({ key: `${type}.starvationTime` }) || 86400;
+
+  const isDead = (simulationTime, hunger, isEating) => {
+    if (lastSimTime === null) lastSimTime = simulationTime;
+    if (hunger.get() >= hunger.max) {
+      deathDelta += lastSimTime === null ? 0 : simulationTime - lastSimTime;
+    } else if (isEating) {
+      deathDelta = 0;
+    }
+    lastSimTime = simulationTime;
+
+    const isDead = deathDelta > starvationTime;
+    return isDead;
+  };
+
+  return {
+    isDead
+  };
+};
+
+export const breed = ({ gender, type, breedingHandler, simulationTime }) => {
+  const femaleEvent = `${type}_ovulation`;
+  const maleEvent = `${type}_unload`;
+  let lastBreedTime = null;
+  let ovulationTime = CAPI.getValue({ key: `${type}.ovulationTime` });
+  CAPI.addListenerFor({
+    key: `${type}.ovulationTime`,
+    callback: capiModel => {
+      ovulationTime = capiModel.get(`${type}.ovulationTime`);
+    }
+  });
+
+  if (gender === "male") {
+    const breedWrapper = (...args) => {
+      // Can optionally call a handler for male hares here
+      Subject.next(maleEvent);
+    };
+    Subject.subscribe(femaleEvent, breedWrapper);
+
+    return {
+      signal: () => {
+        Subject.next(maleEvent);
+      },
+      cleanup: () => Subject.unsubscribe(femaleEvent, breedWrapper)
+    };
+  } else {
+    let hasBred = false;
+    let canBreed = false;
+    const breedWrapper = (...args) => {
+      if (!hasBred && canBreed) {
+        breedingHandler(...args);
+        hasBred = true;
+        canBreed = false;
+      }
+    };
+    Subject.subscribe(maleEvent, breedWrapper);
+
+    return {
+      signal: simulationTime => {
+        if (!lastBreedTime) lastBreedTime = simulationTime;
+        const elapsedTime = simulationTime - lastBreedTime;
+
+        if (elapsedTime > ovulationTime) {
+          canBreed = true;
+          hasBred = false;
+          lastBreedTime = simulationTime;
+          Subject.next(femaleEvent);
+        }
+      },
+      cleanup: () => {
+        Subject.unsubscribe(maleEvent, breedWrapper);
+      },
+      isReady: simulationTime => {
+        return simulationTime - lastBreedTime > ovulationTime;
+      }
+    };
+  }
+};
+
+export const gender = ({ bias } = { bias: 50 }) => {
+  const assignment = random(0, 100);
+  return assignment >= bias ? "female" : "male";
+};
+
+export const label = ({ text, initialValue, x, y, type }) => {
   const label = document.createElement("div");
+  const labelName = `${type}.label`;
   label.style.position = "absolute";
   label.style.width = "60px";
 
@@ -72,13 +189,13 @@ export const label = ({ text, initialValue, x, y }) => {
     label.innerHTML = `${text}${value}`;
   }
 
-  function hideLabel () {
+  const hideLabel = () => {
     label.style.display = "none";
-  }
+  };
 
-  function showLabel () {
+  const showLabel = () => {
     label.style.display = "flex";
-  }
+  };
 
   function destroy () {
     if (label.parentElement && label.parentElement.hasChildNodes()) {
@@ -86,10 +203,93 @@ export const label = ({ text, initialValue, x, y }) => {
     }
   }
 
+  const toggleLabel = capiModel => {
+    if (capiModel.get(labelName)) {
+      showLabel();
+    } else {
+      hideLabel();
+    }
+  };
+
+  CAPI.addListenerFor({ key: labelName, callback: toggleLabel });
+
   return {
     update,
     hideLabel,
     showLabel,
     destroy
   };
+};
+
+export const fleeToPosition = (model, targetPosition, tweens, createTweens) => {
+  let fleeing = false;
+
+  if (!fleeing) {
+    const currentPosition = model.position;
+    const distance = currentPosition.distanceTo(targetPosition);
+
+    const { x, y, z } = targetPosition;
+    const moveToPosition = new TWEEN.Tween(currentPosition).to(
+      { x, y, z },
+      distance * random(10, 30)
+    );
+    tweens.forEach(tween => {
+      if (tween.isPlaying()) tween.stop();
+    });
+
+    moveToPosition.start();
+    fleeing = true;
+
+    moveToPosition.onComplete(() => {
+      fleeing = false;
+      moveToPosition.stop();
+      tweens.forEach(tween => TWEEN.remove(tween));
+      tweens.length = 0;
+      tweens.push(...createTweens(model));
+    });
+    return moveToPosition;
+  }
+};
+
+export const moveToFood = (
+  model,
+  targetPosition,
+  normalMovementTweens,
+  createTweens
+) => {
+  let gettingFood = false;
+
+  if (!gettingFood) {
+    const currentPosition = model.position;
+    const distance = currentPosition.distanceTo(targetPosition);
+
+    const { x, y, z } = targetPosition;
+    const foodPositionTween = new TWEEN.Tween(currentPosition).to(
+      { x, y, z },
+      distance * random(10, 30)
+    );
+
+    normalMovementTweens.forEach(tween => tween.stop());
+    normalMovementTweens.length = 0;
+    normalMovementTweens.push(foodPositionTween);
+    foodPositionTween.start();
+    gettingFood = true;
+
+    const finishFoodMovement = () => {
+      gettingFood = false;
+      foodPositionTween.stop();
+    };
+
+    foodPositionTween.onComplete(() => {
+      finishFoodMovement();
+    });
+  }
+};
+
+export const watchAnimal = (observer, callback) => {
+  const CAPI = getCapiInstance();
+
+  observer.subscribe(callback);
+
+  return () => observer.unsubscribe(callback);
 };
