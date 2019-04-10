@@ -99,12 +99,9 @@ class EnvironmentManager {
         treeConsumeParams: [0.125, 0.125],
         grassConsumeParams: [0.01, 0.01],
         envConsumeKeys: ["water", "nutrients"],
-        weatherModifiers: {
-            normal: 1.0,
-            rain: 1.5,
-            drought: 0.5
-        },
-        weatherType: "normal"
+        weatherTypes: ["normal", "rain", "drought"],
+        weatherModifiers: [1.0, 1.5, 0.5],
+        weather: "normal"
     };
 
     constructor(){
@@ -119,6 +116,7 @@ class EnvironmentManager {
         this.textureCanvas = drawingCanvas;
         this.drawingContext = drawingContext;
 
+        /*
         const capi = getCapiInstance();
 
         capi.getCapiAdapter().expose('env.weatherType', capi.getCapiModel(),
@@ -131,6 +129,7 @@ class EnvironmentManager {
                 this.defaultEnvironment.weather = capi.getValue('env.weatherType');
             }
         })
+        */
 
     }
 
@@ -138,7 +137,7 @@ class EnvironmentManager {
 
         this.defaultEnvironment = environmentObject;
 
-        this.weatherMod = environmentObject.weatherModifiers[environmentObject.weatherType];
+        this.updateWeatherModifier();
 
         //TODO: Explain object creation here
         //Includes any parameters that we want in every environment tile,
@@ -161,6 +160,19 @@ class EnvironmentManager {
             ()=>Array(groundY).fill().map(
                 () => Object.assign({}, fillObject)
             ));
+    }
+
+    updateWeatherModifier(){
+
+        //Should never fail unless the weather values are incorrectly set
+        var modifierIndex = this.defaultEnvironment.weatherTypes.findIndex(
+            (weatherType) => {
+                return weatherType === this.defaultEnvironment.weather;
+            }
+        );
+
+        this.weatherMod = this.defaultEnvironment.weatherModifiers[modifierIndex];
+
     }
 
     getEnvByXYPos(x, y){
@@ -322,7 +334,7 @@ class EnvironmentManager {
 
     getObjectParamKeyFromType(type){
 
-        var findKey = this.defaultEnvironment.keys.find(key => key.includes(type.toLowerCase()));
+        var findKey = this.defaultEnvironment.envConsumeKeys.find(key => key.includes(type.toLowerCase()));
 
         return typeof myVar !== 'undefined' ? findKey : '';
     }
