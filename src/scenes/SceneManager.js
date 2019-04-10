@@ -32,6 +32,7 @@ class SceneManager {
   defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
   ready = false
+  modelsPreloaded = false
 
   isPaused = false
   simulationElapsedTime = 0
@@ -52,7 +53,7 @@ class SceneManager {
     this.initializeCamera();
     this.initializeSimEvents();
 
-    this.createSceneSubjects();
+    // this.createSceneSubjects();
   }
 
   initializeSimEvents () {
@@ -172,9 +173,24 @@ class SceneManager {
       this.renderer.render(this.loadingScreen.scene, this.loadingScreen.camera);
       return;
     }
+
     this.renderer.render(this.scene, this.camera);
     this.checkIntersects();
     AddModelsBasedOnSimTime();
+
+    if (!this.modelsPreloaded) {
+      this.modelsPreloaded = true;
+      const capi = getCapiInstance();
+      const [hawks, hares, cedars, bushes] = capi.getValues({
+        keys: [
+          "SimCount.redtailHawkCount",
+          "SimCount.snowshoeHareCount",
+          "SimCount.westernCedarCount",
+          "SimCount.sageBushCount"
+        ]
+      });
+      PreLoadModels({ hawks, hares, cedars, bushes });
+    }
   }
 
   checkIntersects = () => {
@@ -361,6 +377,7 @@ class SceneManager {
 
   onTransporterReady () {
     const capi = getCapiInstance();
+    this.createSceneSubjects();
 
     // Finds keys in our capiModel.json file that are prefixed with 'env.'
     const envKeys = Object.keys(capiModel).filter(key => key.includes("env."));
@@ -380,54 +397,6 @@ class SceneManager {
         {}
       )
     );
-
-    const [hawks, hares, cedars, bushes] = capi.getValues({
-      keys: [
-        "SimCount.redtailHawkCount",
-        "SimCount.snowshoeHareCount",
-        "SimCount.westernCedarCount",
-        "SimCount.sageBushCount"
-      ]
-    });
-    PreLoadModels({ hawks, hares, cedars, bushes });
-
-    capi.addListenerFor({
-      key: "redtailHawkCount",
-      callback: this.handleModelCountChange({
-        type: "Hawk",
-        key: "redtailHawkCount"
-      })
-    });
-
-    capi.addListenerFor({
-      key: "snowshoeHareCount",
-      callback: this.handleModelCountChange({
-        type: "Hare",
-        key: "snowshoeHareCount"
-      })
-    });
-
-    capi.addListenerFor({
-      key: "westernCedarCount",
-      callback: this.handleModelCountChange({
-        type: "Tree",
-        key: "westernCedarCount"
-      })
-    });
-
-    capi.addListenerFor({
-      key: "sageBushCount",
-      callback: this.handleModelCountChange({
-        type: "Bush",
-        key: "sageBushCount"
-      })
-    });
-  }
-
-  handleModelCountChange = ({ type, key }) => capiModel => {
-    this.removeAllModelsByType({ type });
-    const count = capiModel.get(key);
-    this.addObjects({ type, count });
   }
 
   onWindowResize () {

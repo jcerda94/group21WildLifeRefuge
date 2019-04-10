@@ -1,8 +1,8 @@
 {
-  "SimCount.redtailHawkCount": 5,
-  "SimCount.snowshoeHareCount": 15,
+  "SimCount.redtailHawkCount": 0,
+  "SimCount.snowshoeHareCount": 1,
   "SimCount.sageBushCount": 0,
-  "SimCount.westernCedarCount": 10,
+  "SimCount.westernCedarCount": 0,
   "SimCount.grass": 150,
   "Hare.label": false,
   "Hare.maleBias": 50,
