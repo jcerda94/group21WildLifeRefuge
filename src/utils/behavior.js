@@ -38,7 +38,7 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
     CAPI.addListenerFor({ key: "Hare.metabolism", callback: updateTickRate });
   }
 
-  function update (elapsedTime, isEating) {
+  const update = (elapsedTime, isEating) => {
     if (lastUpdateTime === null) lastUpdateTime = elapsedTime;
     const delta = elapsedTime - lastUpdateTime;
 
@@ -52,11 +52,11 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
     if (currentHunger < min) currentHunger = min;
     lastUpdateTime = elapsedTime;
     return currentHunger;
-  }
+  };
 
-  function get () {
+  const get = () => {
     return currentHunger;
-  }
+  };
 
   return {
     update,

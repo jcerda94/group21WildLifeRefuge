@@ -9,7 +9,6 @@ require("three/examples/js/loaders/GLTFLoader");
 export const TYPE = "Grass";
 async function GrassField (config) {
   const loadingManager = new THREE.LoadingManager();
-  loadingManager.onLoad = config.onLoad || (() => null);
 
   const loader = new THREE.GLTFLoader(loadingManager);
 
@@ -68,8 +67,8 @@ async function GrassField (config) {
     });
   }
 
+  config.onLoad && config.onLoad();
   function update () {}
-
   return grassModels;
 }
 
