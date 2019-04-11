@@ -56,8 +56,6 @@ __FlyControls = function (object, domElement) {
       return;
     }
 
-    // event.preventDefault();
-
     switch (event.keyCode) {
       case 16:
         /* shift */ this.movementSpeedMultiplier = 0.1;
@@ -269,7 +267,6 @@ __FlyControls = function (object, domElement) {
     this.moveVector.y = -this.moveState.down + this.moveState.up;
     this.moveVector.z = -forward + this.moveState.back;
 
-    // console.log( "move:", [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
   };
 
   this.updateRotationVector = function () {
@@ -277,7 +274,6 @@ __FlyControls = function (object, domElement) {
     this.rotationVector.y = -this.moveState.yawRight + this.moveState.yawLeft;
     this.rotationVector.z = -this.moveState.rollRight + this.moveState.rollLeft;
 
-    // console.log( "rotate:", [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
   };
 
   this.getContainerDimensions = function () {

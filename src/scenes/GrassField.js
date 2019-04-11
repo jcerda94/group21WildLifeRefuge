@@ -1,7 +1,5 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
-import { Node } from "../utils/LinkedList.js";
-import { getGrassLinkedList } from "../utils/LinkedList.js";
 
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
