@@ -116,20 +116,21 @@ class EnvironmentManager {
         this.textureCanvas = drawingCanvas;
         this.drawingContext = drawingContext;
 
-        /*
         const capi = getCapiInstance();
 
-        capi.getCapiAdapter().expose('env.weatherType', capi.getCapiModel(),
-            {allowedValues: capi.getValue('env.weatherModifiers').keys});
+        capi.getCapiAdapter().expose('env.weather', capi.getCapiModel(),
+            {allowedValues: capi.getValue('env.weatherTypes')});
 
         capi.addListenerFor({
-            key: "env.weatherType",
+            key: "env.weather",
             callback: () => {
-                this.weatherMod = this.defaultEnvironment.weatherModifiers[capi.getValue('env.weatherType')];
-                this.defaultEnvironment.weather = capi.getValue('env.weatherType');
+                const newWeather = capi.getValue('env.weather');
+                const weatherIdx = this.defaultEnvironment.weatherTypes.findIndex(type => type === newWeather);
+
+                this.weatherMod = this.defaultEnvironment.weatherModifiers[weatherIdx];
+                this.defaultEnvironment.weather = newWeather;
             }
         })
-        */
 
     }
 
@@ -279,7 +280,7 @@ class EnvironmentManager {
         const envArrX = Math.trunc(pos.x/10);
         const envArrY = Math.trunc(pos.y/10);
 
-        let neighbors = [this.localEnv(envArrX, envArrY)];
+        let neighbors = [this.localEnv[envArrX][envArrY]];
 
         if (object.type === 'Tree'){
             neighbors.push(...this.getAdjacentTiles(envArrX, envArrY));
@@ -325,7 +326,7 @@ class EnvironmentManager {
 
             this.trackedObjects.push(envObject);
         } else {
-            console.warn("Object type: " + envObject.type + "is not currently supported by EnvironmentManger or\n" +
+            console.warn("Object type: " + envObject.type + " is not currently supported by EnvironmentManger or\n" +
                 "Object model parameters do not match environmentConsumeKeys length")
         }
 
@@ -334,9 +335,9 @@ class EnvironmentManager {
 
     getObjectParamKeyFromType(type){
 
-        var findKey = this.defaultEnvironment.envConsumeKeys.find(key => key.includes(type.toLowerCase()));
+        var findKey = Object.keys(this.defaultEnvironment).find(key => key.includes(type.toLowerCase()));
 
-        return typeof myVar !== 'undefined' ? findKey : '';
+        return typeof findKey !== 'undefined' ? findKey : '';
     }
 
     //TODO add function for nutrient addition that can be called in onDestroy

@@ -2,6 +2,7 @@ import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import { Node } from "../utils/LinkedList.js";
 import { getGrassLinkedList } from "../utils/LinkedList.js";
+import {getEnvironmentManager} from "./EnvironmentManager";
 
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
@@ -60,6 +61,8 @@ async function GrassField (config) {
     grass.children[0].children[0].material = grassMesh.clone();
     grass.type = TYPE;
     grass.name = "grass";
+    getEnvironmentManager().registerTrackedObject(grass);
+
     grassModels.push({
       update,
       model: grass,
