@@ -25,9 +25,6 @@ function AddModelsBasedOnSimTime () {
     days = days + timeInterval;
   }
 
-  function addGras () {
-    // TODO: need logic for adding grass
-  }
 }
 
 export default AddModelsBasedOnSimTime;

@@ -12,7 +12,7 @@ const flipAnimation = keyframes`
     transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
     -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
   }
-`
+`;
 
 const Spinner = styled.div`
   width: 40px;
@@ -22,11 +22,11 @@ const Spinner = styled.div`
   margin: 100px auto;
   -webkit-animation: ${flipAnimation} 1.2s infinite ease-in-out;
   animation: ${flipAnimation} 1.2s infinite ease-in-out;
-`
+`;
 
 class Loading extends Component {
   render () {
-    return <Spinner/>
+    return <Spinner/>;
   }
 }
 
