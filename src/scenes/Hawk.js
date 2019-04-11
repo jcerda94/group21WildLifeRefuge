@@ -88,7 +88,6 @@ function Hawk (config) {
   const hawkTweens = createHawkTweens(hawk);
   tweens.push(...hawkTweens);
 
-  let chase = false;
   let targettedHareId = null;
   let isChasingHare = false;
   let tweenChase = new TWEEN.Tween(hawk.position);
