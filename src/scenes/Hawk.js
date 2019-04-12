@@ -84,10 +84,9 @@ function Hawk (config) {
   hawk.position.z = randomZ();
   hawk.position.y = 100;
 
-  
   const hawkTweens = createHawkTweens(hawk);
   tweens.push(...hawkTweens);
-  let chase = false;
+
   let targettedHareId = null;
   let isChasingHare = false;
   let tweenChase = new TWEEN.Tween(hawk.position);
@@ -228,7 +227,7 @@ function Hawk (config) {
     }
     if (currentHugner <= minHunger && isEating) {
       hawk.remove(hareMesh);
-      chase = false;
+      isChasingHare = false;
       isEating = false;
     }
 

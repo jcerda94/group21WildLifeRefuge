@@ -12,7 +12,7 @@
   "Hare.starvationTime": 43200,
   "WesternCedar.label": false,
   "Hawk.label": false,
-  "Hawk.metabolism": 5,
+  "Hawk.metabolism": 3,
   "Hawk.maleBias": 50,
   "Hawk.ovulationTime": 172800,
   "Hawk.starvationTime": 86400,

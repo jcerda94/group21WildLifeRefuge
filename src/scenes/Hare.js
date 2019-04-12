@@ -1,4 +1,4 @@
-import {random} from "../utils/helpers";
+import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import ModelFactory from "./ModelFactory";
 import { getHawkObserver } from "./observer.js";
@@ -144,7 +144,6 @@ function Hare () {
 
   const hawkObserver = watchAnimal(getHawkObserver(), checkHawkDanger);
 
-  
   hareMesh.type = TYPE;
 
   tweens.push(...createHareTweens(hareMesh));
@@ -191,7 +190,7 @@ function Hare () {
 
   const hareDeathBehavior = death("Hare");
 
-  function update (simulationTime) {
+  function update (elapsedTime, simulationTime) {
     updateLabelPosition();
     const currentHunger = hareHunger.update(simulationTime, eatingFood);
 
@@ -211,10 +210,7 @@ function Hare () {
     }
   }
 
-  //let timesCollided = 0;
-
   function handleCollision (targets) {
-    //timesCollided += 1;
     targets.forEach &&
       targets.forEach(target => {
         let parent = target.object.parent;

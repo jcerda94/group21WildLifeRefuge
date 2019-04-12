@@ -1,8 +1,6 @@
 import Subject from "../utils/subject";
 import { getCapiInstance } from "./CAPI/capi";
 import { random, clamp } from "../utils/helpers";
-import { getHawkObserver } from "../scenes/observer.js";
-import { createHareTweens } from "../utils/animations";
 
 const TWEEN = require("@tweenjs/tween.js");
 const CAPI = getCapiInstance();
@@ -14,6 +12,7 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
   if (!hungerTickRate) {
     let metabolism = CAPI.getValue({ key: `${type}.metabolism` });
     metabolism = clamp(metabolism)({ min: 2, max: 5 });
+    if (!metabolism) metabolism = 2;
     tickRate = Math.pow(10, -Number(metabolism));
   }
 
@@ -30,15 +29,15 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
 
   if (type) {
     const updateTickRate = capiModel => {
-      let exponent = capiModel.get(`${type}.metabolism`);
-      exponent = clamp(exponent)({ min: 2, max: 5 });
-      tickRate = Math.pow(10, -Number(exponent));
+      let metabolism = capiModel.get(`${type}.metabolism`);
+      metabolism = clamp(metabolism)({ min: 2, max: 5 });
+      tickRate = Math.pow(10, -Number(metabolism));
     };
 
     CAPI.addListenerFor({ key: "Hare.metabolism", callback: updateTickRate });
   }
 
-  const update = (elapsedTime, isEating) => {
+  function update (elapsedTime, isEating) {
     if (lastUpdateTime === null) lastUpdateTime = elapsedTime;
     const delta = elapsedTime - lastUpdateTime;
 
@@ -52,11 +51,11 @@ export const hunger = ({ maxHunger, minHunger, hungerTickRate, type }) => {
     if (currentHunger < min) currentHunger = min;
     lastUpdateTime = elapsedTime;
     return currentHunger;
-  };
+  }
 
-  const get = () => {
+  function get () {
     return currentHunger;
-  };
+  }
 
   return {
     update,
@@ -287,9 +286,6 @@ export const moveToFood = (
 };
 
 export const watchAnimal = (observer, callback) => {
-  const CAPI = getCapiInstance();
-
   observer.subscribe(callback);
-
   return () => observer.unsubscribe(callback);
 };

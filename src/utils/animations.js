@@ -75,8 +75,7 @@ export const createHareTweens = hareMesh => {
 
 export const createHawkTweens = hawkMesh => {
   const SceneManager = getSceneManager();
-  let random_X = randomX(SceneManager.groundSize);
-  let random_Z = randomZ(SceneManager.groundSize);
+
   const { x, y, z } = hawkMesh.position;
   const positionOne = randomPositionOn(SceneManager.groundSize, { y: 100 });
   const positionTwo = randomPositionOn(SceneManager.groundSize, { y: 100 });
