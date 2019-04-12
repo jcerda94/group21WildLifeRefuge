@@ -132,54 +132,53 @@ function Tree (config) {
 
   let lastSimTime = 0;
   function update (elapsedTime, simulationTime) {
-    if (true) {
-      if (deathDelta > deathTimer) {
-        SceneManager.removeObject(tree);
-      }
-      if (treeThirsty.get() >= maxThirsty) {
-        deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
-      } else if (isConsuming) {
-        deathDelta = 0;
-      }
-      lastSimTime = simulationTime;
-      const position = get2DPosition();
-      treeThirsty.update(simulationTime, isConsuming);
-      thirstyLabel.update(position.x, position.y, treeThirsty.get().toFixed(1));
-
-      if (treeThirsty.get() >= maxThirsty * 0.75 && !isConsuming) {
-        env.getEnvByXYPos(tree.position.x, tree.position.z).water -= tree.water;
-        if (env.getEnvByXYPos(tree.position.x, tree.position.z).water > 0) {
-          isConsuming = true;
-        } else if (
+    if (deathDelta > deathTimer) {
+      SceneManager.removeObject(tree);
+    }
+    if (treeThirsty.get() >= maxThirsty) {
+      deathDelta += lastSimTime === 0 ? 0 : simulationTime - lastSimTime;
+    } else if (isConsuming) {
+      deathDelta = 0;
+    }
+    lastSimTime = simulationTime;
+    const position = get2DPosition();
+    treeThirsty.update(simulationTime, isConsuming);
+    thirstyLabel.update(position.x, position.y, treeThirsty.get().toFixed(1));
+    if (treeThirsty.get() >= maxThirsty * 0.75 && !isConsuming) {
+      env.consume(tree);
+      if (env.getEnvByXYPos(tree.position.x, tree.position.z).water > 0) {
+        isConsuming = true;
+      } else if (
           env.getEnvByXYPos(tree.position.x, tree.position.z).water < 0 &&
           env.getEnvByXYPos(tree.position.x, tree.position.z).water > -1
-        ) {
-          isConsuming = false;
-          setTreeToBrownColor();
-          setTreeTo45Degree();
-        } else if (
+      ) {
+        isConsuming = false;
+        setTreeToBrownColor();
+        setTreeTo45Degree();
+      } else if (
           env.getEnvByXYPos(tree.position.x, tree.position.z).water < -15
-        ) {
-          setTreeToBrownColor();
-          setTreeLayFlat();
-          isConsuming = false;
-        }
-      }
-      if (treeThirsty.get() <= 6) {
-        setTreeToGreen();
+      ) {
+        setTreeToBrownColor();
+        setTreeLayFlat();
         isConsuming = false;
       }
+    }
+    if (treeThirsty.get() <= 6) {
+      setTreeToGreen();
+      isConsuming = false;
     }
   }
 
   function onDestroy () {
     thirstyLabel.destroy();
+    env.onDeath(tree);
   }
 
   function updateLabelPosition () {
     const position = get2DPosition();
     thirstyLabel.update(position.x, position.y, treeThirsty.get().toFixed(1));
   }
+
 
   return {
     update,

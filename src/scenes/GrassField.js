@@ -32,6 +32,7 @@ async function GrassField (config) {
 
   const grassModels = [];
 
+
   for (let i = 0; i < count; i++) {
     const grass = originalGrass.clone();
     grass.children[0].children[0].userData = {
@@ -63,8 +64,14 @@ async function GrassField (config) {
     grass.name = "grass";
     getEnvironmentManager().registerTrackedObject(grass);
 
+
+    const onDestroy = () => {
+      getEnvironmentManager().onDeath(grass);
+    };
+
     grassModels.push({
       update,
+      onDestroy,
       model: grass,
       created: new Date(0)
     });

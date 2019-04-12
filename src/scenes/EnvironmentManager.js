@@ -96,12 +96,14 @@ class EnvironmentManager {
         waterRegen: 0.001,
         waterBalanceThreshold : 0.5,
         nutrients: 1.0,
-        treeConsumeParams: [0.125, 0.125],
-        grassConsumeParams: [0.01, 0.01],
+        treeParams: [0.125, 0.125, 2.0],
+        grassParams: [0.01, 0.01, 0.25],
+        //TODO Document how the params are loaded into objects
         envConsumeKeys: ["water", "nutrients"],
-        weatherTypes: ["normal", "rain", "drought"],
+        auxEnvParams: ["nutrientReturnOnDeath"],
+        weatherTypes: ["Normal", "Rain", "Drought"],
         weatherModifiers: [1.0, 1.5, 0.5],
-        weather: "normal"
+        weather: "Normal"
     };
 
     constructor(){
@@ -118,21 +120,18 @@ class EnvironmentManager {
 
         const capi = getCapiInstance();
 
-        capi.getCapiAdapter().expose('env.weather', capi.getCapiModel(),
-            {allowedValues: capi.getValue('env.weatherTypes')});
+        capi.getCapiAdapter().expose('env.weather', capi.capiModel,
+            {allowedValues: capi.capiModel.get('env.weatherTypes')});
 
         capi.addListenerFor({
             key: "env.weather",
             callback: () => {
-                const newWeather = capi.getValue('env.weather');
-                const weatherIdx = this.defaultEnvironment.weatherTypes.findIndex(type => type === newWeather);
-
-                this.weatherMod = this.defaultEnvironment.weatherModifiers[weatherIdx];
-                this.defaultEnvironment.weather = newWeather;
+                this.updateWeatherModifier();
             }
         })
 
     }
+
 
     initializeEnvironmentWithParams(environmentObject) {
 
@@ -141,6 +140,7 @@ class EnvironmentManager {
         this.updateWeatherModifier();
 
         //TODO: Explain object creation here
+        //TODO: Explain that only consumables are loaded into every tile
         //Includes any parameters that we want in every environment tile,
         //other object values will simply be made available under the defaultEnvironment object
         const fillObject = environmentObject.envConsumeKeys.reduce(
@@ -165,14 +165,13 @@ class EnvironmentManager {
 
     updateWeatherModifier(){
 
-        //Should never fail unless the weather values are incorrectly set
-        var modifierIndex = this.defaultEnvironment.weatherTypes.findIndex(
-            (weatherType) => {
-                return weatherType === this.defaultEnvironment.weather;
-            }
-        );
+        const capi = getCapiInstance();
 
-        this.weatherMod = this.defaultEnvironment.weatherModifiers[modifierIndex];
+        const newWeather = capi.capiModel.get('env.weather');
+        const weatherIdx = this.defaultEnvironment.weatherTypes.findIndex(type => type === newWeather);
+
+        this.weatherMod = this.defaultEnvironment.weatherModifiers[weatherIdx];
+        this.defaultEnvironment.weather = newWeather;
 
     }
 
@@ -300,26 +299,32 @@ class EnvironmentManager {
 
     }
 
-    //TODO: Add nutrient values to CAPI/SPR
-    //TODO: Add nutrientParams and env params by type
     //TODO: Add germination stats/params
     //TODO: Add random grass/tree in radius by germination stats
     //TODO: Add hare/hawk nutrient replenishment upon death
-    //TODO: Tree water radius
     //TODO: Add raindrops on environment
     //TODO: Change ground tile darkness based on water saturation
     registerTrackedObject(envObject) {
 
 
-        var objectKey = this.getObjectParamKeyFromType(envObject.type);
+        const objectKey = this.getObjectParamKeyFromType(envObject.type);
+        const targetArrLength = this.defaultEnvironment.envConsumeKeys.length + this.defaultEnvironment.auxEnvParams.length;
 
         //Checks that a match was found and that the array of parameters has the same length as our consumption keys
-        if (objectKey.length > 0 && this.defaultEnvironment[objectKey].length === this.defaultEnvironment.envConsumeKeys.length){
+        if (objectKey.length > 0 && this.defaultEnvironment[objectKey].length === targetArrLength){
 
             //Assigns consume key values from the object's capi Parameters. This assumes that the object parameters
             //and consume keys are in the same order.
             for (var i = 0; i < this.defaultEnvironment.envConsumeKeys.length; i++) {
                 envObject[this.defaultEnvironment.envConsumeKeys[i]] = this.defaultEnvironment[objectKey][i];
+            }
+
+            //Assigns auxiliary key values from the object's capi Parameters. This assumes that the object parameters
+            //and auxiliary keys are in the same order.
+            for (var j = 0; j < this.defaultEnvironment.auxEnvParams.length; j++) {
+                //We use i+j because all object params are in an ordered shared array. So by starting at i + 0 we start at
+                //the first object parameter after the envConsume keys
+                envObject[this.defaultEnvironment.auxEnvParams[j]] = this.defaultEnvironment[objectKey][i+j];
             }
 
             this.consume(envObject);
@@ -330,7 +335,6 @@ class EnvironmentManager {
                 "Object model parameters do not match environmentConsumeKeys length")
         }
 
-
     }
 
     getObjectParamKeyFromType(type){
@@ -338,6 +342,15 @@ class EnvironmentManager {
         var findKey = Object.keys(this.defaultEnvironment).find(key => key.includes(type.toLowerCase()));
 
         return typeof findKey !== 'undefined' ? findKey : '';
+    }
+
+    onDeath(object){
+        const pos = this.groundXYToCanvasXY(object.position.x, object.position.z);
+
+        const envArrX = Math.trunc(pos.x/10);
+        const envArrY = Math.trunc(pos.y/10);
+
+        this.localEnv[envArrX][envArrY].nutrients += object.nutrientReturnOnDeath;
     }
 
     //TODO add function for nutrient addition that can be called in onDestroy
@@ -359,7 +372,7 @@ class EnvironmentManager {
 
         for (var i = 0; i < this.localEnv.length; i++) {
             for (var j = 0; j < this.localEnv[0].length; j++) {
-                let colorLightness = 100 - (50 * this.localEnv[j][i].water);
+                let colorLightness = 100 - (50 * this.localEnv[j][i].nutrients);
                 let titleColor = 'hsl(204, 100%, ' + colorLightness + '%)';
 
                 this.drawOnCanvas(j * 10, i * 10, titleColor, false);
@@ -400,16 +413,15 @@ class EnvironmentManager {
     update() {
 
         for (var i = 0; i < this.trackedObjects.length; i++) {
-            let envTile = this.getEnvByXYPos(this.trackedObjects[i].position.x, this.trackedObjects[i].position.z);
-            envTile.water -= this.trackedObjects[i].water;
+            this.consume(this.trackedObjects[i])
         }
 
         this.balanceWaterTable();
 
     }
 
+    //TODO Consider performance tuning for final commits
     //TODO update with flip flop for water/nutrients
-    //TODO update registered objects
 
 }
 
