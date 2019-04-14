@@ -13,6 +13,7 @@ import {
 } from "../utils/behavior";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import ModelFactory from "./ModelFactory";
+import {getEnvironmentManager} from "./EnvironmentManager";
 
 const THREE = require("three");
 
@@ -186,6 +187,7 @@ function Hawk (config) {
     tweens.forEach(tween => TWEEN.remove(tween));
     hungerLabel.destroy();
     pauseResumeCleanup();
+    getEnvironmentManager().onDeath(hawk);
   }
 
   function updateLabelPosition () {
@@ -262,6 +264,8 @@ function Hawk (config) {
     isEating = true;
     SceneManager.removeObject(hare.object);
   }
+
+  getEnvironmentManager().registerTrackedObject(hawk);
 
   return {
     update,

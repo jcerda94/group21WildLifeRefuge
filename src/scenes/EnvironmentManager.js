@@ -96,11 +96,15 @@ class EnvironmentManager {
         waterRegen: 0.001,
         waterBalanceThreshold : 0.5,
         nutrients: 1.0,
-        treeParams: [0.125, 0.125, 2.0],
-        grassParams: [0.01, 0.01, 0.25],
+        treeParams: [0.125, 0.125, 1.0, 2.0],
+        grassParams: [0.01, 0.01, 1.0, 0.25],
+        numAnimalParams: 1,
+        hareParams: [1.0],
+        hawkParams: [1.0],
         //TODO Document how the params are loaded into objects
+        //TODO Detail necessary order of params
         envConsumeKeys: ["water", "nutrients"],
-        auxEnvParams: ["nutrientReturnOnDeath"],
+        auxEnvParams: ["germinationRate", "nutrientReturnOnDeath"],
         weatherTypes: ["Normal", "Rain", "Drought"],
         weatherModifiers: [1.0, 1.5, 0.5],
         weather: "Normal"
@@ -330,6 +334,18 @@ class EnvironmentManager {
             this.consume(envObject);
 
             this.trackedObjects.push(envObject);
+
+          //This next statement is for animal environmental properties
+        } else if (objectKey.length > 0 && this.defaultEnvironment[objectKey].length === this.defaultEnvironment.numAnimalParams) {
+
+            const endOfAuxArr = this.defaultEnvironment.auxEnvParams.length - 1;
+
+            for (var k = 0; k < this.defaultEnvironment.numAnimalParams; k++){
+                envObject[this.defaultEnvironment.auxEnvParams[endOfAuxArr-k]] = this.defaultEnvironment[objectKey][k];
+            }
+
+            //Animals are specifically not pushed into the tracked object array because they only have behaviors on death
+
         } else {
             console.warn("Object type: " + envObject.type + " is not currently supported by EnvironmentManger or\n" +
                 "Object model parameters do not match environmentConsumeKeys length")

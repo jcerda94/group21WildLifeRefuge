@@ -20,6 +20,7 @@ import { get2DPosition, findClosestModel } from "../utils/helpers";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { createHareTweens } from "../utils/animations";
 import { ExpansionPanelSummary } from "@material-ui/core";
+import {getEnvironmentManager} from "./EnvironmentManager";
 
 const THREE = require("three");
 const TWEEN = require("@tweenjs/tween.js");
@@ -246,6 +247,7 @@ function Hare (config) {
     pauseResumeBehavior();
     hawkObserver();
     hareLabel.destroy();
+    getEnvironmentManager().onDeath(hareMesh);
   }
 
   function updateLabelPosition () {
@@ -256,6 +258,10 @@ function Hare (config) {
       hareHunger.get().toFixed(1)
     );
   }
+
+  getEnvironmentManager().registerTrackedObject(hareMesh);
+
+  console.log(hareMesh);
 
   return {
     update,
