@@ -11,6 +11,8 @@ import capiModel from "../model/capiModel";
 import Subject from "../utils/subject";
 import AddModelsBasedOnSimTime from "./AddModelsBasedOnSimTime";
 import { getEnvironmentManager } from "./EnvironmentManager";
+import { getGrassLinkedList } from "../utils/LinkedList.js";
+import { Node } from "../utils/LinkedList.js";
 
 class SceneManager {
   groundSize = {
@@ -295,7 +297,30 @@ class SceneManager {
   removeObjectByUUID (id) {
     const target = this.subjects.find(subject => subject.model.uuid === id);
     if (!target) return;
-    this.removeObject(target.model);
+    this.removeObject_grass_growback(target.model);
+  }
+  // The idea for simple grass-growback keeps the removed grass object in a list
+  // and grows it back at a later time. This is a simple way to grow the grass in proper densities 
+  // without adding a complex density-manager object.
+  // to regrow grass quicker either lower the linked list count limit or tie the 're-grow' to be time based.
+  removeObject_grass_growback(sceneObject) {
+    this.subjects = this.subjects.filter(subject => {
+      const targetSubject = subject.model.uuid === sceneObject.uuid;
+
+      return !targetSubject;
+    });
+    // don't want to destory the grass, only remove it. it will grow back.
+   
+    this.scene.remove(sceneObject);
+    getGrassLinkedList().Append(new Node(sceneObject));
+    //console.log("eat grass ");
+  
+    if(getGrassLinkedList().length > 20) {
+      //console.log("put grass back");
+      var grass_node = getGrassLinkedList().First();
+      this.scene.add(grass_node.data);
+      getGrassLinkedList().Remove(grass_node);
+    }
   }
 
   removeObject (sceneObject) {

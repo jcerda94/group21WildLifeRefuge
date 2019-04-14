@@ -226,7 +226,7 @@ export const fleeToPosition = (model, targetPosition, tweens, createTweens) => {
   if (!fleeing) {
     const currentPosition = model.position;
     const distance = currentPosition.distanceTo(targetPosition);
-
+    
     const { x, y, z } = targetPosition;
     const moveToPosition = new TWEEN.Tween(currentPosition).to(
       { x, y, z },
