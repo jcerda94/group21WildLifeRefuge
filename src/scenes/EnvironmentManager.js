@@ -283,7 +283,8 @@ class EnvironmentManager {
         const envArrX = Math.trunc(pos.x/10);
         const envArrY = Math.trunc(pos.y/10);
 
-        let neighbors = [this.localEnv[envArrX][envArrY]];
+        let neighbors = [];
+        let groundTile = this.localEnv[envArrX][envArrY];
 
         if (object.type === 'Tree'){
             neighbors.push(...this.getAdjacentTiles(envArrX, envArrY));
@@ -293,13 +294,22 @@ class EnvironmentManager {
 
             let key = this.defaultEnvironment.envConsumeKeys[i];
 
-            let valid = neighbors.filter(tile => tile[key] > 0);
+            groundTile -= object[key];
 
-            let balancedConsumption = object[key] / valid.length;
-            for (var k=0; k < valid.length; k++){
-                valid[k][key] -= balancedConsumption;
+            if (neighbors.length > 0){
+                let valid = neighbors.filter(tile => tile[key] > 0);
+
+                let balancedConsumption = object[key] / valid.length;
+                for (var k=0; k < valid.length; k++){
+                    valid[k][key] -= balancedConsumption;
+                }
             }
+
         }
+
+    }
+
+    germinate(object) {
 
     }
 
@@ -315,6 +325,7 @@ class EnvironmentManager {
         const targetArrLength = this.defaultEnvironment.envConsumeKeys.length + this.defaultEnvironment.auxEnvParams.length;
 
         //Checks that a match was found and that the array of parameters has the same length as our consumption keys
+        //This section is for plant objects
         if (objectKey.length > 0 && this.defaultEnvironment[objectKey].length === targetArrLength){
 
             //Assigns consume key values from the object's capi Parameters. This assumes that the object parameters
@@ -331,11 +342,13 @@ class EnvironmentManager {
                 envObject[this.defaultEnvironment.auxEnvParams[j]] = this.defaultEnvironment[objectKey][i+j];
             }
 
+            envObject["germinationLevel"] = 0.0;
+
             this.consume(envObject);
 
             this.trackedObjects.push(envObject);
 
-          //This next statement is for animal environmental properties
+          //This next section is for animal environmental properties
         } else if (objectKey.length > 0 && this.defaultEnvironment[objectKey].length === this.defaultEnvironment.numAnimalParams) {
 
             const endOfAuxArr = this.defaultEnvironment.auxEnvParams.length - 1;
@@ -367,6 +380,15 @@ class EnvironmentManager {
         const envArrY = Math.trunc(pos.y/10);
 
         this.localEnv[envArrX][envArrY].nutrients += object.nutrientReturnOnDeath;
+
+        //If the object is registered as a tracked object (all tracked objects have envConsumeKey properties)
+        //then the object will be removed from the tracked object array
+        if (object.hasOwnProperty(this.defaultEnvironment.envConsumeKeys[0])){
+            this.trackedObjects = this.trackedObjects.filter(obj => {
+                return obj.uuid !== object.uuid;
+            })
+        }
+
     }
 
     //TODO add function for nutrient addition that can be called in onDestroy

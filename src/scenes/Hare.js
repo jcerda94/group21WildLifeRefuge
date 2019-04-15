@@ -261,8 +261,6 @@ function Hare (config) {
 
   getEnvironmentManager().registerTrackedObject(hareMesh);
 
-  console.log(hareMesh);
-
   return {
     update,
     model: hareMesh,
