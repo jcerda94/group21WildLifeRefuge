@@ -1,5 +1,8 @@
 import {getSceneManager} from "./SceneManager";
 import {getCapiInstance} from "../utils/CAPI/capi";
+import {random} from "../utils/helpers";
+import ModelFactory from "./ModelFactory";
+import TargetedGrassField from "./TargetedGrassField";
 
 // From: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
 // Used to support Internet Explorer
@@ -89,20 +92,25 @@ class EnvironmentManager {
     //TODO Consider how to adapt for nutrients on weather type?
     //TODO Maybe create two separate tables or a nested set of ordered values similar to the consumeParams?
     weatherMod = 1.0;
+    objectRemovalQueue = [];
+    objectCreationQueue = [];
+    envTime = 0;
 
     //CAUTION! consumeKey objects will only be shallow copied
     defaultEnvironment = {
         water: 1.0,
         waterRegen: 0.001,
+        updateRate: 1,
         waterBalanceThreshold : 0.5,
         nutrients: 1.0,
-        treeParams: [0.125, 0.125, 1.0, 2.0],
-        grassParams: [0.01, 0.01, 1.0, 0.25],
+        treeParams: [0.125, 0.125, 0.01, 2.0],
+        grassParams: [0.01, 0.01, 0.01, 0.25],
         numAnimalParams: 1,
         hareParams: [1.0],
         hawkParams: [1.0],
         //TODO Document how the params are loaded into objects
         //TODO Detail necessary order of params
+        //TODO consider adding a germination radius
         envConsumeKeys: ["water", "nutrients"],
         auxEnvParams: ["germinationRate", "nutrientReturnOnDeath"],
         weatherTypes: ["Normal", "Rain", "Drought"],
@@ -309,12 +317,79 @@ class EnvironmentManager {
 
     }
 
-    germinate(object) {
+    async createNearbyObject(object) {
+        //create new object in radius
 
+
+        //Will be updated for a proper radius later
+        var newX = object.position.x + (random(-30, 30));
+        var newY = object.position.z + (random(-30, 30));
+
+        if (newX > 0){
+            newX = Math.min(newX, (this.sceneManager.groundSize.x / 2) - 15);
+        } else {
+            newX = Math.max(newX, -(this.sceneManager.groundSize.x / 2) + 15);
+        }
+
+        if (newY > 0){
+            newY = Math.min(newY, (this.sceneManager.groundSize.y / 2) - 15);
+        } else {
+            newY = Math.max(newY, -(this.sceneManager.groundSize.y / 2) + 15);
+        }
+
+        var newObject = null;
+        switch (object.type) {
+            case 'Tree':
+                newObject = ModelFactory.makeSceneObject(
+                    {
+                        type: "tree"
+                    });
+                break;
+            case 'Grass':
+                this.objectCreationQueue.push({x: newX, y: newY});
+                break;
+            case 'Bush':
+                newObject = ModelFactory.makeSceneObject({ type: "bush" });
+                break;
+            default:
+                break;
+        }
+
+
+        if (newObject !== null){
+            newObject.model.position.x = newX;
+            newObject.model.position.z = newY;
+            this.sceneManager.addObject(newObject);
+        }
     }
 
-    //TODO: Add germination stats/params
-    //TODO: Add random grass/tree in radius by germination stats
+    germinate(object) {
+        //Checks if nutrients/water are high enough
+        if (this.checkIfLiving(object)){
+
+            if (object.germinationLevel >= 1.0){
+                console.log("Germinating!");
+
+                this.createNearbyObject(object);
+                object.germinationLevel = 0;
+
+            } else {
+                //this makes it so that when it's sunnier, they will photosynthesize faster
+                object.germinationLevel += (2 - this.weatherMod) * object.germinationRate
+            }
+
+        } else {
+            this.sceneManager.removeObject(object);
+        }
+    }
+
+    //TODO Need to add some variability to consumption/germination
+    //TODO Need to incorporate weather into consumption
+    checkIfLiving(object) {
+        return true;
+    }
+
+
     //TODO: Add hare/hawk nutrient replenishment upon death
     //TODO: Add raindrops on environment
     //TODO: Change ground tile darkness based on water saturation
@@ -384,9 +459,7 @@ class EnvironmentManager {
         //If the object is registered as a tracked object (all tracked objects have envConsumeKey properties)
         //then the object will be removed from the tracked object array
         if (object.hasOwnProperty(this.defaultEnvironment.envConsumeKeys[0])){
-            this.trackedObjects = this.trackedObjects.filter(obj => {
-                return obj.uuid !== object.uuid;
-            })
+                this.objectRemovalQueue.push(object.uuid);
         }
 
     }
@@ -447,14 +520,57 @@ class EnvironmentManager {
 
     }
 
-    //TODO: Update to support/enhance element behaviors
-    update() {
+    async update() {
+        const simTime = this.sceneManager.getElapsedSimTime({ unit: "hours" });
 
-        for (var i = 0; i < this.trackedObjects.length; i++) {
-            this.consume(this.trackedObjects[i])
+        //The update rate is tied to "hours" in simulation
+        if( (simTime - this.envTime) > this.defaultEnvironment.updateRate){
+
+            //TODO Need to add some variability to consumption/germination
+            //TODO Need to incorporate weather into consumption
+            for (var i = 0; i < this.trackedObjects.length; i++) {
+                this.consume(this.trackedObjects[i]);
+                this.germinate(this.trackedObjects[i]);
+            }
+
+            for (var j = 0; j < this.objectRemovalQueue.length; j++){
+                this.trackedObjects = this.trackedObjects.filter(obj => {
+                    return obj.uuid !== this.objectRemovalQueue[j];
+                })
+            }
+
+            //Only for grass right now
+            if (this.objectCreationQueue.length > 0){
+
+                if (this.objectCreationQueue.length > 30){
+                    const targetGrassField = await TargetedGrassField({
+                        coords: this.objectCreationQueue.slice(0, 50)
+                    });
+
+                    for (var k = 0; k < targetGrassField.length; k++){
+                        this.sceneManager.addObject(targetGrassField[k]);
+                    }
+
+                    this.objectCreationQueue = this.objectCreationQueue.slice(50);
+                } else {
+                    const targetGrassField = await TargetedGrassField({
+                        coords: this.objectCreationQueue
+                    });
+
+                    for (var k = 0; k < targetGrassField.length; k++){
+                        this.sceneManager.addObject(targetGrassField[k]);
+                    }
+
+                    this.objectCreationQueue = [];
+                }
+
+            }
+
+            this.objectRemovalQueue = [];
+
+            this.balanceWaterTable();
+            this.envTime = simTime;
         }
-
-        this.balanceWaterTable();
 
     }
 
