@@ -8,12 +8,12 @@ const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
 
 export const TYPE = "Grass";
-async function GrassField (config) {
+async function TargetedGrassField (config) {
   const loadingManager = new THREE.LoadingManager();
 
   const loader = new THREE.GLTFLoader(loadingManager);
 
-  const { grasses: count } = config;
+  const { coords: targets } = config;
 
   const originalGrass = await new Promise((resolve, reject) => {
     loader.load(
@@ -24,16 +24,11 @@ async function GrassField (config) {
     );
   });
 
-  const bounds = getSceneManager().groundSize;
-  const positionBound = {
-    x: bounds.x * 0.95,
-    y: bounds.y * 0.95
-  };
 
   const grassModels = [];
 
 
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < targets.length; i++) {
     const grass = originalGrass.clone();
     grass.children[0].children[0].userData = {
       selectable: true,
@@ -47,8 +42,8 @@ async function GrassField (config) {
     };
     const size = random(2, 5);
 
-    const x = random(-positionBound.x / 2, positionBound.x / 2);
-    const z = random(-positionBound.y / 2, positionBound.y / 2);
+    const x = targets[i].x;
+    const z = targets[i].y;
 
     const rotation = random(-Math.PI / 2, Math.PI / 2);
 
@@ -82,4 +77,4 @@ async function GrassField (config) {
   return grassModels;
 }
 
-export default GrassField;
+export default TargetedGrassField;

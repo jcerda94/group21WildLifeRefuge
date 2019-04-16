@@ -1,4 +1,8 @@
 import {getSceneManager} from "./SceneManager";
+import {getCapiInstance} from "../utils/CAPI/capi";
+import {random} from "../utils/helpers";
+import ModelFactory from "./ModelFactory";
+import TargetedGrassField from "./TargetedGrassField";
 
 // From: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
 // Used to support Internet Explorer
@@ -84,12 +88,33 @@ class EnvironmentManager {
     sceneManager = null;
     localEnv = null;
     trackedObjects = [];
+    //TODO Consider how to adapt for nutrients on weather type?
+    //TODO Maybe create two separate tables or a nested set of ordered values similar to the consumeParams?
+    weatherMod = 1.0;
+    objectRemovalQueue = [];
+    objectCreationQueue = [];
+    envTime = 0;
 
-    //CAUTION! Object will only be shallow copied
+    //CAUTION! consumeKey objects will only be shallow copied
     defaultEnvironment = {
         water: 1.0,
-        treeThirst: 0.025,
-        grassThirst: 0.01
+        waterRegen: 0.001,
+        updateRate: 1,
+        waterBalanceThreshold : 0.5,
+        nutrients: 1.0,
+        treeParams: [0.125, 0.125, 0.01, 2.0],
+        grassParams: [0.01, 0.01, 0.01, 0.25],
+        numAnimalParams: 1,
+        hareParams: [1.0],
+        hawkParams: [1.0],
+        //TODO Document how the params are loaded into objects
+        //TODO Detail necessary order of params
+        //TODO consider adding a germination radius
+        envConsumeKeys: ["water", "nutrients"],
+        auxEnvParams: ["germinationRate", "nutrientReturnOnDeath"],
+        weatherTypes: ["Normal", "Rain", "Drought"],
+        weatherModifiers: [1.0, 1.5, 0.5],
+        weather: "Normal"
     };
 
     constructor(){
@@ -104,17 +129,35 @@ class EnvironmentManager {
         this.textureCanvas = drawingCanvas;
         this.drawingContext = drawingContext;
 
+        const capi = getCapiInstance();
+
+        capi.getCapiAdapter().expose('env.weather', capi.capiModel,
+            {allowedValues: capi.capiModel.get('env.weatherTypes')});
+
+        capi.addListenerFor({
+            key: "env.weather",
+            callback: () => {
+                this.updateWeatherModifier();
+            }
+        })
+
     }
+
 
     initializeEnvironmentWithParams(environmentObject) {
 
         this.defaultEnvironment = environmentObject;
 
-        //Include any parameters that we want in every environment tile,
+        this.updateWeatherModifier();
+
+        //TODO: Explain object creation here
+        //TODO: Explain that only consumables are loaded into every tile
+        //Includes any parameters that we want in every environment tile,
         //other object values will simply be made available under the defaultEnvironment object
-        const fillObject = {
-            water: environmentObject.water
-        };
+        const fillObject = environmentObject.envConsumeKeys.reduce(
+            (o, key) => ({...o, [key]: environmentObject[key]}),
+            {}
+        );
 
         this.sceneManager = getSceneManager();
 
@@ -130,6 +173,18 @@ class EnvironmentManager {
             ()=>Array(groundY).fill().map(
                 () => Object.assign({}, fillObject)
             ));
+    }
+
+    updateWeatherModifier(){
+
+        const capi = getCapiInstance();
+
+        const newWeather = capi.capiModel.get('env.weather');
+        const weatherIdx = this.defaultEnvironment.weatherTypes.findIndex(type => type === newWeather);
+
+        this.weatherMod = this.defaultEnvironment.weatherModifiers[weatherIdx];
+        this.defaultEnvironment.weather = newWeather;
+
     }
 
     getEnvByXYPos(x, y){
@@ -208,27 +263,212 @@ class EnvironmentManager {
 
     }
 
-    //TODO: Add dynamic updating of the tree/grass thirstyness, add a listener on the appropriate values
-    registerTrackedObject(object) {
+    getAdjacentTiles(envArrX, envArrY) {
 
-        //TODO: Add object type for bushes
-        switch (object.type) {
-            case "Tree":
-                object.water = this.defaultEnvironment.treeThirst;
-                break;
-            case "Grass":
-                object.water = this.defaultEnvironment.grassThirst;
-                break;
-            default:
-                console.warn("Object type: " + object.type + " not currently supported by EnvironmentManger");
+        let neighbors = [];
+
+        const adjacencyMatrix = [[1,1], [0,1], [1,0], [-1,0], [0, -1], [-1,-1], [1,-1], [-1, 1]];
+
+        const yBnd = this.localEnv.length;
+        const xBnd = this.localEnv[0].length;
+
+
+        for (var i = 0; i < adjacencyMatrix.length; i++) {
+            let x = envArrX + adjacencyMatrix[i][0];
+            let y = envArrY + adjacencyMatrix[i][1];
+
+            if (((-1 < x && x < xBnd) && (-1 < y && y < yBnd))) {
+                neighbors.push(this.localEnv[x][y]);
+            }
         }
 
-        //TODO: Break out into separate function
-        let envTile = this.getEnvByXYPos(object.position.x, object.position.z);
-        envTile.water -= object.water;
-
-        this.trackedObjects.push(object);
+        return neighbors;
     }
+
+    consume(object) {
+
+        const pos = this.groundXYToCanvasXY(object.position.x, object.position.z);
+
+        const envArrX = Math.trunc(pos.x/10);
+        const envArrY = Math.trunc(pos.y/10);
+
+        let neighbors = [];
+        let groundTile = this.localEnv[envArrX][envArrY];
+
+        if (object.type === 'Tree'){
+            neighbors.push(...this.getAdjacentTiles(envArrX, envArrY));
+        }
+
+        for (var i=0; i < this.defaultEnvironment.envConsumeKeys.length; i++){
+
+            let key = this.defaultEnvironment.envConsumeKeys[i];
+
+            groundTile -= object[key];
+
+            if (neighbors.length > 0){
+                let valid = neighbors.filter(tile => tile[key] > 0);
+
+                let balancedConsumption = object[key] / valid.length;
+                for (var k=0; k < valid.length; k++){
+                    valid[k][key] -= balancedConsumption;
+                }
+            }
+
+        }
+
+    }
+
+    async createNearbyObject(object) {
+        //create new object in radius
+
+
+        //Will be updated for a proper radius later
+        var newX = object.position.x + (random(-30, 30));
+        var newY = object.position.z + (random(-30, 30));
+
+        if (newX > 0){
+            newX = Math.min(newX, (this.sceneManager.groundSize.x / 2) - 15);
+        } else {
+            newX = Math.max(newX, -(this.sceneManager.groundSize.x / 2) + 15);
+        }
+
+        if (newY > 0){
+            newY = Math.min(newY, (this.sceneManager.groundSize.y / 2) - 15);
+        } else {
+            newY = Math.max(newY, -(this.sceneManager.groundSize.y / 2) + 15);
+        }
+
+        var newObject = null;
+        switch (object.type) {
+            case 'Tree':
+                newObject = ModelFactory.makeSceneObject(
+                    {
+                        type: "tree"
+                    });
+                break;
+            case 'Grass':
+                this.objectCreationQueue.push({x: newX, y: newY});
+                break;
+            case 'Bush':
+                newObject = ModelFactory.makeSceneObject({ type: "bush" });
+                break;
+            default:
+                break;
+        }
+
+
+        if (newObject !== null){
+            newObject.model.position.x = newX;
+            newObject.model.position.z = newY;
+            this.sceneManager.addObject(newObject);
+        }
+    }
+
+    germinate(object) {
+        //Checks if nutrients/water are high enough
+        if (this.checkIfLiving(object)){
+
+            if (object.germinationLevel >= 1.0){
+                console.log("Germinating!");
+
+                this.createNearbyObject(object);
+                object.germinationLevel = 0;
+
+            } else {
+                //this makes it so that when it's sunnier, they will photosynthesize faster
+                object.germinationLevel += (2 - this.weatherMod) * object.germinationRate
+            }
+
+        } else {
+            this.sceneManager.removeObject(object);
+
+        }
+    }
+
+    //TODO Need to add some variability to consumption/germination
+    //TODO Need to incorporate weather into consumption
+    checkIfLiving(object) {
+        return true;
+    }
+
+
+    //TODO: Add hare/hawk nutrient replenishment upon death
+    //TODO: Add raindrops on environment
+    //TODO: Change ground tile darkness based on water saturation
+    registerTrackedObject(envObject) {
+
+
+        const objectKey = this.getObjectParamKeyFromType(envObject.type);
+        const targetArrLength = this.defaultEnvironment.envConsumeKeys.length + this.defaultEnvironment.auxEnvParams.length;
+
+        //Checks that a match was found and that the array of parameters has the same length as our consumption keys
+        //This section is for plant objects
+        if (objectKey.length > 0 && this.defaultEnvironment[objectKey].length === targetArrLength){
+
+            //Assigns consume key values from the object's capi Parameters. This assumes that the object parameters
+            //and consume keys are in the same order.
+            for (var i = 0; i < this.defaultEnvironment.envConsumeKeys.length; i++) {
+                envObject[this.defaultEnvironment.envConsumeKeys[i]] = this.defaultEnvironment[objectKey][i];
+            }
+
+            //Assigns auxiliary key values from the object's capi Parameters. This assumes that the object parameters
+            //and auxiliary keys are in the same order.
+            for (var j = 0; j < this.defaultEnvironment.auxEnvParams.length; j++) {
+                //We use i+j because all object params are in an ordered shared array. So by starting at i + 0 we start at
+                //the first object parameter after the envConsume keys
+                envObject[this.defaultEnvironment.auxEnvParams[j]] = this.defaultEnvironment[objectKey][i+j];
+            }
+
+            envObject["germinationLevel"] = 0.0;
+
+            this.consume(envObject);
+
+            this.trackedObjects.push(envObject);
+
+          //This next section is for animal environmental properties
+        } else if (objectKey.length > 0 && this.defaultEnvironment[objectKey].length === this.defaultEnvironment.numAnimalParams) {
+
+            const endOfAuxArr = this.defaultEnvironment.auxEnvParams.length - 1;
+
+            for (var k = 0; k < this.defaultEnvironment.numAnimalParams; k++){
+                envObject[this.defaultEnvironment.auxEnvParams[endOfAuxArr-k]] = this.defaultEnvironment[objectKey][k];
+            }
+
+            //Animals are specifically not pushed into the tracked object array because they only have behaviors on death
+
+        } else {
+            console.warn("Object type: " + envObject.type + " is not currently supported by EnvironmentManger or\n" +
+                "Object model parameters do not match environmentConsumeKeys length")
+        }
+
+    }
+
+    getObjectParamKeyFromType(type){
+
+        var findKey = Object.keys(this.defaultEnvironment).find(key => key.includes(type.toLowerCase()));
+
+        return typeof findKey !== 'undefined' ? findKey : '';
+    }
+
+    onDeath(object){
+        const pos = this.groundXYToCanvasXY(object.position.x, object.position.z);
+
+        const envArrX = Math.trunc(pos.x/10);
+        const envArrY = Math.trunc(pos.y/10);
+
+        this.localEnv[envArrX][envArrY].nutrients += object.nutrientReturnOnDeath;
+
+        //If the object is registered as a tracked object (all tracked objects have envConsumeKey properties)
+        //then the object will be removed from the tracked object array
+        if (object.hasOwnProperty(this.defaultEnvironment.envConsumeKeys[0])){
+                this.objectRemovalQueue.push(object.uuid);
+        }
+
+    }
+
+    //TODO add function for nutrient addition that can be called in onDestroy
+
+    //TODO: Absorb nutrients/water in a given radius (object.env object, radius)
 
     //Creates a Generator iterator. This will iterate through the entire environment array with each call.
     //Use: localEnvGenerator.next() returns an object similar to {value: nextVal, done: false}
@@ -247,62 +487,96 @@ class EnvironmentManager {
             for (var j = 0; j < this.localEnv[0].length; j++) {
                 let colorLightness = 100 - (50 * this.localEnv[j][i].water);
                 let titleColor = "hsl(204, 100%, " + colorLightness + "%)";
-
                 this.drawOnCanvas(j * 10, i * 10, titleColor, false);
             }
         }
 
     }
 
-    //TODO: Clarify code and add input parameters to support CAPI use
+    //TODO: Add documentation of approach/use of this function
     async balanceWaterTable() {
 
-        const adjacencyMatrix = [[1,1], [0,1], [1,0], [-1,0], [0, -1], [-1,-1], [1,-1], [-1, 1]];
-
         const envGen = this.localEnvGenerator();
-        let lowWater = [...envGen].filter(val => val.env.water < 0.5);
-
-        const yBnd = this.localEnv.length;
-        const xBnd = this.localEnv[0].length;
+        let lowWater = [...envGen].filter(val => val.env.water < this.defaultEnvironment.waterBalanceThreshold);
 
         for (var i = 0; i < lowWater.length; i++) {
-            adjacencyMatrix.forEach((offset) => {
-                let x = lowWater[i].x + offset[0];
-                let y = lowWater[i].y + offset[1];
 
-                let neighborsWithWater = [];
+            //Will return valid adjacent env tiles
+            let neighborsWithWater = this.getAdjacentTiles(lowWater[i].x, lowWater[i].y).filter(
+                tile => tile.water > this.defaultEnvironment.waterBalanceThreshold);
 
-                if (((-1 < x && x < xBnd) && (-1 < y && y < yBnd)) && this.localEnv[x][y].water >= 0.05){
-                    neighborsWithWater.push(this.localEnv[x][y]);
+            if (neighborsWithWater.length > 0) {
+                //console.log("neighbor with water + " + neighborsWithWater.length);
+                //TODO: Change name of waterRegen to reflect the value is actually how much water is being
+                //TODO: redistributed to the center tile
+                let waterBalanced = this.defaultEnvironment.waterRegen / neighborsWithWater.length;
+                for (var j = 0; j < neighborsWithWater.length; j++) {
+                    neighborsWithWater[j].water -= waterBalanced;
                 }
 
-                if (neighborsWithWater.length > 0) {
-                    let waterBalanced = 0.05 / neighborsWithWater.length;
-                    for (var j = 0; j < neighborsWithWater.length; j++) {
-                        neighborsWithWater[j].water -= waterBalanced;
+                lowWater[i].water += this.weatherMod * this.defaultEnvironment.waterRegen;
+            }
+
+        }
+
+    }
+
+    async update() {
+        const simTime = this.sceneManager.getElapsedSimTime({ unit: "hours" });
+
+        //The update rate is tied to "hours" in simulation
+        if( (simTime - this.envTime) > this.defaultEnvironment.updateRate){
+
+            //TODO Need to add some variability to consumption/germination
+            //TODO Need to incorporate weather into consumption
+            for (var i = 0; i < this.trackedObjects.length; i++) {
+                this.consume(this.trackedObjects[i]);
+                this.germinate(this.trackedObjects[i]);
+            }
+
+            for (var j = 0; j < this.objectRemovalQueue.length; j++){
+                this.trackedObjects = this.trackedObjects.filter(obj => {
+                    return obj.uuid !== this.objectRemovalQueue[j];
+                })
+            }
+
+            //Only for grass right now
+            if (this.objectCreationQueue.length > 0){
+
+                if (this.objectCreationQueue.length > 30){
+                    const targetGrassField = await TargetedGrassField({
+                        coords: this.objectCreationQueue.slice(0, 50)
+                    });
+
+                    for (var k = 0; k < targetGrassField.length; k++){
+                        this.sceneManager.addObject(targetGrassField[k]);
                     }
 
-                    lowWater[i].water += 0.05;
+                    this.objectCreationQueue = this.objectCreationQueue.slice(50);
+                } else {
+                    const targetGrassField = await TargetedGrassField({
+                        coords: this.objectCreationQueue
+                    });
+
+                    for (var k = 0; k < targetGrassField.length; k++){
+                        this.sceneManager.addObject(targetGrassField[k]);
+                    }
+
+                    this.objectCreationQueue = [];
                 }
 
-            });
+            }
+
+            this.objectRemovalQueue = [];
+
+            this.balanceWaterTable();
+            this.envTime = simTime;
         }
 
     }
 
-    //TODO: Update to support/enhance element behaviors
-    update() {
-
-        for (var i = 0; i < this.trackedObjects.length; i++) {
-            let envTile = this.getEnvByXYPos(this.trackedObjects[i].position.x, this.trackedObjects[i].position.z);
-            envTile.water -= this.trackedObjects[i].water;
-        }
-
-        this.balanceWaterTable();
-
-        this.toggleEnvironmentViewOnCanvas();
-
-    }
+    //TODO Consider performance tuning for final commits
+    //TODO update with flip flop for water/nutrients
 
 }
 

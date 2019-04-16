@@ -174,9 +174,13 @@ class SceneManager {
       return;
     }
 
+
+
     this.renderer.render(this.scene, this.camera);
     this.checkIntersects();
-    AddModelsBasedOnSimTime();
+    //AddModelsBasedOnSimTime();
+    getEnvironmentManager().update();
+
 
     if (!this.modelsPreloaded) {
       this.modelsPreloaded = true;
