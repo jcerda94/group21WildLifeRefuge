@@ -7,12 +7,12 @@ import TargetedGrassField from "./TargetedGrassField";
 // From: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
 // Used to support Internet Explorer
 if (!Array.prototype.fill) {
-    Object.defineProperty(Array.prototype, 'fill', {
+    Object.defineProperty(Array.prototype, "fill", {
         value: function(value) {
 
             // Steps 1-2.
             if (this == null) {
-                throw new TypeError('this is null or not defined');
+                throw new TypeError("this is null or not defined");
             }
 
             var O = Object(this);
@@ -53,13 +53,12 @@ if (!Array.prototype.fill) {
 
 // From: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
 // Used to support Internet Explorer and Android Webviews
-if (typeof Object.assign != 'function') {
+if (typeof Object.assign != "function") {
     // Must be writable: true, enumerable: false, configurable: true
     Object.defineProperty(Object, "assign", {
         value: function assign(target, varArgs) { // .length of function is 2
-            'use strict';
             if (target == null) { // TypeError if undefined or null
-                throw new TypeError('Cannot convert undefined or null to object');
+                throw new TypeError("Cannot convert undefined or null to object");
             }
 
             var to = Object(target);
@@ -122,9 +121,9 @@ class EnvironmentManager {
 
         this.initializeEnvironmentWithParams(this.defaultEnvironment);
         // Creates a THREE Texture using an HTML Canvas element
-        var drawingCanvas = document.getElementById( 'drawing-canvas' );
-        var drawingContext = drawingCanvas.getContext( '2d' );
-        drawingContext.fillStyle = '#996600';
+        var drawingCanvas = document.getElementById( "drawing-canvas" );
+        var drawingContext = drawingCanvas.getContext( "2d" );
+        drawingContext.fillStyle = "#996600";
         drawingContext.fillRect( 0, 0, this.sceneManager.groundSize.x, this.sceneManager.groundSize.y);
 
         this.textureCanvas = drawingCanvas;
@@ -168,7 +167,8 @@ class EnvironmentManager {
 
         //Initializes an array shaped like our ground object, and fills it with a set of default environment conditions
         // CAUTION! Only does a shallow copy of the defaultEnvironment object
-        //TODO: Add dynamically generated environments (non-uniform starting conditions, maybe toy environment 'painter')
+        //TODO: Add dynamically generated environments (non-uniform starting conditions, 
+        //maybe toy environment 'painter')
         this.localEnv = [...Array(groundX)].map(
             ()=>Array(groundY).fill().map(
                 () => Object.assign({}, fillObject)
@@ -203,7 +203,7 @@ class EnvironmentManager {
         const xPos = x - (this.sceneManager.groundSize.x / 2);
         const yPos = y - (this.sceneManager.groundSize.y / 2);
 
-        return {x: xPos, y: yPos}
+        return {x: xPos, y: yPos};
     }
 
     groundXYToCanvasXY(x, y){
@@ -211,34 +211,35 @@ class EnvironmentManager {
         const xPos = x + (this.sceneManager.groundSize.x / 2);
         const yPos = y + (this.sceneManager.groundSize.y / 2);
 
-        return {x: xPos, y: yPos}
+        return {x: xPos, y: yPos};
 
     }
 
 
     prettyPrintEnvStateToConsole() {
 
-        let output = '';
+        let output = "";
         let cssStyling = [];
 
         for (var i = 0; i < this.localEnv.length; i++){
             for (var j = 0; j < this.localEnv[0].length; j++){
-                output += '%c█';
+                output += "%c█";
 
                 let colorLightness = 100 - (50 * this.localEnv[j][i].water);
-                let cssString = 'color:hsl(204, 100%, ' + colorLightness + '%)';
+                let cssString = "color:hsl(204, 100%, " + colorLightness + "%)";
                 cssStyling.push(cssString);
             }
-            output += '\n';
+            output += "\n";
         }
 
         console.clear();
-        console.warn("CAUTION: USE SPARINGLY, THIS CLEARS THE CONSOLE AND PUTS A SIGNIFICANT BURDEN ON THE CONSOLE WINDOW");
+        console.warn("CAUTION: USE SPARINGLY, THIS CLEARS THE CONSOLE AND PUTS A SIGNIFICANT"
+                    + " BURDEN ON THE CONSOLE WINDOW");
         console.log(output, ...cssStyling);
 
     }
 
-    drawOnCanvas(x, y, color = '#5b7aff', convertXY = true) {
+    drawOnCanvas(x, y, color = "#5b7aff", convertXY = true) {
 
         // If no value is passed for convertXY this assumes that you are giving it ground XY coordinates
         // that are centered on the object. This converts the xy to canvas coordinates and shifts the drawn
@@ -380,6 +381,7 @@ class EnvironmentManager {
 
         } else {
             this.sceneManager.removeObject(object);
+
         }
     }
 
@@ -483,9 +485,8 @@ class EnvironmentManager {
 
         for (var i = 0; i < this.localEnv.length; i++) {
             for (var j = 0; j < this.localEnv[0].length; j++) {
-                let colorLightness = 100 - (50 * this.localEnv[j][i].nutrients);
-                let titleColor = 'hsl(204, 100%, ' + colorLightness + '%)';
-
+                let colorLightness = 100 - (50 * this.localEnv[j][i].water);
+                let titleColor = "hsl(204, 100%, " + colorLightness + "%)";
                 this.drawOnCanvas(j * 10, i * 10, titleColor, false);
             }
         }

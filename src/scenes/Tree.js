@@ -9,7 +9,7 @@
  */
 
 import { getSceneManager } from "./SceneManager";
-import { random, randomInt } from "../utils/helpers";
+import {random} from "../utils/helpers";
 import { waterLevel } from "../utils/treeBehavior";
 import { label } from "../utils/behavior";
 import { getEnvironmentManager } from "./EnvironmentManager";
@@ -22,8 +22,6 @@ export const TYPE = "Tree";
 let color = 0x33ff33;
 
 function Tree (config) {
-  let removeLabel = false;
-  let treeDeath = false;
   let isConsuming = false;
   let deathDelta = 0;
   const deathTimer = 60 * 60 * 24; // Eat within a day at max hunger or die

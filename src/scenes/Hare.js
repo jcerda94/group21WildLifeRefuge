@@ -1,8 +1,7 @@
-import { getValue, random } from "../utils/helpers";
+import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
 import ModelFactory from "./ModelFactory";
 import { getHawkObserver } from "./observer.js";
-import { findRemoveIfNear } from "./GrassField";
 import {
   hunger,
   label,
@@ -14,8 +13,6 @@ import {
   moveToFood,
   death
 } from "../utils/behavior";
-import { getHawks } from "./Hawk.js";
-import { getTrees } from "./Tree.js";
 import { get2DPosition, findClosestModel } from "../utils/helpers";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { createHareTweens } from "../utils/animations";
@@ -28,10 +25,9 @@ const TWEEN = require("@tweenjs/tween.js");
 export const NAME = "hare";
 export const TYPE = "Hare";
 
-function Hare (config) {
+function Hare () {
   const CAPI = getCapiInstance();
 
-  const dangerRange = 170;
   const maxHunger = 20;
   const minHunger = 1;
   const hareHunger = hunger({
@@ -43,7 +39,6 @@ function Hare (config) {
   const hareGender = gender({ bias: genderBias });
   const tweens = [];
   const color = hareGender === "female" ? "#db7093" : "#407093";
-  const HareTweenGroup = new TWEEN.Group();
 
   const sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
   const sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
@@ -151,8 +146,6 @@ function Hare (config) {
 
   const hawkObserver = watchAnimal(getHawkObserver(), checkHawkDanger);
 
-  let movingToTree = false;
-
   hareMesh.type = TYPE;
 
   tweens.push(...createHareTweens(hareMesh));
@@ -219,10 +212,7 @@ function Hare (config) {
     }
   }
 
-  let timesCollided = 0;
-
   function handleCollision (targets) {
-    timesCollided += 1;
     targets.forEach &&
       targets.forEach(target => {
         let parent = target.object.parent;
@@ -270,9 +260,6 @@ function Hare (config) {
     created: new Date(),
     handleCollision
   };
-}
-function getDistance (pos1, pos2) {
-  return pos1.distanceTo(pos2);
 }
 export function getHareID (theHare) {
   return theHare.id;

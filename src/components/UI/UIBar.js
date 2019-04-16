@@ -4,11 +4,8 @@ import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import MenuIcon from "@material-ui/icons/Menu";
 import IconButton from "@material-ui/core/IconButton";
-import ModelAdd from "./ModelAdd";
-import ModelMenu from "./ModelMenu";
 import Subject from "../../utils/subject";
 import SimControls from "./SimControls";
 
@@ -26,11 +23,6 @@ const styles = {
 };
 
 class UIBar extends Component {
-  state = {
-    floraAnchor: null,
-    faunaAnchor: null
-  }
-
   handleMenu = anchor => event => {
     if (event.currentTarget !== this.state[anchor]) {
       this.setState({ [anchor]: event.currentTarget });
@@ -49,9 +41,6 @@ class UIBar extends Component {
 
   render () {
     const { classes } = this.props;
-    const { floraAnchor, faunaAnchor } = this.state;
-    const floraOpen = Boolean(floraAnchor);
-    const faunaOpen = Boolean(faunaAnchor);
 
     return (
       <div className={classes.root}>
@@ -68,10 +57,7 @@ class UIBar extends Component {
             <Typography variant='h6' color='inherit' className={classes.grow}>
               Willapa Refuge
             </Typography>
-            <SimControls
-              color='inherit'
-              className={classes.menuButton}
-            />
+            <SimControls color='inherit' className={classes.menuButton} />
           </Toolbar>
         </AppBar>
       </div>

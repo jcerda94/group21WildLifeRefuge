@@ -4,14 +4,6 @@ import PlayArrow from "@material-ui/icons/PlayArrow";
 import PauseBars from "@material-ui/icons/Pause";
 import Subject from "../../utils/subject";
 
-const Pause = props => {
-  return <PauseBars {...props} />;
-};
-
-const Play = props => {
-  return <PlayArrow {...props} />;
-};
-
 class SimControls extends Component {
   state = {
     paused: false
