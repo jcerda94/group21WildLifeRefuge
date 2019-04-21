@@ -29,6 +29,7 @@
   "env.waterFlow": 0.1,
   "env.waterBalanceThreshold" : 0.5,
   "env.updateRate": 1,
+  "env.objectLimit": 1500,
   "env.nutrients": 1.0,
   "env.envConsumeKeys": ["water", "nutrients"],
   "env.auxEnvParams": ["germinationRate", "nutrientReturnOnDeath"],

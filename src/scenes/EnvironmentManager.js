@@ -102,6 +102,7 @@ class EnvironmentManager {
         waterRegen: 0.001,
         waterFlow: 0.1,
         updateRate: 1,
+        objectLimit: 1500,
         waterBalanceThreshold : 0.5,
         nutrients: 1.0,
         treeParams: [0.125, 0.125, 0.01, 2.0],
@@ -322,48 +323,49 @@ class EnvironmentManager {
 
     async createNearbyObject(object) {
         //create new object in radius
+        if (this.trackedObjects.length < this.defaultEnvironment.objectLimit){
+            //Will be updated for a proper radius later
+            var newX = object.position.x + (random(-50, 50));
+            var newY = object.position.z + (random(-50, 50));
+
+            if (newX > 0){
+                newX = Math.min(newX, (this.sceneManager.groundSize.x / 2) - 15);
+            } else {
+                newX = Math.max(newX, -(this.sceneManager.groundSize.x / 2) + 15);
+            }
+
+            if (newY > 0){
+                newY = Math.min(newY, (this.sceneManager.groundSize.y / 2) - 15);
+            } else {
+                newY = Math.max(newY, -(this.sceneManager.groundSize.y / 2) + 15);
+            }
+
+            var newObject = null;
+            switch (object.type) {
+                case 'Tree':
+                    newObject = ModelFactory.makeSceneObject(
+                        {
+                            type: "tree"
+                        });
+                    break;
+                case 'Grass':
+                    this.objectCreationQueue.push({x: newX, y: newY});
+                    break;
+                case 'Bush':
+                    newObject = ModelFactory.makeSceneObject({ type: "bush" });
+                    break;
+                default:
+                    break;
+            }
 
 
-        //Will be updated for a proper radius later
-        var newX = object.position.x + (random(-50, 50));
-        var newY = object.position.z + (random(-50, 50));
-
-        if (newX > 0){
-            newX = Math.min(newX, (this.sceneManager.groundSize.x / 2) - 15);
-        } else {
-            newX = Math.max(newX, -(this.sceneManager.groundSize.x / 2) + 15);
+            if (newObject !== null){
+                newObject.model.position.x = newX;
+                newObject.model.position.z = newY;
+                this.sceneManager.addObject(newObject);
+            }
         }
 
-        if (newY > 0){
-            newY = Math.min(newY, (this.sceneManager.groundSize.y / 2) - 15);
-        } else {
-            newY = Math.max(newY, -(this.sceneManager.groundSize.y / 2) + 15);
-        }
-
-        var newObject = null;
-        switch (object.type) {
-            case 'Tree':
-                newObject = ModelFactory.makeSceneObject(
-                    {
-                        type: "tree"
-                    });
-                break;
-            case 'Grass':
-                this.objectCreationQueue.push({x: newX, y: newY});
-                break;
-            case 'Bush':
-                newObject = ModelFactory.makeSceneObject({ type: "bush" });
-                break;
-            default:
-                break;
-        }
-
-
-        if (newObject !== null){
-            newObject.model.position.x = newX;
-            newObject.model.position.z = newY;
-            this.sceneManager.addObject(newObject);
-        }
     }
 
     germinate(object) {
