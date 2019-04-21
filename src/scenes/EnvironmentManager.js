@@ -94,11 +94,13 @@ class EnvironmentManager {
     objectRemovalQueue = [];
     objectCreationQueue = [];
     envTime = 0;
+    tickTock = true;
 
     //CAUTION! consumeKey objects will only be shallow copied
     defaultEnvironment = {
         water: 1.0,
         waterRegen: 0.001,
+        waterFlow: 0.1,
         updateRate: 1,
         waterBalanceThreshold : 0.5,
         nutrients: 1.0,
@@ -292,8 +294,8 @@ class EnvironmentManager {
         const envArrX = Math.trunc(pos.x/10);
         const envArrY = Math.trunc(pos.y/10);
 
-        let neighbors = [];
-        let groundTile = this.localEnv[envArrX][envArrY];
+        var neighbors = [];
+        var groundTile = this.localEnv[envArrX][envArrY];
 
         if (object.type === 'Tree'){
             neighbors.push(...this.getAdjacentTiles(envArrX, envArrY));
@@ -303,10 +305,10 @@ class EnvironmentManager {
 
             let key = this.defaultEnvironment.envConsumeKeys[i];
 
-            groundTile -= object[key];
+            groundTile[key] -= object[key];
 
             if (neighbors.length > 0){
-                let valid = neighbors.filter(tile => tile[key] > 0);
+                let valid = neighbors.filter(tile => tile[key] >= 0);
 
                 let balancedConsumption = object[key] / valid.length;
                 for (var k=0; k < valid.length; k++){
@@ -381,16 +383,19 @@ class EnvironmentManager {
 
         } else {
             this.sceneManager.removeObject(object);
-
         }
     }
 
     checkIfLiving(object) {
+        const envAtObj = this.getEnvByXYPos(object.position.x, object.position.z);
 
-        const envAtObj = this.getEnvByXYPos(object.position.x, object.position.y);
+        return this.defaultEnvironment.envConsumeKeys.every(key => envAtObj[key] > 0);
+    }
 
-        return this.defaultEnvironment.envConsumeKeys.every(key => envAtObj[key] >= 0);
+    getRandomByPercent(val, percentOffset){
+        const offset = val * (percentOffset/100);
 
+        return random(val - offset, val + offset);
     }
 
 
@@ -409,7 +414,7 @@ class EnvironmentManager {
             //Assigns consume key values from the object's capi Parameters. This assumes that the object parameters
             //and consume keys are in the same order.
             for (var i = 0; i < this.defaultEnvironment.envConsumeKeys.length; i++) {
-                envObject[this.defaultEnvironment.envConsumeKeys[i]] = this.defaultEnvironment[objectKey][i];
+                envObject[this.defaultEnvironment.envConsumeKeys[i]] = this.getRandomByPercent(this.defaultEnvironment[objectKey][i], 10);
             }
 
             //Assigns auxiliary key values from the object's capi Parameters. This assumes that the object parameters
@@ -417,12 +422,10 @@ class EnvironmentManager {
             for (var j = 0; j < this.defaultEnvironment.auxEnvParams.length; j++) {
                 //We use i+j because all object params are in an ordered shared array. So by starting at i + 0 we start at
                 //the first object parameter after the envConsume keys
-                envObject[this.defaultEnvironment.auxEnvParams[j]] = this.defaultEnvironment[objectKey][i+j];
+                envObject[this.defaultEnvironment.auxEnvParams[j]] = this.getRandomByPercent(this.defaultEnvironment[objectKey][i+j], 10);
             }
 
             envObject["germinationLevel"] = 0.0;
-
-            this.consume(envObject);
 
             this.trackedObjects.push(envObject);
 
@@ -432,7 +435,7 @@ class EnvironmentManager {
             const endOfAuxArr = this.defaultEnvironment.auxEnvParams.length - 1;
 
             for (var k = 0; k < this.defaultEnvironment.numAnimalParams; k++){
-                envObject[this.defaultEnvironment.auxEnvParams[endOfAuxArr-k]] = this.defaultEnvironment[objectKey][k];
+                envObject[this.defaultEnvironment.auxEnvParams[endOfAuxArr-k]] = this.getRandomByPercent(this.defaultEnvironment[objectKey][k], 10);;
             }
 
             //Animals are specifically not pushed into the tracked object array because they only have behaviors on death
@@ -457,7 +460,12 @@ class EnvironmentManager {
         const envArrX = Math.trunc(pos.x/10);
         const envArrY = Math.trunc(pos.y/10);
 
-        this.localEnv[envArrX][envArrY].nutrients += object.nutrientReturnOnDeath;
+        var tilesForReturn = [this.localEnv[envArrX][envArrY]];
+        tilesForReturn.push(...this.getAdjacentTiles(envArrX, envArrY));
+
+        tilesForReturn.forEach(tile => {
+        tile.nutrients += object.nutrientReturnOnDeath;
+        });
 
         //If the object is registered as a tracked object (all tracked objects have envConsumeKey properties)
         //then the object will be removed from the tracked object array
@@ -482,11 +490,11 @@ class EnvironmentManager {
         }
     }
 
-    async toggleEnvironmentViewOnCanvas() {
+    async toggleEnvironmentViewOnCanvasByParam(param) {
 
         for (var i = 0; i < this.localEnv.length; i++) {
             for (var j = 0; j < this.localEnv[0].length; j++) {
-                let colorLightness = 100 - (50 * this.localEnv[j][i].water);
+                let colorLightness = 100 - (50 * this.localEnv[j][i][param]);
                 let titleColor = "hsl(204, 100%, " + colorLightness + "%)";
                 this.drawOnCanvas(j * 10, i * 10, titleColor, false);
             }
@@ -510,12 +518,12 @@ class EnvironmentManager {
                 //console.log("neighbor with water + " + neighborsWithWater.length);
                 //TODO: Change name of waterRegen to reflect the value is actually how much water is being
                 //TODO: redistributed to the center tile
-                let waterBalanced = this.defaultEnvironment.waterRegen / neighborsWithWater.length;
+                let waterBalanced = this.defaultEnvironment.waterFlow / neighborsWithWater.length;
                 for (var j = 0; j < neighborsWithWater.length; j++) {
                     neighborsWithWater[j].water -= waterBalanced;
                 }
 
-                lowWater[i].water += this.weatherMod * this.defaultEnvironment.waterRegen;
+                lowWater[i].env.water += this.defaultEnvironment.waterFlow + (this.weatherMod * this.defaultEnvironment.waterRegen);
             }
 
         }
@@ -523,10 +531,13 @@ class EnvironmentManager {
     }
 
     async update() {
-        const simTime = this.sceneManager.getElapsedSimTime({ unit: "hours" });
+        const simTime = this.sceneManager.getElapsedSimTime({ unit: "minutes" });
 
-        //The update rate is tied to "hours" in simulation
-        if( (simTime - this.envTime) > this.defaultEnvironment.updateRate){
+        //The update rate is tied to "hours" in simulation,
+        //Update is called twice in the update rate period. Once for object consumption/germination
+        //and again for balancing the water table. Each type of environment update will update at the
+        //set cadence
+        if( (simTime - this.envTime) > this.defaultEnvironment.updateRate * 30){
 
             //Removes objects that died during the last cycle
             for (var j = 0; j < this.objectRemovalQueue.length; j++){
@@ -537,14 +548,20 @@ class EnvironmentManager {
 
             this.objectRemovalQueue = [];
 
-            //TODO Need to add some variability to consumption/germination
-            //TODO Need to incorporate weather into consumption
-            for (var i = 0; i < this.trackedObjects.length; i++) {
-                this.consume(this.trackedObjects[i]);
-                this.germinate(this.trackedObjects[i]);
+            if (this.tickTock){
+                //TODO Need to add some variability to consumption/germination
+                //TODO Need to incorporate weather into consumption
+                for (var i = 0; i < this.trackedObjects.length; i++) {
+                    this.consume(this.trackedObjects[i]);
+                    this.germinate(this.trackedObjects[i]);
+                }
+
+                this.tickTock = false;
+            } else {
+                this.balanceWaterTable();
+                this.tickTock = true;
             }
 
-            this.balanceWaterTable();
             this.envTime = simTime;
         }
 
@@ -581,7 +598,6 @@ class EnvironmentManager {
     }
 
     //TODO Consider performance tuning for final commits
-    //TODO update with flip flop for water/nutrients
 
 }
 
