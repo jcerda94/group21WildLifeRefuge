@@ -392,6 +392,12 @@ class EnvironmentManager {
         return this.defaultEnvironment.envConsumeKeys.every(key => envAtObj[key] > 0);
     }
 
+    static getRandomByPercent(val, percentOffset){
+        const offset = val * (percentOffset/100);
+
+        return random(val - offset, val + offset);
+    }
+
 
     registerTrackedObject(envObject) {
 
@@ -408,7 +414,7 @@ class EnvironmentManager {
             //Assigns consume key values from the object's capi Parameters. This assumes that the object parameters
             //and consume keys are in the same order.
             for (var i = 0; i < this.defaultEnvironment.envConsumeKeys.length; i++) {
-                envObject[this.defaultEnvironment.envConsumeKeys[i]] = this.defaultEnvironment[objectKey][i];
+                envObject[this.defaultEnvironment.envConsumeKeys[i]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][i], 10);
             }
 
             //Assigns auxiliary key values from the object's capi Parameters. This assumes that the object parameters
@@ -416,7 +422,7 @@ class EnvironmentManager {
             for (var j = 0; j < this.defaultEnvironment.auxEnvParams.length; j++) {
                 //We use i+j because all object params are in an ordered shared array. So by starting at i + 0 we start at
                 //the first object parameter after the envConsume keys
-                envObject[this.defaultEnvironment.auxEnvParams[j]] = this.defaultEnvironment[objectKey][i+j];
+                envObject[this.defaultEnvironment.auxEnvParams[j]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][i+j], 10);
             }
 
             envObject["germinationLevel"] = 0.0;
@@ -429,7 +435,7 @@ class EnvironmentManager {
             const endOfAuxArr = this.defaultEnvironment.auxEnvParams.length - 1;
 
             for (var k = 0; k < this.defaultEnvironment.numAnimalParams; k++){
-                envObject[this.defaultEnvironment.auxEnvParams[endOfAuxArr-k]] = this.defaultEnvironment[objectKey][k];
+                envObject[this.defaultEnvironment.auxEnvParams[endOfAuxArr-k]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][k], 10);;
             }
 
             //Animals are specifically not pushed into the tracked object array because they only have behaviors on death
