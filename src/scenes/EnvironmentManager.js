@@ -88,8 +88,6 @@ class EnvironmentManager {
     sceneManager = null;
     localEnv = null;
     trackedObjects = [];
-    //TODO Consider how to adapt for nutrients on weather type?
-    //TODO Maybe create two separate tables or a nested set of ordered values similar to the consumeParams?
     weatherMod = 1.0;
     objectRemovalQueue = [];
     objectCreationQueue = [];
@@ -112,7 +110,6 @@ class EnvironmentManager {
         hawkParams: [1.0],
         //TODO Document how the params are loaded into objects
         //TODO Detail necessary order of params
-        //TODO consider adding a germination radius
         envConsumeKeys: ["water", "nutrients"],
         auxEnvParams: ["germinationRate", "nutrientReturnOnDeath"],
         weatherTypes: ["Normal", "Rain", "Drought"],
@@ -153,8 +150,6 @@ class EnvironmentManager {
 
         this.updateWeatherModifier();
 
-        //TODO: Explain object creation here
-        //TODO: Explain that only consumables are loaded into every tile
         //Includes any parameters that we want in every environment tile,
         //other object values will simply be made available under the defaultEnvironment object
         const fillObject = environmentObject.envConsumeKeys.reduce(
@@ -170,8 +165,6 @@ class EnvironmentManager {
 
         //Initializes an array shaped like our ground object, and fills it with a set of default environment conditions
         // CAUTION! Only does a shallow copy of the defaultEnvironment object
-        //TODO: Add dynamically generated environments (non-uniform starting conditions, 
-        //maybe toy environment 'painter')
         this.localEnv = [...Array(groundX)].map(
             ()=>Array(groundY).fill().map(
                 () => Object.assign({}, fillObject)
@@ -405,16 +398,14 @@ class EnvironmentManager {
         const objectKey = this.getObjectParamKeyFromType(envObject.type);
         const targetArrLength = this.defaultEnvironment.envConsumeKeys.length + this.defaultEnvironment.auxEnvParams.length;
 
-        //TODO Add some variability to the set parameters (maybe +/- 10%) so that all plants do not have synced behavior
         //Checks that a match was found and that the array of parameters has the same length as our consumption keys
         //This section is for plant objects
         if (objectKey.length > 0 && this.defaultEnvironment[objectKey].length === targetArrLength){
 
-            //TODO Variability needs to go here:
             //Assigns consume key values from the object's capi Parameters. This assumes that the object parameters
             //and consume keys are in the same order.
             for (var i = 0; i < this.defaultEnvironment.envConsumeKeys.length; i++) {
-                envObject[this.defaultEnvironment.envConsumeKeys[i]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][i], 10);
+                envObject[this.defaultEnvironment.envConsumeKeys[i]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][i], 20);
             }
 
             //Assigns auxiliary key values from the object's capi Parameters. This assumes that the object parameters
@@ -422,7 +413,7 @@ class EnvironmentManager {
             for (var j = 0; j < this.defaultEnvironment.auxEnvParams.length; j++) {
                 //We use i+j because all object params are in an ordered shared array. So by starting at i + 0 we start at
                 //the first object parameter after the envConsume keys
-                envObject[this.defaultEnvironment.auxEnvParams[j]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][i+j], 10);
+                envObject[this.defaultEnvironment.auxEnvParams[j]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][i+j], 20);
             }
 
             envObject["germinationLevel"] = 0.0;
@@ -435,7 +426,7 @@ class EnvironmentManager {
             const endOfAuxArr = this.defaultEnvironment.auxEnvParams.length - 1;
 
             for (var k = 0; k < this.defaultEnvironment.numAnimalParams; k++){
-                envObject[this.defaultEnvironment.auxEnvParams[endOfAuxArr-k]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][k], 10);
+                envObject[this.defaultEnvironment.auxEnvParams[endOfAuxArr-k]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][k], 20);
             }
 
             //Animals are specifically not pushed into the tracked object array because they only have behaviors on death
@@ -475,10 +466,6 @@ class EnvironmentManager {
 
     }
 
-    //TODO add function for nutrient addition that can be called in onDestroy
-
-    //TODO: Absorb nutrients/water in a given radius (object.env object, radius)
-
     //Creates a Generator iterator. This will iterate through the entire environment array with each call.
     //Use: localEnvGenerator.next() returns an object similar to {value: nextVal, done: false}
     //Google javascript generators to understand the functionality/uses better
@@ -502,7 +489,6 @@ class EnvironmentManager {
 
     }
 
-    //TODO: Add documentation of approach/use of this function
     async balanceWaterTable() {
 
         const envGen = this.localEnvGenerator();
@@ -515,9 +501,6 @@ class EnvironmentManager {
                 tile => tile.water > this.defaultEnvironment.waterBalanceThreshold);
 
             if (neighborsWithWater.length > 0) {
-                //console.log("neighbor with water + " + neighborsWithWater.length);
-                //TODO: Change name of waterRegen to reflect the value is actually how much water is being
-                //TODO: redistributed to the center tile
                 let waterBalanced = this.defaultEnvironment.waterFlow / neighborsWithWater.length;
                 for (var j = 0; j < neighborsWithWater.length; j++) {
                     neighborsWithWater[j].water -= waterBalanced;
@@ -549,8 +532,6 @@ class EnvironmentManager {
             this.objectRemovalQueue = [];
 
             if (this.tickTock){
-                //TODO Need to add some variability to consumption/germination
-                //TODO Need to incorporate weather into consumption
                 for (var i = 0; i < this.trackedObjects.length; i++) {
                     this.consume(this.trackedObjects[i]);
                     this.germinate(this.trackedObjects[i]);
@@ -558,7 +539,6 @@ class EnvironmentManager {
 
                 this.tickTock = false;
             } else {
-                this.toggleEnvironmentViewOnCanvasByParam("water");
                 this.balanceWaterTable();
                 this.tickTock = true;
             }
@@ -598,8 +578,6 @@ class EnvironmentManager {
         }
 
     }
-
-    //TODO Consider performance tuning for final commits
 
 }
 
