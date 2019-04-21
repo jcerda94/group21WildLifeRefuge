@@ -384,7 +384,7 @@ class EnvironmentManager {
 
         }
     }
-    
+
     checkIfLiving(object) {
 
         const envAtObj = this.getEnvByXYPos(object.position.x, object.position.y);
@@ -528,11 +528,14 @@ class EnvironmentManager {
         //The update rate is tied to "hours" in simulation
         if( (simTime - this.envTime) > this.defaultEnvironment.updateRate){
 
+            //Removes objects that died during the last cycle
             for (var j = 0; j < this.objectRemovalQueue.length; j++){
                 this.trackedObjects = this.trackedObjects.filter(obj => {
                     return obj.uuid !== this.objectRemovalQueue[j];
                 })
             }
+
+            this.objectRemovalQueue = [];
 
             //TODO Need to add some variability to consumption/germination
             //TODO Need to incorporate weather into consumption
@@ -541,39 +544,39 @@ class EnvironmentManager {
                 this.germinate(this.trackedObjects[i]);
             }
 
-
-            //Only for grass right now
-            if (this.objectCreationQueue.length > 0){
-
-                if (this.objectCreationQueue.length > 30){
-                    const targetGrassField = await TargetedGrassField({
-                        coords: this.objectCreationQueue.slice(0, 50)
-                    });
-
-                    for (var k = 0; k < targetGrassField.length; k++){
-                        this.sceneManager.addObject(targetGrassField[k]);
-                    }
-
-                    this.objectCreationQueue = this.objectCreationQueue.slice(50);
-                } else {
-                    const targetGrassField = await TargetedGrassField({
-                        coords: this.objectCreationQueue
-                    });
-
-                    for (var k = 0; k < targetGrassField.length; k++){
-                        this.sceneManager.addObject(targetGrassField[k]);
-                    }
-
-                    this.objectCreationQueue = [];
-                }
-
-            }
-
-            this.objectRemovalQueue = [];
-
             this.balanceWaterTable();
             this.envTime = simTime;
         }
+
+        //Only for grass right now
+        //Supports the efficient creation of a large number of grass objects
+        if (this.objectCreationQueue.length > 0){
+
+            if (this.objectCreationQueue.length > 20){
+                const targetGrassField = await TargetedGrassField({
+                    coords: this.objectCreationQueue.slice(0, 20)
+                });
+
+                for (var k = 0; k < targetGrassField.length; k++){
+                    this.sceneManager.addObject(targetGrassField[k]);
+                }
+
+                this.objectCreationQueue = this.objectCreationQueue.slice(20);
+            } else {
+                const targetGrassField = await TargetedGrassField({
+                    coords: this.objectCreationQueue
+                });
+
+                for (var k = 0; k < targetGrassField.length; k++){
+                    this.sceneManager.addObject(targetGrassField[k]);
+                }
+
+                this.objectCreationQueue = [];
+            }
+
+        }
+
+
 
     }
 
