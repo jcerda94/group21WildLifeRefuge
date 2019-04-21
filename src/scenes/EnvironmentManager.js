@@ -325,8 +325,8 @@ class EnvironmentManager {
 
 
         //Will be updated for a proper radius later
-        var newX = object.position.x + (random(-30, 30));
-        var newY = object.position.z + (random(-30, 30));
+        var newX = object.position.x + (random(-50, 50));
+        var newY = object.position.z + (random(-50, 50));
 
         if (newX > 0){
             newX = Math.min(newX, (this.sceneManager.groundSize.x / 2) - 15);
@@ -371,8 +371,6 @@ class EnvironmentManager {
         if (this.checkIfLiving(object)){
 
             if (object.germinationLevel >= 1.0){
-                console.log("Germinating!");
-
                 this.createNearbyObject(object);
                 object.germinationLevel = 0;
 
@@ -435,7 +433,7 @@ class EnvironmentManager {
             const endOfAuxArr = this.defaultEnvironment.auxEnvParams.length - 1;
 
             for (var k = 0; k < this.defaultEnvironment.numAnimalParams; k++){
-                envObject[this.defaultEnvironment.auxEnvParams[endOfAuxArr-k]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][k], 10);;
+                envObject[this.defaultEnvironment.auxEnvParams[endOfAuxArr-k]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][k], 10);
             }
 
             //Animals are specifically not pushed into the tracked object array because they only have behaviors on death
@@ -558,42 +556,44 @@ class EnvironmentManager {
 
                 this.tickTock = false;
             } else {
+                this.toggleEnvironmentViewOnCanvasByParam("water");
                 this.balanceWaterTable();
                 this.tickTock = true;
             }
 
             this.envTime = simTime;
-        }
 
-        //Only for grass right now
-        //Supports the efficient creation of a large number of grass objects
-        if (this.objectCreationQueue.length > 0){
+            //Only for grass right now
+            //Supports the efficient creation of a large number of grass objects
+            if (this.objectCreationQueue.length > 0){
 
-            if (this.objectCreationQueue.length > 20){
-                const targetGrassField = await TargetedGrassField({
-                    coords: this.objectCreationQueue.slice(0, 20)
-                });
+                if (this.objectCreationQueue.length > 50){
+                    const tempQueue = this.objectCreationQueue.slice(0, 50);
 
-                for (var k = 0; k < targetGrassField.length; k++){
-                    this.sceneManager.addObject(targetGrassField[k]);
+                    const targetGrassField = await TargetedGrassField({
+                        coords: tempQueue
+                    });
+
+                    for (var k = 0; k < targetGrassField.length; k++){
+                        this.sceneManager.addObject(targetGrassField[k]);
+                    }
+
+                    this.objectCreationQueue = this.objectCreationQueue.slice(50);
+
+                } else {
+                    const targetGrassField = await TargetedGrassField({
+                        coords: this.objectCreationQueue
+                    });
+
+                    for (var k = 0; k < targetGrassField.length; k++){
+                        this.sceneManager.addObject(targetGrassField[k]);
+                    }
+
+                    this.objectCreationQueue = [];
                 }
 
-                this.objectCreationQueue = this.objectCreationQueue.slice(20);
-            } else {
-                const targetGrassField = await TargetedGrassField({
-                    coords: this.objectCreationQueue
-                });
-
-                for (var k = 0; k < targetGrassField.length; k++){
-                    this.sceneManager.addObject(targetGrassField[k]);
-                }
-
-                this.objectCreationQueue = [];
             }
-
         }
-
-
 
     }
 
