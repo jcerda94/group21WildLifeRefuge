@@ -384,27 +384,28 @@ class EnvironmentManager {
 
         }
     }
-
-    //TODO Need to add some variability to consumption/germination
-    //TODO Need to incorporate weather into consumption
+    
     checkIfLiving(object) {
-        return true;
+
+        const envAtObj = this.getEnvByXYPos(object.position.x, object.position.y);
+
+        return this.defaultEnvironment.envConsumeKeys.every(key => envAtObj[key] >= 0);
+
     }
 
 
-    //TODO: Add hare/hawk nutrient replenishment upon death
-    //TODO: Add raindrops on environment
-    //TODO: Change ground tile darkness based on water saturation
     registerTrackedObject(envObject) {
 
 
         const objectKey = this.getObjectParamKeyFromType(envObject.type);
         const targetArrLength = this.defaultEnvironment.envConsumeKeys.length + this.defaultEnvironment.auxEnvParams.length;
 
+        //TODO Add some variability to the set parameters (maybe +/- 10%) so that all plants do not have synced behavior
         //Checks that a match was found and that the array of parameters has the same length as our consumption keys
         //This section is for plant objects
         if (objectKey.length > 0 && this.defaultEnvironment[objectKey].length === targetArrLength){
 
+            //TODO Variability needs to go here:
             //Assigns consume key values from the object's capi Parameters. This assumes that the object parameters
             //and consume keys are in the same order.
             for (var i = 0; i < this.defaultEnvironment.envConsumeKeys.length; i++) {
@@ -527,6 +528,12 @@ class EnvironmentManager {
         //The update rate is tied to "hours" in simulation
         if( (simTime - this.envTime) > this.defaultEnvironment.updateRate){
 
+            for (var j = 0; j < this.objectRemovalQueue.length; j++){
+                this.trackedObjects = this.trackedObjects.filter(obj => {
+                    return obj.uuid !== this.objectRemovalQueue[j];
+                })
+            }
+
             //TODO Need to add some variability to consumption/germination
             //TODO Need to incorporate weather into consumption
             for (var i = 0; i < this.trackedObjects.length; i++) {
@@ -534,11 +541,6 @@ class EnvironmentManager {
                 this.germinate(this.trackedObjects[i]);
             }
 
-            for (var j = 0; j < this.objectRemovalQueue.length; j++){
-                this.trackedObjects = this.trackedObjects.filter(obj => {
-                    return obj.uuid !== this.objectRemovalQueue[j];
-                })
-            }
 
             //Only for grass right now
             if (this.objectCreationQueue.length > 0){
