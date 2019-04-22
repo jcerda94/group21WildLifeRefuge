@@ -13,28 +13,49 @@ import AddModelsBasedOnSimTime from "./AddModelsBasedOnSimTime";
 import { getEnvironmentManager } from "./EnvironmentManager";
 
 class SceneManager {
+  // Controls size of the ground, which is centered at 0, 0
+  // Actual coordinates are x and z, since y is up
   groundSize = {
     x: 1000,
     y: 1000
   }
+
+  // ThreeJS references for various entities
   camera = null
   scene = null
   renderer = null
   cameraControls = null
+
+  // Whether async loading of models is done
   loaded = false
+
+  // Raycaster for doing collision detection and mouseover highlighting
   raycaster = new THREE.Raycaster()
+
   mouse = new THREE.Vector2()
   clock = new THREE.Clock()
+
+  // How big the user's screen is
   screenDimensions = {}
+
+  // An array of objects representing a sceneSubject, each of which contains some sort of model key
   subjects = []
+
+  // Which items are selected
   selected = []
+
+  // Currently intersected model (closest to camera's plane)
   intersected = null
+
   defaultCameraPosition = [0, 40, 400]
   loadingScreen = null
   ready = false
   modelsPreloaded = false
 
+  // Whether the simulation (business logic and time elapsing) is paused
   isPaused = false
+
+  // Current seconds in simulation time, this advances faster than clock time based on the timeScale selected
   simulationElapsedTime = 0
   currentTimeScale = "hours"
   timeScale = {
@@ -52,15 +73,26 @@ class SceneManager {
     this.initializeRenderer();
     this.initializeCamera();
     this.initializeSimEvents();
-
-    // this.createSceneSubjects();
   }
 
+  /**
+   * These two Subject events are used to broadcast that the simulation is paused
+   * or has resumed. Models are responsible for subscribing to this event in order
+   * to respond to the pause and play behavior and stop animating. Animations are
+   * run in the background and will continue even when the debugger has the application
+   * paused
+   */
   initializeSimEvents () {
     Subject.subscribe("pause_simulation", this.pauseSimulation);
     Subject.subscribe("resume_simulation", this.resumeSimulation);
   }
 
+  /**
+   * Since models are loaded from files, which is done asynchronously, this
+   * loading "screen" is the first thing displayed to users before the models
+   * are ready to go. It can be modified to be any ThreeJS scene as long as it doesn't
+   * also need to load models.
+   */
   initializeLoadingScreen () {
     const { width, height } = this.screenDimensions;
     const aspectRatio = width / height;
@@ -82,6 +114,11 @@ class SceneManager {
     this.loadingScreen.scene.add(this.loadingScreen.indicator);
   }
 
+  /**
+   * This sets the canvas element for drawing by ThreeJS. The canvas size is also used
+   * as the user's screen dimensions.
+   * @param {HTMLCanvasElement} canvas The canvas element ThreeJS will use to render to
+   */
   setCanvas (canvas) {
     const { width, height } = canvas;
     this.canvas = canvas;
@@ -96,6 +133,13 @@ class SceneManager {
     this.cameraControls.reset();
   }
 
+  /**
+   * This function was written early on as a way to integrate with capi and count the number of items
+   * selected. It turned out to not be too useful but its here as an example of one way to get this done.
+   *
+   * @param {THREE.Object3D} model This is the model being selected by the user with an event
+   * such as a touch or click.
+   */
   toggleSelected (model) {
     const modelIndex = this.selected.findIndex(
       selectedModel => model === selectedModel
@@ -132,10 +176,24 @@ class SceneManager {
     }
   }
 
+  /**
+   * Broadcasts an event with data attached to let the UI know there's an updated sim time to display.
+   * This is the primary driver for the simulation time component in React's UI.
+   * @param {Number} elapsedTime seconds elapsed since the start of the simulation
+   * @param {Number} simTime accelerated seconds elapsed since the start of the simulation
+   */
   updateDisplayTime (elapsedTime, simTime) {
     Subject.next("update_sim_time", { elapsedTime, simTime });
   }
 
+  /**
+   * Returns the sim time in the unit requested. Must be one of the simTimeScale units to be used.
+   * This function rounds down, since elapsed time hasn't elapsed unless its through to the next
+   * discrete value. For example, 1.7 days is 1 day elapsed.
+   *
+   * @param {String} param0 The object must have a unit key that's used to get what the sim
+   * time would be for a given unit.
+   */
   getElapsedSimTime ({ unit } = { unit: "seconds" }) {
     if (unit === "seconds") return this.simulationElapsedTime;
 
@@ -145,6 +203,15 @@ class SceneManager {
     return Math.floor(this.simulationElapsedTime / conversionFactor);
   }
 
+  /**
+   * The update loop, this runs on every animation frame. Not guaranteed to be 60 fps.
+   * If the simulation is paused it will only update the models' label positions, camera
+   * controls, and continue elapsing time. If the SceneManager hasn't loaded yet this will
+   * display the loading scene instead of the simulation scene.
+   *
+   * If all is good, this calls update() on every object in this.subjects, which means every
+   * object in that array should provide an update function.
+   */
   update () {
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
@@ -174,13 +241,9 @@ class SceneManager {
       return;
     }
 
-
-
     this.renderer.render(this.scene, this.camera);
     this.checkIntersects();
-    //AddModelsBasedOnSimTime();
     getEnvironmentManager().update();
-
 
     if (!this.modelsPreloaded) {
       this.modelsPreloaded = true;
@@ -197,6 +260,11 @@ class SceneManager {
     }
   }
 
+  /**
+   * This function uses basic raycasting to check whether the mouse has intersected with a model.
+   * The ray intersects all models in a line but only the first one is used since that's the closest
+   * model to the camera (and the one the user is probably trying to click on).
+   */
   checkIntersects = () => {
     const intersects =
       this.raycaster.intersectObjects(this.scene.children, true) || [];
@@ -221,6 +289,11 @@ class SceneManager {
     }
   }
 
+  /**
+   * Turns a models color back to its original color. This is a limited implementation.
+   * Something like a solid outline or a glow effect would be better than changing the \
+   * color of a model.
+   */
   resetIntersectedColor (intersected) {
     const selectableKey = "userData.selectable";
     if (intersected && getValue(selectableKey, intersected)) {
@@ -237,6 +310,10 @@ class SceneManager {
     }
   }
 
+  /**
+   * Adds the initial sceneSubjects to the subjects array and adds them to the
+   * ThreeJS scene.
+   */
   async createSceneSubjects () {
     let grassCount = getCapiInstance().getValue({ key: "SimCount.grass" });
     if (grassCount === null || grassCount === undefined) grassCount = 100;
@@ -268,11 +345,24 @@ class SceneManager {
     this.ready = true;
   }
 
+  /**
+   * The SceneManager will add this object to the scene at whatever position the model says it should be at. It will also
+   * add it to the subjects array and begin calling its update function during the update loop.
+   *
+   * @param {SceneObject} sceneObject The object that should be added to the scene. This should have a model key on it.
+   */
   addObject (sceneObject) {
     this.subjects.push(sceneObject);
     this.scene.add(sceneObject.model);
   }
 
+  /**
+   * This is just a convenient method to add, for instance, 15 hawks to the scene. You would call
+   * SceneManager.addObjects({ type: "hawk", config: {yourconfig}, count: 15 }). The objects will
+   * spawn in whatever location their constructor asks them to.
+   *
+   * @param {Object} param0 The type, count, and configuration of a fixed number of objects to add.
+   */
   addObjects ({ type, config, count }) {
     for (let i = 0; i < count; i++) {
       this.addObject(
@@ -284,24 +374,55 @@ class SceneManager {
     }
   }
 
+  /**
+   * Returns all subjects with a matching id, which is usually a UUID. This
+   * can return multiple objects, or none.
+   *
+   * @param {Object} param0 Object with an id key to compare subjects to
+   */
   getSceneObjectByID ({ id }) {
     return this.subjects.find(child => child.model.uuid === id);
   }
 
+  /**
+   * Returns all objects in the scene with the given type(s)
+   * SceneManager.getSceneObjectsOf({ types: ["Grass", "Hare"] }) would return
+   * all grass and hares in the scene.
+   *
+   * @param {Object} param0 An object with a types key, an array of types to return
+   */
   getSceneObjectsOf ({ types }) {
     return this.scene.children.filter(child => types.includes(child.type));
   }
 
+  /**
+   * Returns a boolean as true if the scene has a model with the given ID, false otherwise.
+   * This is used to make sure animals targeting food still have a valid target as they approach the food.
+   * @param {Object} param0 Object with an id key to compare subjects to
+   * @returns {Boolean}
+   */
   hasSceneObject ({ id }) {
     return this.subjects.some(subject => subject.model.uuid === id);
   }
 
+  /**
+   * This will remove a specific object from the scene, such as the food a hare was just eating.
+   *
+   * @param {String} id The UUID of the object to remove from the scene.
+   */
   removeObjectByUUID (id) {
     const target = this.subjects.find(subject => subject.model.uuid === id);
     if (!target) return;
     this.removeObject(target.model);
   }
 
+  /**
+   * Removes the subject from the subjects array and the scene, and calls its onDestroy function
+   * upon removal. This does a UUID comparison to match the UUID of the provided object with a matching
+   * object in the subjects array.
+   *
+   * @param {Object} sceneObject The subject to remove from the subjects array
+   */
   removeObject (sceneObject) {
     this.subjects = this.subjects.filter(subject => {
       const targetSubject = subject.model.uuid === sceneObject.uuid;
@@ -315,27 +436,12 @@ class SceneManager {
     this.scene.remove(sceneObject);
   }
 
-  removeMostRecentModelByType ({ type }) {
-    const lastCreated = this.subjects
-      .filter(subject => {
-        if (subject.model) {
-          return subject.model.type === type;
-        }
-        return false;
-      })
-      .map(subject => subject.created)
-      .reduce((a, b) => Math.max(a, b))
-      .valueOf();
-
-    const mostRecentModel = this.subjects.find(subject => {
-      if (subject.created) {
-        return subject.created.valueOf() === lastCreated;
-      }
-      return false;
-    });
-    this.scene.remove(mostRecentModel);
-  }
-
+  /**
+   * Removes all models on screen that match the given type. If you wanted all
+   * grass removed you'd call SceneManager.removeAllModelsByType('Grass')
+   *
+   * @param {String} type The provided model type to remove from the scene.
+   */
   removeAllModelsByType (type) {
     const modelsToRemove = this.subjects
       .filter(subject => {
@@ -356,6 +462,9 @@ class SceneManager {
     modelsToRemove.forEach(model => this.scene.remove(model));
   }
 
+  /**
+   * Turns the label on and off. This is the listener for label visibility in smart sparrow
+   */
   toggleLabelFor = ({ type, labelName }) => capiModel => {
     this.subjects.forEach(subject => {
       if (subject.model && subject.model.type === type) {
@@ -367,18 +476,30 @@ class SceneManager {
     });
   }
 
+  /**
+   * Stops the ThreeJS clock and fires a simulation paused event for other
+   * objects to respond to
+   */
   pauseSimulation = () => {
     this.isPaused = true;
     this.clock.stop();
     Subject.next("simulation_paused");
   }
 
+  /**
+   * Continues running the ThreeJS Clock and fires a simulation resumed event
+   * for other objects to respond to
+   */
   resumeSimulation = () => {
     this.isPaused = false;
     this.clock.start();
     Subject.next("simulation_resumed");
   }
 
+  /**
+   * This is the callback used to indicate that smart sparrow is ready to communicate with
+   * this application.
+   */
   onTransporterReady () {
     const capi = getCapiInstance();
     this.createSceneSubjects();
@@ -403,6 +524,10 @@ class SceneManager {
     );
   }
 
+  /**
+   * Resizes the canvas if the user adjusts their window size. This works on most screen sizes,
+   * though its hard to see on small devices.
+   */
   onWindowResize () {
     const { width, height } = this.canvas;
 
@@ -417,6 +542,11 @@ class SceneManager {
     this.renderer.setSize(width, height);
   }
 
+  /**
+   * The user clicking on the screen needs to be handled. Currently it just selects an item
+   * if they click on it. However, any functionality could be put here to respond to clicks
+   * and even communicate them to smart sparrow.
+   */
   handleClick = event => {
     const vector = this.convertClickToVector(event);
     this.raycaster.set(this.camera.position, vector);
@@ -439,11 +569,11 @@ class SceneManager {
     }
   }
 
-  getPositionById ({ id }) {
-    const target = this.scene.children.find(child => child.uuid === id);
-    return target.position;
-  }
-
+  /**
+   * This is the opposite of projecting a set of 3d coordinates to the 2d plane of the
+   * camera, its projecting a point on the camera (where the user clicked) to the corresponding point
+   * in 3d space.
+   */
   convertClickToVector = event => {
     const vector = new THREE.Vector3();
     const canvasTopOffset = this.canvas.getBoundingClientRect().top;
@@ -456,15 +586,25 @@ class SceneManager {
     return vector;
   }
 
+  /**
+   * This is the function which gets bound to the mouse click event in the browser
+   */
   onDocumentMouseClick = event => {
     this.handleClick(event);
   }
 
+  /**
+   * This is run every time the mouse moves, and is bound to the mousemove even in
+   * the browser.
+   */
   onDocumentMouseMove = event => {
     const vector = this.convertClickToVector(event);
     this.raycaster.set(this.camera.position, vector);
   }
 
+  /**
+   * Basic camera setup, can be modified to any desired positioning or controls.
+   */
   initializeCamera () {
     const { width, height } = this.screenDimensions;
     const fieldOfView = 60;
@@ -484,6 +624,11 @@ class SceneManager {
     this.cameraControls = new OrbitControls(this.camera);
   }
 
+  /**
+   * This is modifying the camera controls to use FlyControls instead of
+   * OrbitControls. This was part of learning how to better integrate with
+   * smart sparrow.
+   */
   setFlyControlCamera () {
     this.camera.position.x = 100;
     this.camera.position.y = 100;
@@ -500,6 +645,12 @@ class SceneManager {
     this.cameraControls.dragToLook = true;
   }
 
+  /**
+   * Sets the camera to orbit controls and puts the position at the desired position.
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} z
+   */
   setCameraPosition (x, y, z) {
     this.cameraControls = new OrbitControls(this.camera);
 
@@ -508,15 +659,26 @@ class SceneManager {
     this.camera.position.z = z;
   }
 
+  /**
+   * Returns the camera to its default positioning.
+   */
   setDefaultCamera () {
     this.camera.position.set(...this.defaultCameraPosition);
   }
 
+  /**
+   * Creates an initial empty scene for ThreeJS to use.
+   */
   initializeScene () {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color("#ffffff");
   }
 
+  /**
+   * Initializes the renderer with the attributes from the canvas element
+   * and the known screen dimensions. This needs to be called after the canvas has
+   * been set.
+   */
   initializeRenderer () {
     const { width, height } = this.screenDimensions;
     this.renderer = new THREE.WebGLRenderer({
@@ -528,10 +690,22 @@ class SceneManager {
   }
 }
 
+/**
+ * This is how you get the SceneManager. JavaScript doesn't have a great way of dealing with
+ * singletons. This will provide the one instantiation of the class. Since the SceneManager class
+ * requires a canvas container in its constructor, this can't create one by default. Not every place
+ * the SceneManager is being used can provide the constructor arguments.
+ */
 export const getSceneManager = () => {
   return SceneManager.instance || null;
 };
 
+/**
+ * This is essentially a higher order constructor for the SceneManager. It creates the instance of SceneManager
+ * and makes sure the instance is set and available for getSceneManager to return.
+ *
+ * @param container This is the container the canvas will be placed into.
+ */
 export default function (container) {
   if (!SceneManager.instance) {
     SceneManager.instance = new SceneManager(container);
