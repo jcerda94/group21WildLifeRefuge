@@ -346,8 +346,8 @@ class SceneManager {
   }
 
   /**
-   * The SceneManager will add this object to the scene at whatever position the model says it should be at. It will also
-   * add it to the subjects array and begin calling its update function during the update loop.
+   * The SceneManager will add this object to the scene at whatever position the model says it should be at.
+   * It will also add it to the subjects array and begin calling its update function during the update loop.
    *
    * @param {SceneObject} sceneObject The object that should be added to the scene. This should have a model key on it.
    */
