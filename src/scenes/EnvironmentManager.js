@@ -84,17 +84,24 @@ if (typeof Object.assign != "function") {
 
 class EnvironmentManager {
 
+    //Stores a canvas element that we will use as a texture for the ground plane
     textureCanvas = null;
     sceneManager = null;
+    //Stores our initialized environment as a set of nested arrays
     localEnv = null;
+    //Array to track objects that have been added to the EnvironmentManager
     trackedObjects = [];
+    //When the weather is updated, this value is updated to adjust germination and waterRegen rates
     weatherMod = 1.0;
+    //Array to store objects that have been removed from the sim during the most recent update cycle
     objectRemovalQueue = [];
+    //Array to store the position of grass objects that need to be created
     objectCreationQueue = [];
+    //Stores the time of the most recent update
     envTime = 0;
+    //Used to alternate updates between water balancing and object consumption/germination
     tickTock = true;
 
-    //CAUTION! consumeKey objects will only be shallow copied
     defaultEnvironment = {
         water: 1.0,
         waterRegen: 0.001,
@@ -103,13 +110,12 @@ class EnvironmentManager {
         objectLimit: 1500,
         waterBalanceThreshold : 0.5,
         nutrients: 1.0,
-        treeParams: [0.125, 0.125, 0.01, 2.0],
+        treeParams: [0.125, 0.05, 0.01, 2.0],
         grassParams: [0.01, 0.01, 0.01, 0.25],
+        bushParams: [0.025, 0.025, 0.01, 1.0],
         numAnimalParams: 1,
         hareParams: [1.0],
         hawkParams: [1.0],
-        //TODO Document how the params are loaded into objects
-        //TODO Detail necessary order of params
         envConsumeKeys: ["water", "nutrients"],
         auxEnvParams: ["germinationRate", "nutrientReturnOnDeath"],
         weatherTypes: ["Normal", "Rain", "Drought"],
@@ -117,8 +123,14 @@ class EnvironmentManager {
         weather: "Normal"
     };
 
+    /**
+     * Initializes the EnvironmentManager.
+     * Loads our default environment parameters into the localEnv array.
+     * Connects the EnvironmentManager to the ground plane canvas and fills it in with a soil color
+     */
     constructor(){
 
+        this.sceneManager = getSceneManager();
         this.initializeEnvironmentWithParams(this.defaultEnvironment);
         // Creates a THREE Texture using an HTML Canvas element
         var drawingCanvas = document.getElementById( "drawing-canvas" );
@@ -143,7 +155,16 @@ class EnvironmentManager {
 
     }
 
-
+    /**
+     * This takes an object formatted for the EnvironmentManager, extracts the types of parameters each tile in the
+     * Environment should and assigns them to a fill object. That object is used to fill an array shaped like the
+     * SceneManager ground size divided into 10x10 tiles.
+     *
+     * The fill object will assign the values that match the keys in the envConsumeKeys array to each tile in the Environment
+     *
+     * @param {environmentObject} environmentObject The object used to initialize the EnvironmentManager's parameters.
+     * This is usually the set of values prefixed by "env" in the capiModel.json file.
+     */
     initializeEnvironmentWithParams(environmentObject) {
 
         this.defaultEnvironment = environmentObject;
@@ -151,26 +172,30 @@ class EnvironmentManager {
         this.updateWeatherModifier();
 
         //Includes any parameters that we want in every environment tile,
-        //other object values will simply be made available under the defaultEnvironment object
+        //other object values/parameters will simply be made available under the defaultEnvironment object
         const fillObject = environmentObject.envConsumeKeys.reduce(
             (o, key) => ({...o, [key]: environmentObject[key]}),
             {}
         );
-
-        this.sceneManager = getSceneManager();
 
         //Added 1 to array size to handle odd ground sizes (1222 x 899) and objects at the absolute edge of the ground
         const groundX = Math.trunc(this.sceneManager.groundSize.x/10) + 1;
         const groundY = Math.trunc(this.sceneManager.groundSize.y/10) + 1;
 
         //Initializes an array shaped like our ground object, and fills it with a set of default environment conditions
-        // CAUTION! Only does a shallow copy of the defaultEnvironment object
+        // CAUTION! Only performs a shallow copy of the supplied object
         this.localEnv = [...Array(groundX)].map(
             ()=>Array(groundY).fill().map(
                 () => Object.assign({}, fillObject)
             ));
     }
 
+    /**
+     * This function is called by a listener on the "env.weather" value in Capi. It gets the new Weather type and
+     * matches that type to it's index in the weatherTypes array. The weatherModifiers array values are ordered in the
+     * same sequence as their matching types, so the previously found index is used to get the appropriate numerical
+     * weather modifier and that value is used to update this.weatherMod
+     */
     updateWeatherModifier(){
 
         const capi = getCapiInstance();
@@ -183,6 +208,12 @@ class EnvironmentManager {
 
     }
 
+    /**
+     * Takes an SceneObject's x,y position and returns the appropriate tile from localEnv
+     *
+     * @param {Number} x
+     * @param {Number} y
+     */
     getEnvByXYPos(x, y){
 
         const pos = this.groundXYToCanvasXY(x, y);
@@ -194,6 +225,12 @@ class EnvironmentManager {
 
     }
 
+    /**
+     * Takes an x,y coordinate from the ground plane's canvas and translates it to a THREE x,z position
+     *
+     * @param {Number} x
+     * @param {Number} y
+     */
     canvasXYToGroundXY(x, y){
 
         const xPos = x - (this.sceneManager.groundSize.x / 2);
@@ -202,6 +239,12 @@ class EnvironmentManager {
         return {x: xPos, y: yPos};
     }
 
+    /**
+     * Takes an THREE x,z position and translates it to x,y coordinates on the ground plane's canvas
+     *
+     * @param {Number} x
+     * @param {Number} y
+     */
     groundXYToCanvasXY(x, y){
 
         const xPos = x + (this.sceneManager.groundSize.x / 2);
@@ -211,8 +254,16 @@ class EnvironmentManager {
 
     }
 
-
-    prettyPrintEnvStateToConsole() {
+    /**
+     * Will print out a colored graphical representation of any environment tile value to the console
+     * (usually an envConsumeKey value)
+     *
+     * Currently displays a blue colored gradient. This can be adjusted in the cssString variable (which accepts a css
+     * formatted color as a string)
+     *
+     * @param {String} envParam The name of the value we want to map/display in the console
+     */
+    prettyPrintEnvStateToConsole(envParam) {
 
         let output = "";
         let cssStyling = [];
@@ -221,7 +272,7 @@ class EnvironmentManager {
             for (var j = 0; j < this.localEnv[0].length; j++){
                 output += "%c█";
 
-                let colorLightness = 100 - (50 * this.localEnv[j][i].water);
+                let colorLightness = 100 - (50 * this.localEnv[j][i][envParam]);
                 let cssString = "color:hsl(204, 100%, " + colorLightness + "%)";
                 cssStyling.push(cssString);
             }
@@ -235,6 +286,16 @@ class EnvironmentManager {
 
     }
 
+    /**
+     * Given a coordinate and a color it will draw a square of that color on the ground plane canvas centered on
+     * the given coordinates.
+     *
+     * @param {Number} x
+     * @param {Number} y
+     * @param {String} color A Hex value for the desired color, blue is the default
+     * @param {Boolean} convertXY Boolean value that tells us if we need to convert from THREE object coordinates to
+     * canvas coordinates, default is true
+     */
     drawOnCanvas(x, y, color = "#5b7aff", convertXY = true) {
 
         // If no value is passed for convertXY this assumes that you are giving it ground XY coordinates
@@ -253,12 +314,21 @@ class EnvironmentManager {
         this.drawingContext.fillStyle = color;
 
         this.drawingContext.fillRect(xPos, yPos, 10, 10 );
+
+        //The canvas will only be updated (drawn on) if the SceneManager is fully initialized
         if (this.sceneManager.ready){
             this.sceneManager.scene.children[3].material[2].map.needsUpdate = true;
         }
 
     }
 
+    /**
+     * Given the x and y indices of a Environment tile, an array of the surrounding tiles will be returned
+     *
+     * @param {Number} envArrX
+     * @param {Number} envArrY
+     * @returns {Array} An array of all Neighboring tiles
+     */
     getAdjacentTiles(envArrX, envArrY) {
 
         let neighbors = [];
@@ -281,6 +351,12 @@ class EnvironmentManager {
         return neighbors;
     }
 
+    /**
+     * Given a SceneObject, the envConsumeKey values of the object will be subtracted from the matching value in
+     * environment tile beneath the object.
+     *
+     * @param {SceneObject} object
+     */
     consume(object) {
 
         const pos = this.groundXYToCanvasXY(object.position.x, object.position.z);
@@ -314,13 +390,21 @@ class EnvironmentManager {
 
     }
 
+    /**
+     * Given a SceneObject this function will generate a new SceneObject of the same type and place it in
+     * a random valid position near the existing object.
+     *
+     * @param {SceneObject} object
+     */
     async createNearbyObject(object) {
-        //create new object in radius
+        //Will only create a new object if the global object limit has not been reached
         if (this.trackedObjects.length < this.defaultEnvironment.objectLimit){
-            //Will be updated for a proper radius later
+
+            //Generates a random position in +/- 50 units of the original object
             var newX = object.position.x + (random(-50, 50));
             var newY = object.position.z + (random(-50, 50));
 
+            //It's validated that the new random position is within the bounds of the Simulation's ground plane
             if (newX > 0){
                 newX = Math.min(newX, (this.sceneManager.groundSize.x / 2) - 15);
             } else {
@@ -333,13 +417,12 @@ class EnvironmentManager {
                 newY = Math.max(newY, -(this.sceneManager.groundSize.y / 2) + 15);
             }
 
+            //Uses the model factory to create a new SceneObject. If a new grass type object needs to be created,
+            //it's coordinates are queued for batched grass creation.
             var newObject = null;
             switch (object.type) {
                 case 'Tree':
-                    newObject = ModelFactory.makeSceneObject(
-                        {
-                            type: "tree"
-                        });
+                    newObject = ModelFactory.makeSceneObject({type: "tree" });
                     break;
                 case 'Grass':
                     this.objectCreationQueue.push({x: newX, y: newY});
@@ -348,10 +431,13 @@ class EnvironmentManager {
                     newObject = ModelFactory.makeSceneObject({ type: "bush" });
                     break;
                 default:
+                    //If there is no preset case, it will use whatever is returned from the ModelFactory
+                    newObject = ModelFactory.makeSceneObject({ type: object.type });
                     break;
             }
 
-
+            //Will add the object to the Scene if it is an object type supported by this function. Unknown object types
+            // are returned as cubes from the ModelFactory
             if (newObject !== null){
                 newObject.model.position.x = newX;
                 newObject.model.position.z = newY;
@@ -361,6 +447,13 @@ class EnvironmentManager {
 
     }
 
+    /**
+     * This function increases the Germination parameter of the supplied object based on the Environment's Weather value.
+     * If the parameter rises above 1.0, a new object of the same type is added randomly nearby. If the object fails the
+     * this.checkIfLiving(object) test, it's removed from the Scene and Environment Manager
+     *
+     * @param {SceneObject} object
+     */
     germinate(object) {
         //Checks if nutrients/water are high enough
         if (this.checkIfLiving(object)){
@@ -379,12 +472,26 @@ class EnvironmentManager {
         }
     }
 
+    /**
+     * Checks envConsumeKey values in the environment tile at the given object's position.
+     * Returns true if all envConsumeKey based values are above zero in the tile.
+     *
+     * @param {SceneObject} object
+     * @returns {boolean}
+     */
     checkIfLiving(object) {
         const envAtObj = this.getEnvByXYPos(object.position.x, object.position.z);
 
-        return this.defaultEnvironment.envConsumeKeys.every(key => envAtObj[key] > 0);
+        return this.defaultEnvironment.envConsumeKeys.every(key => envAtObj[key] >= 0);
     }
 
+    /**
+     * Helper function that generates a random number within a +/- percent range of the original value
+     *
+     * @param val The original value
+     * @param percentOffset The desired percent variance from the original value
+     * @returns {Number}
+     */
     static getRandomByPercent(val, percentOffset){
         const offset = val * (percentOffset/100);
 
@@ -392,6 +499,29 @@ class EnvironmentManager {
     }
 
 
+    /**
+     * This takes an SceneObject, assigns the appropriate properties based on the object type, and registers that object
+     * with the EnvironmentManager by adding it to the trackedObjects class array
+     *
+     * Plant type objects are assigned all properties in envConsumeKeys and auxEnvParams
+     * Animal type objects are assigned only certain properties from auxEnvParams based on the defaultEnvironment.numAnimalParams value.
+     * numAnimalParams specifies the number of properties to be assigned to animal type objects starting from the last position of
+     * auxEnvParams.
+     *
+     * Objects are matched to their property values based on the object type. It is presumed that within the defaultEnvironment object
+     * there is a array called "{objectType}params" that has the object type in it's key. These values are assigned to the objects
+     * only if the number of values for the object type matches the number of keys in envConsumeKeys and/or auxEnvParams
+     * respectively. The values in the object type's array are assumed to be ordered in the same sequence as
+     * [envConsumeKeys] -> [auxEnvParams] and will be assigned in that order.
+     *
+     * All properties are initialized with a 20 percent variance from the set value so that objects have some variance
+     * (objects created at the same time will no longer update at the same time). This can be adjusted in the calls
+     * to getRandomPercent below.
+     *
+     * After plant objects are assigned all relevant properties they are added to the trackedObjects array.
+     *
+     * @param {SceneObject} envObject
+     */
     registerTrackedObject(envObject) {
 
 
@@ -416,6 +546,7 @@ class EnvironmentManager {
                 envObject[this.defaultEnvironment.auxEnvParams[j]] = EnvironmentManager.getRandomByPercent(this.defaultEnvironment[objectKey][i+j], 20);
             }
 
+            //Adds a property to track the object's germination level
             envObject["germinationLevel"] = 0.0;
 
             this.trackedObjects.push(envObject);
@@ -438,13 +569,25 @@ class EnvironmentManager {
 
     }
 
+    /**
+     * Returns the first key from this.defaultEnvironment that includes a given object type
+     *
+     * @param {String} type
+     * @returns {string}
+     */
     getObjectParamKeyFromType(type){
-
         var findKey = Object.keys(this.defaultEnvironment).find(key => key.includes(type.toLowerCase()));
 
         return typeof findKey !== 'undefined' ? findKey : '';
     }
 
+    /**
+     * Called in the onDestroy function of each object. The object's nutrientOnDeath value is added to the environment tile
+     * the object was located on at death. If the object has envConsumeKey properties, it is queued to be removed from the
+     * trackedObjects array
+     *
+     * @param {SceneObject} object
+     */
     onDeath(object){
         const pos = this.groundXYToCanvasXY(object.position.x, object.position.z);
 
@@ -466,9 +609,17 @@ class EnvironmentManager {
 
     }
 
-    //Creates a Generator iterator. This will iterate through the entire environment array with each call.
-    //Use: localEnvGenerator.next() returns an object similar to {value: nextVal, done: false}
-    //Google javascript generators to understand the functionality/uses better
+    /**
+     * Creates a Generator iterator. This will iterate through the entire environment array with each call.
+     * Each call to localEnvGenerator.next() returns an object similar to {value: nextVal, done: false}.
+     * nextVal will contain an object of type {
+     *      x: x index of the specified environment tile,
+     *      y: y index of the specified environment tile,
+     *      env: The tile object located at the above indices
+     *  }
+     *
+     * @returns {IterableIterator<{x: number, y: number, env: *}>}
+     */
     *localEnvGenerator () {
         for (var i = 0; i < this.localEnv.length; i++) {
             for (var j = 0; j < this.localEnv[0].length; j++) {
@@ -477,6 +628,13 @@ class EnvironmentManager {
         }
     }
 
+    /**
+     * Given the key of an environment tile property, this displays a heatmap of that property on the ground plane canvas.
+     * Note: Currently the heatmap is displayed in a gradient from blue to white. This can be adjusted by supplying a
+     * different HSL value in titleColor below
+     *
+     * @param {String} param A key from envConsumeKeys
+     */
     async toggleEnvironmentViewOnCanvasByParam(param) {
 
         for (var i = 0; i < this.localEnv.length; i++) {
@@ -489,8 +647,17 @@ class EnvironmentManager {
 
     }
 
+    /**
+     * Iterates through all environment tiles that have a water value less than this.defaultEnvironment.waterBalanceThreshold
+     * and redistributes water to that tile from neighboring tiles that have a value above this.defaultEnvironment.waterBalanceThreshold
+     *
+     * All tiles below this.defaultEnvironment.waterBalanceThreshold also regenerate a certain amount of water based
+     * on the current weather modifier and the this.defaultEnvironment.waterRegen parameter
+     */
     async balanceWaterTable() {
 
+        //Uses a generator that supplies and iterator over all environment tiles, and filters the result for tiles that
+        //have a water value below a certain threshold
         const envGen = this.localEnvGenerator();
         let lowWater = [...envGen].filter(val => val.env.water < this.defaultEnvironment.waterBalanceThreshold);
 
@@ -513,13 +680,18 @@ class EnvironmentManager {
 
     }
 
+    /**
+     *  Updates the Environment at a set cadence (this.defaultEnvironment.updateRate)
+     *  Balances the water table and calls consume/germinate for each tracked object. Any objects that died between updates
+     *  are removed at this point and queued grass objects are created.
+     */
     async update() {
         const simTime = this.sceneManager.getElapsedSimTime({ unit: "minutes" });
 
         //The update rate is tied to "hours" in simulation,
         //Update is called twice in the update rate period. Once for object consumption/germination
         //and again for balancing the water table. Each type of environment update will update at the
-        //set cadence
+        //cadence set in this.defaultEnvironment.updateRate
         if( (simTime - this.envTime) > this.defaultEnvironment.updateRate * 30){
 
             //Removes objects that died during the last cycle
@@ -531,6 +703,7 @@ class EnvironmentManager {
 
             this.objectRemovalQueue = [];
 
+            //Use to alternate between water balancing and consumption/germination each cycle
             if (this.tickTock){
                 for (var i = 0; i < this.trackedObjects.length; i++) {
                     this.consume(this.trackedObjects[i]);
@@ -549,6 +722,8 @@ class EnvironmentManager {
             //Supports the efficient creation of a large number of grass objects
             if (this.objectCreationQueue.length > 0){
 
+                //If there are a significant amount of grass objects queued for creation, 50 grass objects will be
+                //generated in this update cycle and any remaining objects will be generate in future updates
                 if (this.objectCreationQueue.length > 50){
                     const tempQueue = this.objectCreationQueue.slice(0, 50);
 
@@ -585,6 +760,7 @@ export const getEnvironmentManager = () => {
     return EnvironmentManager.instance || null;
 };
 
+//Ensures that an instance of EnvironmentManager is available for any call to getEnvironmentManager.
 export default function (container) {
     if (!EnvironmentManager.instance) {
         EnvironmentManager.instance = new EnvironmentManager(container);

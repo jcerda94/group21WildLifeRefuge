@@ -1,7 +1,4 @@
 import { random } from "../utils/helpers";
-import { getSceneManager } from "./SceneManager";
-import { Node } from "../utils/LinkedList.js";
-import { getGrassLinkedList } from "../utils/LinkedList.js";
 import {getEnvironmentManager} from "./EnvironmentManager";
 
 const THREE = (window.THREE = require("three"));

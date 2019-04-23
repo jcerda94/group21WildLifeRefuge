@@ -1,5 +1,6 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
+import {getEnvironmentManager} from "./EnvironmentManager";
 const THREE = require("three");
 
 export const NAME = "bush";
@@ -37,10 +38,18 @@ function Bush () {
   cube.type = TYPE;
   cube.name = NAME;
 
-  function update () {}
+  function update () {
+  }
+
+  function onDestroy(){
+    getEnvironmentManager().onDeath(cube);
+  }
+
+  getEnvironmentManager().registerTrackedObject(cube);
 
   return {
     update,
+    onDestroy,
     model: cube,
     created: new Date()
   };

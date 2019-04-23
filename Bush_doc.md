@@ -11,6 +11,7 @@ Function List:
 | :---------------------: | -------------------- | ------------------------------------------------------------ |
 |       Bush                | n/a                   | Default constructor for SageBush model                    |
 |      update               |                       | Currently empty and unimplemented                         |
+|     onDestroy             | n/a                   | Called when the SceneManager removes the object from the scene. `getEnvironmentManager().onDeath(cube)` is called and informs the EnvironmentManager to remove the object from it's tracked objects.
 |     getBushes             | n/a                   | Returns all the bush objects from the SceneManager        |
 
 
@@ -21,7 +22,7 @@ Bush objects are added by the AddModels.js file and remvoed by the RemoveModels.
 
 # Main Interaction Points
 
-Bush.js is used in the AddModels, RemoveModels, PreloadModels, and SceneManager
+Bush.js is used in the AddModels, RemoveModels, PreloadModels, EnvironmentManager and SceneManager
 
 See:
 
