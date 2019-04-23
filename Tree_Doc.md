@@ -4,7 +4,7 @@ Trees are parts of our simulation models, and Trees play an important role in th
 
 
 
-# Functinality Overview
+# Functionality Overview
 
 | Function            | Async? | Param                       | Description                                                  |
 | ------------------- | ------ | --------------------------- | ------------------------------------------------------------ |
