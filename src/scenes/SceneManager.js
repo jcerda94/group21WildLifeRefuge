@@ -402,7 +402,10 @@ class SceneManager {
    * @returns {Boolean}
    */
   hasSceneObject ({ id }) {
-    return this.subjects.some(subject => subject.model.uuid === id);
+    return this.subjects.some(subject => {
+      const targetUUID = getValue("model.uuid", subject);
+      return targetUUID && targetUUID === id;
+    });
   }
 
   /**
@@ -425,7 +428,11 @@ class SceneManager {
    */
   removeObject (sceneObject) {
     this.subjects = this.subjects.filter(subject => {
-      const targetSubject = subject.model.uuid === sceneObject.uuid;
+      const targetUUID = getValue("model.uuid", subject);
+
+      const targetSubject =
+        targetUUID && subject.model.uuid === sceneObject.uuid;
+
       if (targetSubject) {
         subject.onDestroy && subject.onDestroy();
       }

@@ -17,7 +17,7 @@ import { get2DPosition, findClosestModel } from "../utils/helpers";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { createHareTweens } from "../utils/animations";
 import { ExpansionPanelSummary } from "@material-ui/core";
-import {getEnvironmentManager} from "./EnvironmentManager";
+import { getEnvironmentManager } from "./EnvironmentManager";
 
 const THREE = require("three");
 const TWEEN = require("@tweenjs/tween.js");
@@ -25,9 +25,22 @@ const TWEEN = require("@tweenjs/tween.js");
 export const NAME = "hare";
 export const TYPE = "Hare";
 
-function Hare () {
+async function Hare () {
   const CAPI = getCapiInstance();
 
+  const loadingManager = new THREE.LoadingManager();
+  const loader = new THREE.GLTFLoader(loadingManager);
+  const hare = await new Promise((resolve, reject) => {
+    loader.load(
+      "models/hare.gltf",
+      hare => {
+        hare.scene.scale.set(0.03, 0.03, 0.03);
+        resolve(hare.scene);
+      },
+      err => console.log(err),
+      reject
+    );
+  });
   const maxHunger = 20;
   const minHunger = 1;
   const hareHunger = hunger({
@@ -42,7 +55,9 @@ function Hare () {
 
   const sphereGeometry = new THREE.SphereGeometry(6, 30, 30);
   const sphereMaterial = new THREE.MeshPhongMaterial({ color: color });
-  const hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  // const hareMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  const hareMesh = hare;
+
   hareMesh.name = "hare";
 
   const breedBehavior = breed({
@@ -80,11 +95,11 @@ function Hare () {
   }
 
   const x = random(-widthBound, widthBound);
-  const y = 2;
+  const y = 10;
   const z = random(-heightBound, heightBound);
   const position = { x, y, z };
 
-  hareMesh.position.set(position.x, position.y, position.z);
+  hareMesh.position.set(x, y, z);
   hareMesh.castShadow = true;
   hareMesh.userData = {
     selectable: true,

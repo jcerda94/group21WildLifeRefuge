@@ -17,7 +17,6 @@ const randomZ = groundSize => {
 const randomPositionOn = (ground, fixedValues) => {
   return {
     x: randomX(ground),
-    y: random(0, 100),
     z: randomZ(ground),
     ...fixedValues
   };
@@ -34,9 +33,9 @@ const getPositionBasedDelay = (start, end, baseSpeed = 40) => {
 export const createHareTweens = hareMesh => {
   const SceneManager = getSceneManager();
   const { x, y, z } = hareMesh.position;
-  const positionOne = randomPositionOn(SceneManager.groundSize, { y: 2 });
-  const positionTwo = randomPositionOn(SceneManager.groundSize, { y: 2 });
-  const positionThree = randomPositionOn(SceneManager.groundSize, { y: 2 });
+  const positionOne = randomPositionOn(SceneManager.groundSize, { y: 10 });
+  const positionTwo = randomPositionOn(SceneManager.groundSize, { y: 10 });
+  const positionThree = randomPositionOn(SceneManager.groundSize, { y: 10 });
 
   const harePosition = hareMesh.position;
 

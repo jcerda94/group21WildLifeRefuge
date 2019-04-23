@@ -19,9 +19,9 @@ const Hawk = config => {
     return HawkModel(config);
   }
 };
-const Hare = config => {
+const Hare = async config => {
   if (config && config.useCollision) {
-    const hare = HareModel(config);
+    const hare = await HareModel(config);
     return CollisionSphereModel(hare)(config.collision);
   } else {
     return HareModel(config);
