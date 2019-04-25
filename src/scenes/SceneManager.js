@@ -9,7 +9,6 @@ import { getPopUpInfo } from "../components/PopUpInfo";
 import ModelFactory from "./ModelFactory";
 import capiModel from "../model/capiModel";
 import Subject from "../utils/subject";
-import AddModelsBasedOnSimTime from "./AddModelsBasedOnSimTime";
 import { getEnvironmentManager } from "./EnvironmentManager";
 
 class SceneManager {

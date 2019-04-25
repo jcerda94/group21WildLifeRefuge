@@ -16,8 +16,7 @@ import {
 import { get2DPosition, findClosestModel } from "../utils/helpers";
 import { getCapiInstance } from "../utils/CAPI/capi";
 import { createHareTweens } from "../utils/animations";
-import { ExpansionPanelSummary } from "@material-ui/core";
-import {getEnvironmentManager} from "./EnvironmentManager";
+import { getEnvironmentManager } from "./EnvironmentManager";
 
 const THREE = require("three");
 const TWEEN = require("@tweenjs/tween.js");

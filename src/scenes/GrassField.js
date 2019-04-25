@@ -1,8 +1,6 @@
 import { random } from "../utils/helpers";
 import { getSceneManager } from "./SceneManager";
-import { Node } from "../utils/LinkedList.js";
-import { getGrassLinkedList } from "../utils/LinkedList.js";
-import {getEnvironmentManager} from "./EnvironmentManager";
+import { getEnvironmentManager } from "./EnvironmentManager";
 
 const THREE = (window.THREE = require("three"));
 require("three/examples/js/loaders/GLTFLoader");
@@ -31,7 +29,6 @@ async function GrassField (config) {
   };
 
   const grassModels = [];
-
 
   for (let i = 0; i < count; i++) {
     const grass = originalGrass.clone();
@@ -63,7 +60,6 @@ async function GrassField (config) {
     grass.type = TYPE;
     grass.name = "grass";
     getEnvironmentManager().registerTrackedObject(grass);
-
 
     const onDestroy = () => {
       getEnvironmentManager().onDeath(grass);
